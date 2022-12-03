@@ -1,0 +1,7 @@
+version: "3.9"
+services:
+  nginx:
+    build: ./frontend
+    container_name: "nginx-frontend"
+    ports:
+      - "5001:80"
