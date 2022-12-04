@@ -5,3 +5,8 @@ services:
     container_name: "nginx-frontend"
     ports:
       - "5001:80"
+  gunicorn:
+    build: ./backend
+    container_name: "gunicorn-backend"
+    ports:
+      - "8001:8000"
