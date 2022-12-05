@@ -25,8 +25,8 @@ app = Flask(__name__)
 CORS(app)
 
 #Config the connector
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:example@localhost:3306/test'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:example@localhost:3306/test'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 
 #Config the database tracking modifications
 app.config['SQLALCHEMY_DATABASE_TRACK_MODIFICATIONS'] = False
@@ -97,33 +97,66 @@ with app.app_context():
             print(str(e))
             time.sleep(15)
 
-#Get all users
+#Get all users, Admin/Teacher only
 @app.route('/get/all/users', methods = ['GET'])
 def get_all_users():
+    #Needs a API Key Attached to a Admin/Teacher Account
+    try:
+        form_apikey = request.json['apikey']
+        session = Session.query.filter_by(apikey=form_apikey).first()
+        if session == None:
+            raise
+        user = User.query.filter_by(username=session.username).first()
+        if user == None:
+            raise
+        if user.is_admin != True:
+            raise
+    except:
+        abort(401)
+
     all_users = User.query.all()
     results = users_schema.dump(all_users)
     return jsonify(results)
 
-#Get a user by username
+#Get a user by username, Admin/Teacher only
 @app.route('/get/user/<requested_username>', methods = ['GET'])
 def get_user(requested_username):
+    #Needs a API Key Attached to a Admin/Teacher Account
+    try:
+        form_apikey = request.json['apikey']
+        session = Session.query.filter_by(apikey=form_apikey).first()
+        if session == None:
+            raise
+        user = User.query.filter_by(username=session.username).first()
+        if user == None:
+            raise
+        if user.is_admin != True:
+            raise
+    except:
+        abort(401)
+
     try:
         user = User.query.filter_by(username=requested_username).first()
         if user == None:
             raise
     except:
         abort(404)
+
     return user_schema.jsonify(user)
 
-#Add a user if the username is available
+#Add a user if the username is available, Open for everyone
 @app.route('/add/user', methods = ['POST'])
 def add_user():
-    form_email = request.json['email']
-    form_first_name = request.json['first_name']
-    form_last_name = request.json['last_name']
-    form_username = request.json['username']
-    form_password = request.json['password']
-    form_is_admin = request.json['is_admin']
+    try:
+        form_email = request.json['email']
+        form_first_name = request.json['first_name']
+        form_last_name = request.json['last_name']
+        form_username = request.json['username']
+        form_password = request.json['password']
+        #form_is_admin = request.json['is_admin']
+        form_is_admin = False
+    except:
+        abort(400)
 
     try:
         user = User.query.filter_by(username=form_username).first()
@@ -137,36 +170,57 @@ def add_user():
     db.session.commit()
     return user_schema.jsonify(user)
 
-#Update a user by username
+#Update a user by username, Open for logged in user only
 @app.route('/update/user/<requested_username>', methods = ['PUT'])
 def update_user(requested_username):
     try:
-        user = User.query.filter_by(username=requested_username).first()
+        form_email = request.json['email']
+        form_first_name = request.json['first_name']
+        form_last_name = request.json['last_name']
+        form_current_password = request.json['current_password']
+        form_new_password = request.json['new_password']
+    except:
+        abort(400)
+
+    #Needs a API Key to target the account being modified
+    try:
+        form_apikey = request.json['apikey']
+        session = Session.query.filter_by(apikey=form_apikey).first()
+        if session == None:
+            raise
+        user = User.query.filter_by(username=session.username).first()
         if user == None:
             raise
+        if user.password != form_current_password:
+            raise
     except:
-        abort(404)
-
-    form_email = request.json['email']
-    form_first_name = request.json['first_name']
-    form_last_name = request.json['last_name']
-    form_username = request.json['username']
-    form_password = request.json['password']
-    form_is_admin = request.json['is_admin']
+        abort(401)
 
     user.email = form_email
     user.first_name = form_first_name
     user.last_name = form_last_name
-    user.username = form_username
-    user.password = form_password
-    user.is_admin = form_is_admin
+    user.password = form_new_password
 
     db.session.commit()
     return user_schema.jsonify(user)
 
-#Delete a user by username
+#Delete a user by username, Admin/Teacher only
 @app.route('/delete/user/<requested_username>', methods = ['DELETE'])
 def delete_user(requested_username):
+    #Needs a API Key Attached to a Admin/Teacher Account
+    try:
+        form_apikey = request.json['apikey']
+        session = Session.query.filter_by(apikey=form_apikey).first()
+        if session == None:
+            raise
+        user = User.query.filter_by(username=session.username).first()
+        if user == None:
+            raise
+        if user.is_admin != True:
+            raise
+    except:
+        abort(401)
+
     try:
         user = User.query.filter_by(username=requested_username).first()
         if user == None:
@@ -178,11 +232,14 @@ def delete_user(requested_username):
     db.session.commit()
     return user_schema.jsonify(user)
 
-#Login and get a new API key
+#Login and get a new API key, Open for everyone
 @app.route('/login', methods = ['POST'])
 def login():
-    form_username = request.json['username']
-    form_password = request.json['password']
+    try:
+        form_username = request.json['username']
+        form_password = request.json['password']
+    except:
+        abort(400)
 
     try:
         user = User.query.filter_by(username=form_username).first()
@@ -208,9 +265,23 @@ def login():
     db.session.commit()
     return session_schema.jsonify(session)
 
-#Get all sessions
+#Get all sessions, Admin/Teacher only
 @app.route('/get/all/sessions', methods = ['GET'])
 def get_all_sessions():
+    #Needs a API Key Attached to a Admin/Teacher Account
+    try:
+        form_apikey = request.json['apikey']
+        session = Session.query.filter_by(apikey=form_apikey).first()
+        if session == None:
+            raise
+        user = User.query.filter_by(username=session.username).first()
+        if user == None:
+            raise
+        if user.is_admin != True:
+            raise
+    except:
+        abort(401)
+
     all_sessions = Session.query.all()
     results = sessions_schema.dump(all_sessions)
     return jsonify(results)

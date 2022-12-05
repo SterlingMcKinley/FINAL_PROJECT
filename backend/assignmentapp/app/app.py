@@ -25,8 +25,8 @@ app = Flask(__name__)
 CORS(app)
 
 #Config the connector
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:example@localhost:3306/test'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:example@localhost:3306/test'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 
 #Config the database tracking modifications
 app.config['SQLALCHEMY_DATABASE_TRACK_MODIFICATIONS'] = False
@@ -145,14 +145,14 @@ with app.app_context():
             print(str(e))
             time.sleep(15)
 
-#Get all assignments
+#Get all assignments, Open for everyone
 @app.route('/get/all/assignments', methods = ['GET'])
 def get_all_assignments():
     all_assignments = Assignment.query.all()
     results = assignments_schema.dump(all_assignments)
     return jsonify(results)
 
-#Get a assignment by id
+#Get a assignment by id, Open for everyone
 @app.route('/get/assignment/<assignment_id>', methods = ['GET'])
 def get_assignment(assignment_id):
     try:
@@ -163,9 +163,23 @@ def get_assignment(assignment_id):
         abort(404)
     return assignment_schema.jsonify(assignment)
 
-#Add a assignment if the assignment does not exist
+#Add a assignment if the assignment does not exist, Admin/Teacher only
 @app.route('/add/assignment', methods = ['POST'])
 def add_assignment():
+    #Needs a API Key Attached to a Admin/Teacher Account
+    try:
+        form_apikey = request.json['apikey']
+        session = Session.query.filter_by(apikey=form_apikey).first()
+        if session == None:
+            raise
+        user = User.query.filter_by(username=session.username).first()
+        if user == None:
+            raise
+        if user.is_admin != True:
+            raise
+    except:
+        abort(401)
+
     form_assignment_name = request.json['assignment_name']
     form_max_attempts = request.json['max_attempts']
     form_release_date = request.json['release_date']
@@ -183,20 +197,37 @@ def add_assignment():
     db.session.commit()
     return assignment_schema.jsonify(assignment)
 
-#Update an assignment by id
+#Update an assignment by id, Admin/Teacher only
 @app.route('/update/assignment/<assignment_id>', methods = ['PUT'])
 def update_assignment(assignment_id):
+    try:
+        form_assignment_name = request.json['assignment_name']
+        form_max_attempts = request.json['max_attempts']
+        form_release_date = request.json['release_date']
+        form_due_date = request.json['due_date']
+    except:
+        abort(400)
+
+    #Needs a API Key Attached to a Admin/Teacher Account
+    try:
+        form_apikey = request.json['apikey']
+        session = Session.query.filter_by(apikey=form_apikey).first()
+        if session == None:
+            raise
+        user = User.query.filter_by(username=session.username).first()
+        if user == None:
+            raise
+        if user.is_admin != True:
+            raise
+    except:
+        abort(401)
+
     try:
         assignment = Assignment.query.filter_by(id=assignment_id).first()
         if assignment == None:
             raise
     except:
         abort(404)
-
-    form_assignment_name = request.json['assignment_name']
-    form_max_attempts = request.json['max_attempts']
-    form_release_date = request.json['release_date']
-    form_due_date = request.json['due_date']
 
     assignment.assignment_name = form_assignment_name
     assignment.max_attempts = form_max_attempts
@@ -206,9 +237,23 @@ def update_assignment(assignment_id):
     db.session.commit()
     return assignment_schema.jsonify(assignment)
 
-#Delete an assignment by id
+#Delete an assignment by id, Admin/Teacher only
 @app.route('/delete/assignment/<assignment_id>', methods = ['DELETE'])
 def delete_assignment(assignment_id):
+    #Needs a API Key Attached to a Admin/Teacher Account
+    try:
+        form_apikey = request.json['apikey']
+        session = Session.query.filter_by(apikey=form_apikey).first()
+        if session == None:
+            raise
+        user = User.query.filter_by(username=session.username).first()
+        if user == None:
+            raise
+        if user.is_admin != True:
+            raise
+    except:
+        abort(401)
+
     try:
         assignment = Assignment.query.filter_by(id=assignment_id).first()
         if assignment == None:
@@ -222,43 +267,109 @@ def delete_assignment(assignment_id):
 
 
 
-#Get all userdata
+#Get all userdata, Admin/Teacher only
 @app.route('/get/all/userdata', methods = ['GET'])
 def get_all_userdata():
+    #Needs a API Key Attached to a Admin/Teacher Account
+    try:
+        form_apikey = request.json['apikey']
+        session = Session.query.filter_by(apikey=form_apikey).first()
+        if session == None:
+            raise
+        user = User.query.filter_by(username=session.username).first()
+        if user == None:
+            raise
+        if user.is_admin != True:
+            raise
+    except:
+        abort(401)
+
     all_userdata = Userdata.query.all()
     results = userdatas_schema.dump(all_userdata)
     return jsonify(results)
 
-#Get userdata by username
+#Get userdata by username, Admin/Teacher or logged in user only
 @app.route('/get/userdata/username/<userdata_username>', methods = ['GET'])
 def get_userdata_by_username(userdata_username):
+    #Needs a API Key Attached to a Admin/Teacher Account or the account being pulled
+    try:
+        form_apikey = request.json['apikey']
+        session = Session.query.filter_by(apikey=form_apikey).first()
+        if session == None:
+            raise
+        sessionuser = User.query.filter_by(username=session.username).first()
+        if sessionuser == None:
+            raise
+        lookupuser = User.query.filter_by(username=userdata_username).first()
+        if lookupuser == None:
+            if user.is_admin == True or sessionuser.username == userdata_username:
+                abort(404)
+            else:
+                raise
+        if user.is_admin != True and session.username != lookupuser.username:
+            raise
+    except:
+        abort(401)
+
     try:
         userdata = Userdata.query.filter_by(username=userdata_username)
         if userdata == None:
             raise
     except:
         abort(404)
+
     return userdatas_schema.jsonify(userdata)
 
-#Get userdata by id
+#Get userdata by id, Admin/Teacher or logged in user only
 @app.route('/get/userdata/id/<userdata_id>', methods = ['GET'])
 def get_userdata_by_id(userdata_id):
+    #Needs a API Key Attached to a Admin/Teacher Account or the account being pulled
     try:
-        userdata = Userdata.query.filter_by(id=userdata_id).first()
-        if userdata == None:
+        form_apikey = request.json['apikey']
+        session = Session.query.filter_by(apikey=form_apikey).first()
+        if session == None:
+            raise
+        sessionuser = User.query.filter_by(username=session.username).first()
+        if sessionuser == None:
+            raise
+        lookupuserdata = Userdata.query.filter_by(id=userdata_id).first()
+        if lookupuser == None:
+            if user.is_admin == True:
+                abort(404)
+            else:
+                raise
+        if user.is_admin != True and session.username != lookupuserdata.username:
             raise
     except:
-        abort(404)
-    return userdata_schema.jsonify(userdata)
+        abort(401)
 
-#Add userdata if the userdata does not exist for the specific assignment_id
+    return userdata_schema.jsonify(lookupuserdata)
+
+#Add userdata if the userdata does not exist for the specific assignment_id, Admin/Teacher only
 @app.route('/add/userdata', methods = ['POST'])
 def add_userdata():
-    form_username = request.json['username']
-    form_assignment_id = request.json['assignment_id']
-    form_used_attempts = request.json['used_attempts']
-    form_grades = request.json['grades']
-    form_feedback = request.json['feedback']
+    try:
+        form_username = request.json['username']
+        form_assignment_id = request.json['assignment_id']
+        form_used_attempts = request.json['used_attempts']
+        form_grades = request.json['grades']
+        form_feedback = request.json['feedback']
+    except:
+        abort(400)
+
+    #Needs a API Key Attached to a Admin/Teacher Account
+    try:
+        form_apikey = request.json['apikey']
+        session = Session.query.filter_by(apikey=form_apikey).first()
+        if session == None:
+            raise
+        user = User.query.filter_by(username=session.username).first()
+        if user == None:
+            raise
+        if user.is_admin != True:
+            raise
+    except:
+        abort(401)
 
     try:
         userdata = Userdata.query.filter_by(username=form_username)
@@ -273,21 +384,38 @@ def add_userdata():
     db.session.commit()
     return userdata_schema.jsonify(userdata)
 
-#Update userdata by id
+#Update userdata by id, Admin/Teacher only
 @app.route('/update/userdata/<userdata_id>', methods = ['PUT'])
 def update_userdata(userdata_id):
+    try:
+        form_username = request.json['username']
+        form_assignment_id = request.json['assignment_id']
+        form_used_attempts = request.json['used_attempts']
+        form_grades = request.json['grades']
+        form_feedback = request.json['feedback']
+    except:
+        abort(400)
+
+    #Needs a API Key Attached to a Admin/Teacher Account
+    try:
+        form_apikey = request.json['apikey']
+        session = Session.query.filter_by(apikey=form_apikey).first()
+        if session == None:
+            raise
+        user = User.query.filter_by(username=session.username).first()
+        if user == None:
+            raise
+        if user.is_admin != True:
+            raise
+    except:
+        abort(401)
+
     try:
         userdata = Userdata.query.filter_by(id=userdata_id).first()
         if userdata == None:
             raise
     except:
         abort(404)
-
-    form_username = request.json['username']
-    form_assignment_id = request.json['assignment_id']
-    form_used_attempts = request.json['used_attempts']
-    form_grades = request.json['grades']
-    form_feedback = request.json['feedback']
 
     userdata.username = form_username
     userdata.assignment_id = form_assignment_id
@@ -298,9 +426,23 @@ def update_userdata(userdata_id):
     db.session.commit()
     return userdata_schema.jsonify(userdata)
 
-#Delete userdata by id
+#Delete userdata by id, Admin/Teacher only
 @app.route('/delete/userdata/<userdata_id>', methods = ['DELETE'])
 def delete_userdata(userdata_id):
+    #Needs a API Key Attached to a Admin/Teacher Account
+    try:
+        form_apikey = request.json['apikey']
+        session = Session.query.filter_by(apikey=form_apikey).first()
+        if session == None:
+            raise
+        user = User.query.filter_by(username=session.username).first()
+        if user == None:
+            raise
+        if user.is_admin != True:
+            raise
+    except:
+        abort(401)
+
     try:
         userdata = Userdata.query.filter_by(id=userdata_id).first()
         if userdata == None:
