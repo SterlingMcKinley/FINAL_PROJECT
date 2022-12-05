@@ -1,0 +1,469 @@
+{
+	"info": {
+		"_postman_id": "67a7de94-8a43-4e01-9109-bd043e2fa53d",
+		"name": "Backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21529024"
+	},
+	"item": [
+		{
+			"name": "API Backend Get All Users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/get/all/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"get",
+						"all",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "API Backend Get User",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/get/user/jeffhihi",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"get",
+						"user",
+						"jeffhihi"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "API Backend Add User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"jeffhihi@gmail.com\",\r\n    \"first_name\": \"Jeff\",\r\n    \"last_name\": \"Hihi\",\r\n    \"username\": \"jeffhihi\",\r\n    \"password\": \"password1234\",\r\n    \"is_admin\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/add/user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"add",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "API Backend Update User",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"jeffhihi@gmail.com\",\r\n    \"first_name\": \"Jeff\",\r\n    \"last_name\": \"Hihi\",\r\n    \"username\": \"jeffhihi\",\r\n    \"password\": \"password1234\",\r\n    \"is_admin\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/update/user/jeffhihi",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"update",
+						"user",
+						"jeffhihi"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "API Backend Delete User",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/delete/user/jeffhihi",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"delete",
+						"user",
+						"jeffhihi"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "API Backend Login User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"jeffhihi\",\r\n    \"password\": \"password1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "API Backend Get All Sessions",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"jeffhihi\",\r\n    \"password\": \"password1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/get/all/sessions",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"get",
+						"all",
+						"sessions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "API Backend Get All Assignments",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/get/all/assignments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"get",
+						"all",
+						"assignments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "API Backend Get Assignment By Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/get/assignment/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"get",
+						"assignment",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "API Backend Add Assignment",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"apikey\": \"7c17561884216fa88b6fcb0208eb3b46\",\r\n    \"assignment_name\": \"Build Script 5\",\r\n    \"max_attempts\": 3,\r\n    \"release_date\": \"7/30/22\",\r\n    \"due_date\": \"8/6/2022\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/add/assignment",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"add",
+						"assignment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "API Backend Update Assignment",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"apikey\": \"7c17561884216fa88b6fcb0208eb3b46\",\r\n    \"assignment_name\": \"Build Script 3\",\r\n    \"max_attempts\": 1,\r\n    \"release_date\": \"7/30/22\",\r\n    \"due_date\": \"8/6/2022\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/update/assignment/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"update",
+						"assignment",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "API Backend Delete Assignment",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"apikey\": \"7c17561884216fa88b6fcb0208eb3b46\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/delete/assignment/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"delete",
+						"assignment",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "API Backend Get All Userdata",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/get/all/userdata",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"get",
+						"all",
+						"userdata"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "API Backend Get Userdata By Username",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/get/userdata/username/sterling",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"get",
+						"userdata",
+						"username",
+						"sterling"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "API Backend Get Userdata By Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/get/userdata/id/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"get",
+						"userdata",
+						"id",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "API Backend Add Userdata",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"sterling\",\r\n    \"assignment_id\": 2,\r\n    \"used_attempts\": 1,\r\n    \"grades\": \"0/NA/NA\",\r\n    \"feedback\": \"Failure\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/add/userdata",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"add",
+						"userdata"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "API Backend Update Userdata",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"jeffhihi\",\r\n    \"assignment_id\": 1,\r\n    \"used_attempts\": 3,\r\n    \"grades\": \"85/100/0\",\r\n    \"feedback\": \"Looks Cute\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/update/userdata/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"update",
+						"userdata",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "API Backend Delete Userdata",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/delete/userdata/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"delete",
+						"userdata",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
