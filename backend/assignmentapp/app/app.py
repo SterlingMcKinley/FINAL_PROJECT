@@ -172,22 +172,22 @@ def add_assignment():
     form_due_date = request.json['due_date']
 
     try:
-        assignment = Assignment.query.filter_by(assignment=form_assignment).first()
+        assignment = Assignment.query.filter_by(assignment_name=form_assignment_name).first()
         if assignment != None:
             raise
     except:
         abort(409)
 
-    assignment = Assignment(form_assignment_name, max_attempts, form_release_date, form_due_date)
+    assignment = Assignment(form_assignment_name, form_max_attempts, form_release_date, form_due_date)
     db.session.add(assignment)
     db.session.commit()
     return assignment_schema.jsonify(assignment)
 
 #Update an assignment by id
-@app.route('/update/<assignment_id>', methods = ['PUT'])
+@app.route('/update/assignment/<assignment_id>', methods = ['PUT'])
 def update_assignment(assignment_id):
     try:
-        assignment = Assignment.query.filter_by(assignment=assignment_id).first()
+        assignment = Assignment.query.filter_by(id=assignment_id).first()
         if assignment == None:
             raise
     except:
@@ -207,10 +207,10 @@ def update_assignment(assignment_id):
     return assignment_schema.jsonify(assignment)
 
 #Delete an assignment by id
-@app.route('/delete/<assignment_id>', methods = ['DELETE'])
+@app.route('/delete/assignment/<assignment_id>', methods = ['DELETE'])
 def delete_assignment(assignment_id):
     try:
-        assignment = Assignment.query.filter_by(assignment=assignment_id).first()
+        assignment = Assignment.query.filter_by(id=assignment_id).first()
         if assignment == None:
             raise
     except:
@@ -274,7 +274,7 @@ def add_userdata():
     return userdata_schema.jsonify(userdata)
 
 #Update userdata by id
-@app.route('/update/<userdata_id>', methods = ['PUT'])
+@app.route('/update/userdata/<userdata_id>', methods = ['PUT'])
 def update_userdata(userdata_id):
     try:
         userdata = Userdata.query.filter_by(id=userdata_id).first()
@@ -299,7 +299,7 @@ def update_userdata(userdata_id):
     return userdata_schema.jsonify(userdata)
 
 #Delete userdata by id
-@app.route('/delete/<userdata_id>', methods = ['DELETE'])
+@app.route('/delete/userdata/<userdata_id>', methods = ['DELETE'])
 def delete_userdata(userdata_id):
     try:
         userdata = Userdata.query.filter_by(id=userdata_id).first()

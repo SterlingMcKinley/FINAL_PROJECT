@@ -138,7 +138,7 @@ def add_user():
     return user_schema.jsonify(user)
 
 #Update a user by username
-@app.route('/update/<requested_username>', methods = ['PUT'])
+@app.route('/update/user/<requested_username>', methods = ['PUT'])
 def update_user(requested_username):
     try:
         user = User.query.filter_by(username=requested_username).first()
@@ -165,7 +165,7 @@ def update_user(requested_username):
     return user_schema.jsonify(user)
 
 #Delete a user by username
-@app.route('/delete/<requested_username>', methods = ['DELETE'])
+@app.route('/delete/user/<requested_username>', methods = ['DELETE'])
 def delete_user(requested_username):
     try:
         user = User.query.filter_by(username=requested_username).first()
