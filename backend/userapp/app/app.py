@@ -15,6 +15,9 @@ import mysqlx
 import datetime
 import time
 
+#Import Secrets
+import secrets
+
 #Setup the app with Flask
 app = Flask(__name__)
 
@@ -46,7 +49,7 @@ class User(db.Model):
     username = db.Column(db.Text())
     password = db.Column(db.Text())
     is_admin = db.Column(db.Boolean(), default = False)
-    creation_date = db.Column(db.DateTime, default = datetime.datetime.now)
+    creation_datetime = db.Column(db.DateTime, default = datetime.datetime.now)
 
     def __init__(self, email, first_name, last_name, username, password, is_admin):
         self.email = email
@@ -59,7 +62,7 @@ class User(db.Model):
 #User Schema
 class UserSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'email', 'first_name', 'last_name', 'username', 'password', 'is_admin', 'creation_date')
+        fields = ('id', 'email', 'first_name', 'last_name', 'username', 'password', 'is_admin', 'creation_datetime')
 
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
@@ -69,7 +72,7 @@ class Session(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.Text())
     apikey = db.Column(db.Text())
-    creation_date = db.Column(db.DateTime, default = datetime.datetime.now)
+    creation_datetime = db.Column(db.DateTime, default = datetime.datetime.now)
 
     def __init__(self, username, apikey):
         self.username = username
@@ -78,7 +81,7 @@ class Session(db.Model):
 #Session Schema
 class SessionSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'username', 'apikey', 'creation_date')
+        fields = ('id', 'username', 'apikey', 'creation_datetime')
 
 session_schema = SessionSchema()
 sessions_schema = SessionSchema(many=True)
@@ -95,8 +98,8 @@ with app.app_context():
             time.sleep(15)
 
 #Get all users
-@app.route('/get/users', methods = ['GET'])
-def get_users():
+@app.route('/get/all/users', methods = ['GET'])
+def get_all_users():
     all_users = User.query.all()
     results = users_schema.dump(all_users)
     return jsonify(results)
@@ -194,15 +197,23 @@ def login():
     except:
         abort(401)
 
-    session = Session.query.filter_by(username=form_username).first()
+    session = Session.query.filter_by(username=user.username).first()
     if session != None:
         db.session.delete(session)
+        db.session.commit()
 
-    session = Session(form_email, form_first_name, form_last_name, form_username, form_password, form_is_admin)
+    session = Session(user.username, secrets.token_hex(16))
     db.session.add(session)
 
     db.session.commit()
-    return user_schema.jsonify(user)
+    return session_schema.jsonify(session)
+
+#Get all sessions
+@app.route('/get/all/sessions', methods = ['GET'])
+def get_all_sessions():
+    all_sessions = Session.query.all()
+    results = sessions_schema.dump(all_sessions)
+    return jsonify(results)
 
 #Health check
 @app.route('/', methods = ['GET'])

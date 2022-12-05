@@ -5,8 +5,13 @@ services:
     container_name: "nginx-frontend"
     ports:
       - "5001:80"
-  gunicorn:
-    build: ./backend
-    container_name: "gunicorn-backend"
+  gunicorn-user:
+    build: ./backend/userapp
+    container_name: "gunicorn-user-backend"
     ports:
       - "8001:8000"
+  gunicorn-assignment:
+    build: ./backend/assignmentapp
+    container_name: "gunicorn-assignment-backend"
+    ports:
+      - "8002:8000"
