@@ -1,0 +1,37 @@
+name: Init Remote Statefile
+
+on: 
+  workflow_dispatch: 
+    branches: 
+      - main
+
+env: 
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
+  TABLE_NAME: ${{ secrets.TABLE_NAME }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+
+jobs: 
+  init-remote-statefile: 
+    name: Init Remote Statefile S3 using Terraform
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./Terraform/Remote-S3
+    steps: 
+    - uses: actions/checkout@v3
+      name: GitHub Checkout
+    - name: Replace Placeholder BUCKET_NAME
+      run: python3 ../../Utilities/replacer.py terraform.tfvars terraform.tfvars ~bucketname~ $BUCKET_NAME
+    - name: Replace Placeholder TABLE_NAME
+      run: python3 ../../Utilities/replacer.py terraform.tfvars terraform.tfvars ~tablename~ $TABLE_NAME
+    - name: Replace Placeholder AWS_REGION
+      run: python3 ../../Utilities/replacer.py terraform.tfvars terraform.tfvars ~region~ $AWS_REGION
+    - name: Terraform Init
+      run: terraform init
+    - name: Terraform Validate
+      run: terraform validate
+    - name: Terraform Apply
+      run: terraform apply --auto-approve

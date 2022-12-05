@@ -1,0 +1,100 @@
+name: Deploy Pipeline
+
+on: 
+  workflow_dispatch: 
+    branches: 
+      - main
+
+env: 
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_SSH_KEY_BASE64: ${{ secrets.AWS_SSH_KEY_BASE64 }}
+  JENKINS_USERNAME: ${{ secrets.JENKINS_USERNAME }}
+  JENKINS_PASSWORD: ${{ secrets.JENKINS_PASSWORD }}
+  JENKINS_EMAIL: ${{ secrets.JENKINS_EMAIL }}
+  BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
+  TABLE_NAME: ${{ secrets.TABLE_NAME }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  AWS_AMI: ${{ secrets.AWS_AMI }}
+  AWS_ITYPE: ${{ secrets.AWS_ITYPE }}
+  AWS_KEYNAME: ${{ secrets.AWS_KEYNAME }}
+  AWS_SECGROUPNAME: ${{ secrets.AWS_SECGROUPNAME }}
+
+jobs: 
+  deploy-pipeline: 
+    name: Deploy Pipeline using Terraform
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./Terraform/Pipeline
+    steps: 
+    - uses: actions/checkout@v3
+      name: GitHub Checkout
+    - name: Replace Backend Placeholder BUCKET_NAME
+      run: python3 ../../Utilities/replacer.py backend.tf backend.tf ~bucketname~ $BUCKET_NAME
+    - name: Replace Backend Placeholder TABLE_NAME
+      run: python3 ../../Utilities/replacer.py backend.tf backend.tf ~tablename~ $TABLE_NAME
+    - name: Replace Backend Placeholder AWS_REGION
+      run: python3 ../../Utilities/replacer.py backend.tf backend.tf ~region~ $AWS_REGION
+    - name: Replace Placeholder AWS_REGION
+      run: python3 ../../Utilities/replacer.py terraform.tfvars terraform.tfvars ~region~ $AWS_REGION
+    - name: Replace Placeholder AWS_AMI
+      run: python3 ../../Utilities/replacer.py terraform.tfvars terraform.tfvars ~ami~ $AWS_AMI
+    - name: Replace Placeholder AWS_ITYPE
+      run: python3 ../../Utilities/replacer.py terraform.tfvars terraform.tfvars ~itype~ $AWS_ITYPE
+    - name: Replace Placeholder AWS_KEYNAME
+      run: python3 ../../Utilities/replacer.py terraform.tfvars terraform.tfvars ~keyname~ $AWS_KEYNAME
+    - name: Replace Placeholder AWS_SECGROUPNAME
+      run: python3 ../../Utilities/replacer.py terraform.tfvars terraform.tfvars ~secgroupname~ $AWS_SECGROUPNAME
+    - name: Decode and Save SSH Key
+      run: mkdir files && echo "$AWS_SSH_KEY_BASE64" | base64 -i --decode > files/id_rsa && chmod 600 files/id_rsa
+    - name: Terraform Init
+      run: terraform init
+    - name: Terraform Validate
+      run: terraform validate
+    - name: Terraform Apply
+      run: terraform apply --auto-approve
+    - name: Jenkins - Terraform Output
+      run: terraform output -raw jenkinsec2publicip > files/jenkinsip
+    - name: Jenkins SSH Add Credentials and IP
+      run: ssh -q -o StrictHostKeyChecking=accept-new -i files/id_rsa ubuntu@$(cat files/jenkinsip) -tt "cd RDGOAT > /dev/null 2>&1 || { mkdir RDGOAT && cd RDGOAT ; } ; echo $JENKINS_USERNAME | sudo tee JENKINS_USERNAME > /dev/null 2>&1 && echo $JENKINS_PASSWORD | sudo tee JENKINS_PASSWORD > /dev/null 2>&1 && echo $JENKINS_EMAIL | sudo tee JENKINS_EMAIL > /dev/null 2>&1 && echo $(terraform output -raw jenkinsec2publicip) | sudo tee JENKINS_IP > /dev/null 2>&1"
+    - name: Jenkins - SSH Install Jenkins
+      run: ssh -q -o StrictHostKeyChecking=accept-new -i files/id_rsa ubuntu@$(cat files/jenkinsip) -tt "curl -s -O https://raw.githubusercontent.com/RichardDeodutt/Deployment-5/main/Runners/runinstalljenkins.sh && sudo chmod +x runinstalljenkins.sh && sudo ./runinstalljenkins.sh"
+    - name: Jenkins - SSH Configure Jenkins
+      run: ssh -q -o StrictHostKeyChecking=accept-new -i files/id_rsa ubuntu@$(cat files/jenkinsip) -tt "curl -s -O https://raw.githubusercontent.com/RichardDeodutt/Deployment-5/main/Runners/runconfigurejenkins.sh && sudo chmod +x runconfigurejenkins.sh && sudo ./runconfigurejenkins.sh"
+    - name: Jenkins - SSH System Upgrade
+      run: ssh -q -o StrictHostKeyChecking=accept-new -i files/id_rsa ubuntu@$(cat files/jenkinsip) -tt "curl -s -O https://raw.githubusercontent.com/RichardDeodutt/Deployment-5/main/Runners/runsystemupgrade.sh && sudo chmod +x runsystemupgrade.sh && sudo ./runsystemupgrade.sh"
+    - name: Jenkins - SSH Safe Restart Jenkins
+      run: ssh -q -o StrictHostKeyChecking=accept-new -i files/id_rsa ubuntu@$(cat files/jenkinsip) -tt "curl -s -O https://raw.githubusercontent.com/RichardDeodutt/Deployment-5/main/Runners/runsaferestartjenkins.sh && sudo chmod +x runsaferestartjenkins.sh && sudo ./runsaferestartjenkins.sh"
+    - name: Jenkins - SSH Status Check
+      run: ssh -q -o StrictHostKeyChecking=accept-new -i files/id_rsa ubuntu@$(cat files/jenkinsip) -tt "curl -s -O https://raw.githubusercontent.com/RichardDeodutt/Deployment-5/main/Runners/runstatuscheck.sh && sudo chmod +x runstatuscheck.sh && sudo ./runstatuscheck.sh"
+    - name: Jenkins - SSH Remove Credentials and IP
+      if: always()
+      run: ssh -q -o StrictHostKeyChecking=accept-new -i files/id_rsa ubuntu@$(cat files/jenkinsip) -tt "cd RDGOAT > /dev/null 2>&1 || { mkdir RDGOAT && cd RDGOAT ; } ; sudo rm JENKINS_USERNAME && sudo rm JENKINS_PASSWORD && sudo rm JENKINS_EMAIL && sudo rm JENKINS_IP"
+    - name: Terraform - Terraform Output
+      run: terraform output -raw terraformec2publicip > files/terraformip
+    - name: Terraform - SSH Install Agent
+      run: ssh -q -o StrictHostKeyChecking=accept-new -i files/id_rsa ubuntu@$(cat files/terraformip) -tt "curl -s -O https://raw.githubusercontent.com/RichardDeodutt/Deployment-5/main/Runners/runinstallagent.sh && sudo chmod +x runinstallagent.sh && sudo ./runinstallagent.sh"
+    - name: Terraform - SSH Install Terraform
+      run: ssh -q -o StrictHostKeyChecking=accept-new -i files/id_rsa ubuntu@$(cat files/terraformip) -tt "curl -s -O https://raw.githubusercontent.com/RichardDeodutt/Deployment-5/main/Runners/runinstallterraform.sh && sudo chmod +x runinstallterraform.sh && sudo ./runinstallterraform.sh"
+    - name: Terraform - SSH Install Cypress Dependencies
+      run: ssh -q -o StrictHostKeyChecking=accept-new -i files/id_rsa ubuntu@$(cat files/terraformip) -tt "curl -s -O https://raw.githubusercontent.com/RichardDeodutt/Deployment-5/main/Runners/runinstallcydepends.sh && sudo chmod +x runinstallcydepends.sh && sudo ./runinstallcydepends.sh"
+    - name: Docker - Terraform Output
+      run: terraform output -raw dockerec2publicip > files/dockerip
+    - name: Docker - SSH Install Agent
+      run: ssh -q -o StrictHostKeyChecking=accept-new -i files/id_rsa ubuntu@$(cat files/dockerip) -tt "curl -s -O https://raw.githubusercontent.com/RichardDeodutt/Deployment-5/main/Runners/runinstallagent.sh && sudo chmod +x runinstallagent.sh && sudo ./runinstallagent.sh"
+    - name: Docker - SSH Install Docker
+      run: ssh -q -o StrictHostKeyChecking=accept-new -i files/id_rsa ubuntu@$(cat files/dockerip) -tt "curl -s -O https://raw.githubusercontent.com/RichardDeodutt/Deployment-5/main/Runners/runinstalldocker.sh && sudo chmod +x runinstalldocker.sh && sudo ./runinstalldocker.sh"
+    - name: Delete SSH Key and IPs
+      if: always()
+      run: rm files/id_rsa && rm files/jenkinsip && rm files/terraformip && rm files/dockerip
+    - name: Jenkins Link
+      if: always()
+      run: printf "\033[0;32mJenkins Link ~>\033[0m http://$(terraform output -raw jenkinsec2publicip)/\n"
+    - name: Terraform Server IP
+      if: always()
+      run: printf "\033[0;32mTerraform IP ~>\033[0m $(terraform output -raw terraformec2publicip)\n"
+    - name: Docker Server IP
+      if: always()
+      run: printf "\033[0;32mDocker IP ~>\033[0m $(terraform output -raw dockerec2publicip)\n"
