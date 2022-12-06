@@ -52,7 +52,7 @@ jobs:
       run: python3 ../../Utilities/replacer.py ../../Docker/backend/assignmentapp/app/app.py ../../Docker/backend/assignmentapp/app/app.py ~mysqldatabase~ $MYSQL_DATABASE
     - name: Create Backend Microservice Assignment Image
       run: docker build -t $DOCKERHUB_USR/grade_tracker_backend_microservice_assignment:latest .
-      working-directory: ./Docker/frontend/assignmentapp
+      working-directory: ./Docker/backend/assignmentapp
     - name: Create MYSQL Image
       run: docker build -t $DOCKERHUB_USR/grade_tracker_mysql:latest .
       working-directory: ./Docker/mysql
