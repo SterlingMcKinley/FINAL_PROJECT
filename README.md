@@ -1,5 +1,5 @@
 # FINAL_PROJECT 
-F.R.A.N.N.S GRADE TRACKER
+## F.R.A.N.N.S GRADE TRACKER
 
 ### Members of Team F.R.A.N.N.S
 1. Faye
