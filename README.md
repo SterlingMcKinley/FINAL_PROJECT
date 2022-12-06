@@ -1,7 +1,9 @@
-<img src="https://github.com/kura-labs-org/kuralabs_deployment_1/blob/main/Kuralogo.png">
+<p align="center">
+<a href="https://kuralabs.org/"><img src="https://raw.githubusercontent.com/SterlingMcKinley/FINAL_PROJECT/main/Images/kura-labs.svg" />
+</p>
 
-<h1 align="center">FINAL_PROJECT<h1> 
-  
+<h1 align="center">FINAL_PROJECT</h1>
+
 ## F.R.A.N.N.S GRADE TRACKER
 
 ### Members of Team F.R.A.N.N.S
