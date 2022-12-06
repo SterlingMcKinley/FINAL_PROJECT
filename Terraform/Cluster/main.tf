@@ -28,7 +28,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/full-stack-logs",
+          "awslogs-group": "/ecs/final-project-logs",
           "awslogs-region": "us-east-1",
           "awslogs-stream-prefix": "ecs"
         }
@@ -42,7 +42,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/full-stack-logs",
+          "awslogs-group": "/ecs/final-project-logs",
           "awslogs-region": "us-east-1",
           "awslogs-stream-prefix": "ecs"
         }
@@ -56,7 +56,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/full-stack-logs",
+          "awslogs-group": "/ecs/final-project-logs",
           "awslogs-region": "us-east-1",
           "awslogs-stream-prefix": "ecs"
         }
@@ -80,7 +80,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/full-stack-logs",
+          "awslogs-group": "/ecs/final-project-logs",
           "awslogs-region": "us-east-1",
           "awslogs-stream-prefix": "ecs"
         }
@@ -100,7 +100,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/full-stack-logs",
+          "awslogs-group": "/ecs/final-project-logs",
           "awslogs-region": "us-east-1",
           "awslogs-stream-prefix": "ecs"
         }
@@ -114,7 +114,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/full-stack-logs",
+          "awslogs-group": "/ecs/final-project-logs",
           "awslogs-region": "us-east-1",
           "awslogs-stream-prefix": "ecs"
         }
