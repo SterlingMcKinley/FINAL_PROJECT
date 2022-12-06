@@ -12,4 +12,4 @@
 5. Nicole Navarrete (Chief Architect)
 6. Sterling McKinley (Administrator)
 
-### Aim of Project
+## Aim of Project
