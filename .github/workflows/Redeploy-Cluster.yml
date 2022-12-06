@@ -30,8 +30,10 @@ jobs:
       name: GitHub Checkout
     - name: Install Docker
       run: sudo ./installdocker.sh
+      working-directory: ./Scripts
     - name: Install Terraform
       run: sudo ./installterraform.sh
+      working-directory: ./Scripts
     - name: DockerHub Login
       run: docker login --username $DOCKERHUB_USR --password $DOCKERHUB_PWD
     - name: Create Frontend Image

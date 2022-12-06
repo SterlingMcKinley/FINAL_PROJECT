@@ -26,6 +26,12 @@ jobs:
     steps: 
     - uses: actions/checkout@v3
       name: GitHub Checkout
+    - name: Install Docker
+      run: sudo ./installdocker.sh
+      working-directory: ./Scripts
+    - name: Install Terraform
+      run: sudo ./installterraform.sh
+      working-directory: ./Scripts
     - name: Replace Backend Placeholder BUCKET_NAME
       run: python3 ../../Utilities/replacer.py backend.tf backend.tf ~bucketname~ $BUCKET_NAME
     - name: Replace Backend Placeholder TABLE_NAME
