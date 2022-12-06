@@ -1,17 +1,34 @@
 version: "3.9"
 services:
-  nginx:
+  nginx-frontend:
     build: ./frontend
     container_name: "nginx-frontend"
-    ports:
-      - "5001:80"
-  gunicorn-user:
+
+  gunicorn-backend-user:
     build: ./backend/userapp
     container_name: "gunicorn-user-backend"
-    ports:
-      - "8001:8000"
-  gunicorn-assignment:
+
+  gunicorn-backend-assignment:
     build: ./backend/assignmentapp
     container_name: "gunicorn-assignment-backend"
+
+  mysql:
+    build: ./mysql
+    container_name: "mysql"
+
+  adminer:
+    build: ./adminer
+    container_name: "adminer"
+
+  adminer:
+    build: ./adminer
+    container_name: "adminer"
+
+  nginx:
+    build: ./nginx
+    container_name: "nginx"
     ports:
-      - "8002:8000"
+      - "80:80"
+      - "5000:5000"
+      - "5500:5500"
+      - "9000:9000"
