@@ -5,13 +5,6 @@ on:
     branches: 
       - main
 
-env: 
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  JENKINS_USERNAME: ${{ secrets.JENKINS_USERNAME }}
-  JENKINS_PASSWORD: ${{ secrets.JENKINS_PASSWORD }}
-  JENKINS_EMAIL: ${{ secrets.JENKINS_EMAIL }}
-
 jobs: 
   scripts-unit-tests: 
     name: Scripts Unit Tests
@@ -19,32 +12,11 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: .
+        working-directory: ./Scripts
     steps: 
     - uses: actions/checkout@v3
       name: GitHub Checkout
-    - name: Add Credentials and IP
-      run: cd RDGOAT > /dev/null 2>&1 || { mkdir RDGOAT && cd RDGOAT ; } ; echo $JENKINS_USERNAME > JENKINS_USERNAME && echo $JENKINS_PASSWORD > JENKINS_PASSWORD && echo $JENKINS_EMAIL > JENKINS_EMAIL && echo $(curl -s https://checkip.amazonaws.com) > JENKINS_IP
-    - name: Jenkins Install Unit Test
-      run: curl -s -O https://raw.githubusercontent.com/RichardDeodutt/Deployment-5/main/Runners/runinstalljenkins.sh && sudo chmod +x runinstalljenkins.sh && sudo ./runinstalljenkins.sh
-    - name: Jenkins Configure Unit Test
-      run: curl -s -O https://raw.githubusercontent.com/RichardDeodutt/Deployment-5/main/Runners/runconfigurejenkins.sh && sudo chmod +x runconfigurejenkins.sh && sudo ./runconfigurejenkins.sh
-    - name: Terraform Install Unit Test
-      run: curl -s -O https://raw.githubusercontent.com/RichardDeodutt/Deployment-5/main/Runners/runinstallterraform.sh && sudo chmod +x runinstallterraform.sh && sudo ./runinstallterraform.sh
     - name: Docker Install Unit Test
-      run: curl -s -O https://raw.githubusercontent.com/RichardDeodutt/Deployment-5/main/Runners/runinstalldocker.sh && sudo chmod +x runinstalldocker.sh && sudo ./runinstalldocker.sh
-    - name: SSH Install Venv
-      run: curl -s -O https://raw.githubusercontent.com/RichardDeodutt/Deployment-5/main/Runners/runinstallvenv.sh && sudo chmod +x runinstallvenv.sh && sudo ./runinstallvenv.sh
-    - name: Agent Install Unit Test
-      run: curl -s -O https://raw.githubusercontent.com/RichardDeodutt/Deployment-5/main/Runners/runinstallagent.sh && sudo chmod +x runinstallagent.sh && sudo ./runinstallagent.sh
-    - name: Cypress Dependencies Install Unit Test
-      run: curl -s -O https://raw.githubusercontent.com/RichardDeodutt/Deployment-5/main/Runners/runinstallcydepends.sh && sudo chmod +x runinstallcydepends.sh && sudo ./runinstallcydepends.sh
-    - name: System Upgrade Unit Test
-      run: curl -s -O https://raw.githubusercontent.com/RichardDeodutt/Deployment-5/main/Runners/runsystemupgrade.sh && sudo chmod +x runsystemupgrade.sh && sudo ./runsystemupgrade.sh
-    - name: Jenkins Safe Restart Unit Test
-      run: curl -s -O https://raw.githubusercontent.com/RichardDeodutt/Deployment-5/main/Runners/runsaferestartjenkins.sh && sudo chmod +x runsaferestartjenkins.sh && sudo ./runsaferestartjenkins.sh
-    - name: Status Check Unit Test
-      run: curl -s -O https://raw.githubusercontent.com/RichardDeodutt/Deployment-5/main/Runners/runstatuscheck.sh && sudo chmod +x runstatuscheck.sh && sudo ./runstatuscheck.sh
-    - name: Remove Credentials and IP
-      if: always()
-      run: cd RDGOAT > /dev/null 2>&1 || { mkdir RDGOAT && cd RDGOAT ; } ; rm JENKINS_USERNAME && rm JENKINS_PASSWORD && rm JENKINS_EMAIL && rm JENKINS_IP
+      run: ./installdocker.sh
+    - name: Terraform Install Unit Test
+      run: ./installterraform.sh
