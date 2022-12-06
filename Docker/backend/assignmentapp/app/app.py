@@ -25,7 +25,7 @@ app = Flask(__name__)
 CORS(app)
 
 #Config the connector
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:example@localhost:3306/test'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:~mysqlrootpassword~@localhost:3306/~mysqldatabase~'
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 
 #Config the database tracking modifications

@@ -1,14 +1,14 @@
 variable "region"{
     type = string
-    default = "ap-northeast-1"
+    default = "us-east-1"
 }
 
 variable "bucketname"{
     type = string
-    default = "terraform-remote-statefile-store-d5"
+    default = "terraform-remote-statefile-store-final"
 }
 
 variable "tablename"{
     type = string
-    default = "terraform_state_lock_table-d5"
+    default = "terraform_state_lock_table-final"
 }
