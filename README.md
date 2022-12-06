@@ -13,5 +13,6 @@
 6. Sterling McKinley (Administrator)
 
 ## PURPOSE
-A team of peers tasked to build an architecture to deploy an application of choice - Grade Tracker application.  The project provide the opportunity for members to work
-under real-world conditions with a group of your peers under the constraints of a timeline and budget.
+A team of peers tasked to build an architecture to deploy an application of choice,  a Grade Tracker application.
+  
+The project provide the opportunity for members to work under real-world conditions with a group of your peers under the constraints of a timeline and budget.
