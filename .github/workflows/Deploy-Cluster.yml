@@ -62,6 +62,18 @@ jobs:
     - name: Create Nginx Image
       run: docker build -t $DOCKERHUB_USR/grade_tracker_nginx:latest .
       working-directory: ./Docker/nginx
+    - name: Push Frontend Image
+      run: docker push $DOCKERHUB_USR/grade_tracker_frontend:latest
+    - name: Push Backend Microservice User Image
+      run: docker push $DOCKERHUB_USR/grade_tracker_backend_microservice_user:latest
+    - name: Push Backend Microservice Assignment Image
+      run: docker push $DOCKERHUB_USR/grade_tracker_backend_microservice_assignment:latest
+    - name: Push MYSQL Image
+      run: docker push $DOCKERHUB_USR/grade_tracker_mysql:latest
+    - name: Push Adminer Image
+      run: docker push $DOCKERHUB_USR/grade_tracker_adminer:latest
+    - name: Push Nginx Image
+      run: docker push $DOCKERHUB_USR/grade_tracker_nginx:latest
     - name: Replace Backend Placeholder BUCKET_NAME
       run: python3 ../../Utilities/replacer.py backend.tf backend.tf ~bucketname~ $BUCKET_NAME
     - name: Replace Backend Placeholder TABLE_NAME
