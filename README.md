@@ -1,3 +1,5 @@
+<img src="https://github.com/kura-labs-org/kuralabs_deployment_1/blob/main/Kuralogo.png">
+
 # FINAL_PROJECT 
 ## F.R.A.N.N.S GRADE TRACKER
 
