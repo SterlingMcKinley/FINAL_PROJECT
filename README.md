@@ -1,5 +1,5 @@
 <p align-"center">
-<img src="https://github.com/kura-labs-org/kuralabs_deployment_1/blob/main/Kuralogo.png">
+img src="https://github.com/kura-labs-org/kuralabs_deployment_1/blob/main/Kuralogo.png"
 </p>
 
 <h1 align="center">FINAL_PROJECT<h1> 
