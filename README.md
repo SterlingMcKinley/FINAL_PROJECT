@@ -1,5 +1,5 @@
 <p align="center">
-<a href="https://kuralabs.org/"><img src="https://raw.githubusercontent.com/SterlingMcKinley/FINAL_PROJECT/main/Images/kura-labs.svg" />
+<a href="https://kuralabs.org/"><img src="https://kuralabs.org/wp-content/uploads/2021/11/kura-labs.svg" />
 </p>
 
 <h1 align="center">FINAL_PROJECT</h1>
