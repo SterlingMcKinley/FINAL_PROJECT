@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="version2.css">
+    </head>
+    <body>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <div class="topnav">
+        <a class="active" href="#home"><span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span></a>
+    </div>
+
+    <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="home.html">Home</a>
+        <a href="grades.html">Grades</a>
+        <a href="#">Submissions</a>
+        <a href="#">Contact</a>
+      </div>
+      <br><br>
+      <br><br>
+
+      <script>
+      function openNav() {
+        document.getElementById("mySidenav").style.width = "250px";
+      }
+      
+      function closeNav() {
+        document.getElementById("mySidenav").style.width = "0";
+      }
+      </script>
+
+    <form action="/action_page.php" href="grades.html" class="align">
+        <label for="assignments">Assignments:</label>
+        <select name="assignments" id="assignments">
+          <option value="blank"></option>
+          <option value="Buildscripts">Buildscripts</option>
+          <option value="Deployments">Deployments</option>
+          <option value="Diagnostics">Diagnostics</option>
+        </select>
+        <br><br>
+
+        <label for="Attempt">Attempt:</label>
+        <select name="Attempt" id="Attempt">
+          <option value="blank"></option>
+          <option value="take1">Take 1</option>
+          <option value="take2">Take 2</option>
+          <option value="take3">Take 3</option>
+        </select>
+        <br><br>
+
+        <div id="wrapper">
+            <p> Would you like to see ALL grades/scores?</p>
+          <p>
+          <input type="checkbox" name="yes_no" checked>Yes</input>
+          </p>
+          <p>
+          <input type="checkbox" name="yes_no">No</input>
+          </p>
+          </div>
+          <br>
+        <input type="submit" value="Submit">
+      </form>
+
+    
+    </body>
+</html>
