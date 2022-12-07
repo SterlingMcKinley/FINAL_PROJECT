@@ -26,9 +26,6 @@ jobs:
     steps: 
     - uses: actions/checkout@v3
       name: GitHub Checkout
-    - name: Install Docker
-      run: sudo ./installdocker.sh
-      working-directory: ./Scripts
     - name: Install Terraform
       run: sudo ./installterraform.sh
       working-directory: ./Scripts
