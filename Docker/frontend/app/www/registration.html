@@ -40,15 +40,15 @@
 					</span>
                     
                     <div class="wrap-input100 validate-input" data-validate = "Valid first name is required">
-						<input class="input100" type="text" name="first" placeholder="First Name">
+						<input id="first_name" class="input100" type="text" name="first_name" placeholder="First Name">
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
 							<i class="fa fa-envelope" aria-hidden="true"></i>
 						</span>
 					</div>
                     
-                    <div class="wrap-input100 validate-input" data-validate = "Valid last night is required">
-						<input class="input100" type="text" name="last" placeholder="Last Name">
+                    <div class="wrap-input100 validate-input" data-validate = "Valid last name is required">
+						<input id="last_name" class="input100" type="text" name="last_name" placeholder="Last Name">
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
 							<i class="fa fa-envelope" aria-hidden="true"></i>
@@ -56,7 +56,15 @@
 					</div>
 
 					<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
-						<input class="input100" type="text" name="email" placeholder="Email">
+						<input id="email" class="input100" type="text" name="email" placeholder="Email">
+						<span class="focus-input100"></span>
+						<span class="symbol-input100">
+							<i class="fa fa-envelope" aria-hidden="true"></i>
+						</span>
+					</div>
+
+                    <div class="wrap-input100 validate-input" data-validate = "Valid username is required">
+						<input id="username" class="input100" type="text" name="username" placeholder="Username">
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
 							<i class="fa fa-envelope" aria-hidden="true"></i>
@@ -64,7 +72,7 @@
 					</div>
 
 					<div class="wrap-input100 validate-input" data-validate = "Password is required">
-						<input class="input100" type="password" name="pass" placeholder="Password">
+						<input id="password" class="input100" type="password" name="password" placeholder="Password">
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
 							<i class="fa fa-lock" aria-hidden="true"></i>
@@ -72,7 +80,7 @@
 					</div>
                     
                     <div class="wrap-input100 validate-input" data-validate = "Password is required">
-						<input class="input100" type="password" name="repeat" placeholder="Repeat Password">
+						<input id="confirmpassword" class="input100" type="password" name="confirmpassword" placeholder="Confirm Password">
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
 							<i class="fa fa-lock" aria-hidden="true"></i>
@@ -81,13 +89,13 @@
 					
 
 					<div class="container-login100-form-btn">
-						<button class="login100-form-btn">
+						<button class="login100-form-btn" onclick="ClickedRegister();return false;">
 							Register
 						</button>
 					</div>
 
 					<div class="text-center p-t-12">
-						<a class="txt2" href="#">
+						<a class="txt2" href="/">
 							Already have an account?
 						</a>
 					</div>
@@ -114,6 +122,6 @@
 			scale: 1.1
 		})
 	</script>
-
+	<script src="js/script.js"></script>
 </body>
 </html>
