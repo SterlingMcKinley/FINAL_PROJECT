@@ -1,8 +1,8 @@
 <p align="center">
-<a href="https://kuralabs.org/"><img src="https://kuralabs.org/wp-content/uploads/2021/11/kura-labs.svg" />
+<a href="https://kuralabs.org/"><img src="https://github.com/kura-labs-org/kuralabs_deployment_1/blob/main/Kuralogo.png" />
 </p>
 
-<h1 align="center">FINAL_PROJECT</h1>
+<h1 align="center">FINAL_PROJECT</h1> 
 
 ## F.R.A.N.N.S GRADE TRACKER
 
