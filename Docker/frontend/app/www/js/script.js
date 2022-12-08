@@ -31,9 +31,10 @@ function AddUser(JSONData){
 		Request.send(PayLoad);
 		Request.onload = function(){
 			if(Request.status === 200){
-				Log(Request.text)
-				//Login API NEW USER
-				//If Login Works THEN REDIRECT TO OVERVIEW
+				alert('Account created!');
+				if(window.location.href == APIRoot+'/registration.html'){
+					location.href = APIRoot;
+				}
 			}
 			else{
 				Log('Failed to use User Micro Service API, Request Error. Non 200 Status Code');
@@ -48,7 +49,38 @@ function AddUser(JSONData){
 	}
 }
 
-//When the user clicks the bored button
+//Login
+function Login(JSONData){
+	var Request = new XMLHttpRequest();
+	var PayLoad = JSON.stringify(JSONData);
+	Request.open('POST', APIRoot+':'+UserMicroServicePort+'/login', true);
+	Request.setRequestHeader("accept", "application/json");
+	Request.setRequestHeader("Content-Type", "application/json");
+	try{
+		Request.send(PayLoad);
+		Request.onload = function(){
+			if(Request.status === 200){
+				Data = JSON.parse(Request.responseText);
+				SetSessionAPIKey(Data.apikey)
+				if(window.location.href == APIRoot){
+					location.href = APIRoot+'/ss/home.html';
+				}
+			}
+			else{
+				Log('Failed to use User Micro Service API, Request Error. Non 200 Status Code');
+				alert('Could not log in using that information!');
+			}
+		};
+		Request.onerror = function() {
+			Log('Failed to use User Micro Service API, Request Error');
+		};
+	}
+	catch(err){
+		Log('Failed to use User Micro Service API');
+	}
+}
+
+//When the user clicks the register button
 function ClickedRegister(){
 	var Firstname = document.getElementById('first_name').value;
 	var Lastname = document.getElementById('last_name').value;
@@ -58,7 +90,7 @@ function ClickedRegister(){
 	var ConfirmPassword = document.getElementById('confirmpassword').value;
 
 	if(Password != ConfirmPassword){
-		alert('Password does not match');
+		alert('Password does not match!');
 	}
 
 	var JsonObj = new Object();
@@ -69,4 +101,16 @@ function ClickedRegister(){
 	JsonObj.password = Password;
 
 	AddUser(JsonObj);
+}
+
+//When the user clicks the login button
+function ClickedLogin(){
+	var Username = document.getElementById('username').value;
+	var Password = document.getElementById('password').value;
+
+	var JsonObj = new Object();
+	JsonObj.username = Username;
+	JsonObj.password = Password;
+
+	Login(JsonObj);
 }
