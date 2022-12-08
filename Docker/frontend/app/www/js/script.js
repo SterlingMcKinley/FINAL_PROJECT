@@ -1,5 +1,5 @@
 //API root for now should be assumed to be the ip address this is running on
-var APIRoot=window.location.href;
+var APIRoot='http://'+window.location.hostname;
 
 var UserMicroServicePort = 5000;
 
@@ -62,8 +62,8 @@ function ClickedRegister(){
 	}
 
 	var JsonObj = new Object();
-	JsonObj.firstname = Firstname;
-	JsonObj.lastname = Lastname;
+	JsonObj.first_name = Firstname;
+	JsonObj.last_name = Lastname;
 	JsonObj.email = Email;
 	JsonObj.username = Username;
 	JsonObj.password = Password;
