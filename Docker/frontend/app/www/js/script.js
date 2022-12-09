@@ -62,7 +62,7 @@ function Login(JSONData){
 			if(Request.status === 200){
 				Data = JSON.parse(Request.responseText);
 				SetSessionAPIKey(Data.apikey)
-				if(window.location.href == APIRoot){
+				if(window.location.href == APIRoot+'/'){
 					location.href = APIRoot+'/ss/home.html';
 				}
 			}
