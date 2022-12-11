@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
     <head>
         <link rel="stylesheet" href="version2.css">
     </head>
     <body>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <div class="topnav">
         <a class="active" href="#home"><span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span></a>
     </div>
@@ -14,7 +15,7 @@
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
         <a href="home.html">Home</a>
         <a href="grades.html">Grades</a>
-        <a href="#">Submissions</a>
+        <a href="submissions.html">Submissions</a>
       </div>
       <br><br>
       <br><br>
@@ -29,4 +30,174 @@
       }
       </script>
     </body>
+</head>
+<head>
+  <body>
+    <div>
+      <h1 class="greeting">Hello Nicole</h1>
+    </div>
+ </body>
+</head>
+
+<head>
+  <!-- Load libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+</head>
+<body>
+  <!-- Create canvas element for chart -->
+  <style>
+      body{
+        font-family: sans-serif;
+      }
+    </style>
+ <div>
+ <div class="chartCard">  
+      <div class="chartBox_1">
+  <canvas id="chart_1"></canvas>
+      </div>
+  </div>
+  </div>
+  <div>
+    <div class="chartCard">  
+      <div class="chartBox_2">
+   <canvas id="chart_2"></canvas>
+      </div>
+    </div> 
+  </div>
+  <div>
+    <div class="chartCard"> 
+      <div class="chartBox_3">
+  <canvas id="chart_3"></canvas>
+      </div>
+    </div> 
+  </div>
+  <script>
+    // Create chart_1
+    var ctx_1 = document.getElementById('chart_1').getContext('2d');
+    var chart_1 = new Chart(ctx_1, {
+      type: 'line',
+      data: {
+        labels: ['Diagnostic 1', 'Diagnostic 2', 'Diagnostic 3', 'Diagnostic 4', 'Diagnostic 5', 'Diagnostic 6'],
+        datasets: [{
+            label: 'Attempt 1',
+            data: [10, 30, 20, 40, 30, 20],
+            borderColor: 'rgba(255, 99, 132, 0.2)',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            fill: false,
+            borderWidth: 2
+          },
+          {
+            label: 'Attempt 2',
+            data: [20, 40, 30, 50, 40, 100],
+            borderColor: 'rgba(255, 206, 86, 0.2)',
+            backgroundColor: 'rgba(255, 206, 86, 0.2)',
+            fill: false,
+            borderWidth: 2
+          },
+          {
+            label: 'Attempt 3',
+            data: [30, 50, 40, 60, 50, 100],
+            borderColor: 'rgba(54, 162, 235, 0.2)',
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            fill: false,
+            borderWidth: 2
+          }
+        ]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    });
+
+    var ctx_2 = document.getElementById('chart_2').getContext('2d');
+    var chart_1 = new Chart(ctx_2, {
+      type: 'line',
+      data: {
+        labels: ['Buildscript 1', 'Buildscript 2', 'Buildscript 3', 'Buildscript 4'],
+        datasets: [{
+            label: 'Attempt 1',
+            data: [10, 30, 20, 100],
+            borderColor: 'rgba(255, 99, 132, 0.2)',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            fill: false,
+            borderWidth: 2
+          },
+          {
+            label: 'Attempt 2',
+            data: [20, 40, 30, 50],
+            borderColor: 'rgba(255, 206, 86, 0.2)',
+            backgroundColor: 'rgba(255, 206, 86, 0.2)',
+            fill: false,
+            borderWidth: 2
+          },
+          {
+            label: 'Attempt 3',
+            data: [30, 50, 40, 100],
+            borderColor: 'rgba(54, 162, 235, 0.2)',
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            fill: false,
+            borderWidth: 2
+          }
+        ]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    });
+
+    var ctx_3 = document.getElementById('chart_3').getContext('2d');
+    var chart_3 = new Chart(ctx_3, {
+      type: 'line',
+      data: {
+        labels: ['Deployment 1', 'Deployment 2', 'Deployment 3', 'Deployment 4', 'Deployment 5'],
+        datasets: [{
+            label: 'Attempt 1',
+            data: [10, 30, 20, 20, 100],
+            borderColor: 'rgba(255, 99, 132, 0.2)',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            fill: false,
+            borderWidth: 2
+          },
+          {
+            label: 'Attemp 2',
+            data: [20, 40, 30, 30, 100],
+            borderColor: 'rgba(255, 206, 86, 0.2)',
+            backgroundColor: 'rgba(255, 206, 86, 0.2)',
+            fill: false,
+            borderWidth: 2
+          },
+          {
+            label: 'Attempt 3',
+            data: [30, 50, 60, 40, 100],
+            borderColor: 'rgba(54, 162, 235, 0.2)',
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            fill: false,
+            borderWidth: 2
+          }
+        ]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    });
+  </script>
+  </body>
 </html>
