@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="version2.css">
+
+        <script type="text/javascript">
+            function showHideRow(row) {
+                $("#" + row).toggle();
+            }
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+        </script>
+    
+    </head>
+    <body>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <div class="topnav">
+        <a class="active" href="#home"><span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span></a>
+    </div>
+
+    <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="home.html">Home</a>
+        <a href="grades.html">Grades</a>
+        <a href="submissions.html">Submissions</a>
+      </div>
+      <br><br>
+      <br><br>
+
+      <script>
+      function openNav() {
+        document.getElementById("mySidenav").style.width = "250px";
+      }
+      
+      function closeNav() {
+        document.getElementById("mySidenav").style.width = "0";
+      }
+      </script>
+
+      <script>
+        function myFunction() {
+          alert("Successfully submitted assignment!");
+        }
+        </script>
+ 
+    </body>
+
+<h1 id="submit_header" style="margin-top: -3%">Kura Labs Student Submissions</h1>
+
+    <p id="submit_header">You are allowed to submit multiple links at a time. Please notify the instructor of any late submissions!</p>
+
+<div>
+<table id="table_detail"> 
+        <tr>
+         <th>Assignment</th>
+          <th>Take One</th>
+          <th>Take Two</th>
+        </tr>
+        <tr onclick="showHideRow('hidden_row1');">
+          <td>Diagnostic 1</td>
+          <td>20</td>
+          <td>100</td>
+        </tr>
+        <tr id="hidden_row1" class="hidden_row">
+            <td colspan=4>
+                <textarea rows="5" cols="100"></textarea>
+            </td>
+        </tr>
+        <tr onclick="showHideRow('hidden_row2');">
+          <td>Diagnostic 2</td>
+          <td>60</td>
+          <td>88</td>
+        </tr>
+        <tr id="hidden_row2" class="hidden_row">
+            <td colspan=4>
+                <textarea rows="5" cols="100"></textarea>
+            </td>
+        </tr>
+        <tr onclick="showHideRow('hidden_row3');">
+          <td>Diagnostic 3</td>
+          <td>45</td>
+          <td>100</td>
+        </tr>
+        <tr id="hidden_row3" class="hidden_row">
+            <td colspan=4>
+                <textarea rows="5" cols="100"></textarea>
+            </td>
+        </tr>
+        <tr onclick="showHideRow('hidden_row4');"> 
+          <td>Diagnostic 4</td>
+          <td>90</td>
+          <td>N/A</td>
+        </tr>
+        <tr id="hidden_row4" class="hidden_row">
+            <td colspan=4>
+                <textarea rows="5" cols="100"></textarea>
+            </td>
+        </tr>
+        <tr onclick="showHideRow('hidden_row5');">
+          <td>Diagnostic 5</td>
+          <td>90</td>
+          <td>N/A</td>
+        </tr>
+        <tr id="hidden_row5" class="hidden_row">
+            <td colspan=4>
+                <textarea rows="5" cols="100"></textarea>
+            </td>
+        </tr>
+        <tr onclick="showHideRow('hidden_row6');">
+          <td>Diagnostic 6</td>
+          <td>85</td>
+          <td>N/A</td>
+        </tr>
+        <tr id="hidden_row6" class="hidden_row">
+            <td colspan=4>
+                <textarea rows="5" cols="100"></textarea>
+            </td>
+        </tr>
+        <tr onclick="showHideRow('hidden_row7');">
+          <td>Deployment 1</td>
+          <td>85</td>
+          <td>100</td>
+        </tr>
+        <tr id="hidden_row7" class="hidden_row">
+            <td colspan=4>
+                <textarea rows="5" cols="100"></textarea>
+            </td>
+        </tr>
+        <tr onclick="showHideRow('hidden_row8');">
+          <td>Deployment 2</td>
+          <td>75</td>
+          <td>90</td>
+        </tr>
+        <tr id="hidden_row8" class="hidden_row">
+            <td colspan=4>
+                <textarea rows="5" cols="100"></textarea>
+            </td>
+        </tr>
+        <tr onclick="showHideRow('hidden_row9');">
+          <td>Deployment 3</td>
+          <td>100</td>
+          <td>N/A</td>
+        </tr>
+        <tr id="hidden_row9" class="hidden_row">
+            <td colspan=4>
+                <textarea rows="5" cols="100"></textarea>
+            </td>
+        </tr>
+        <tr onclick="showHideRow('hidden_row10');">
+          <td>Deployment 4</td>
+          <td>75</td>
+          <td>100</td>
+        </tr>
+        <tr id="hidden_row10" class="hidden_row">
+            <td colspan=4>
+                <textarea rows="5" cols="100"></textarea>
+            </td>
+        </tr>
+        <tr onclick="showHideRow('hidden_row11');">
+          <td>Deployment 5</td>
+          <td>100</td>
+          <td>N/A</td>
+        </tr>
+        <tr id="hidden_row11" class="hidden_row">
+            <td colspan=4>
+                <textarea rows="5" cols="100"></textarea>
+            </td>
+        </tr>
+        <tr onclick="showHideRow('hidden_row12');">
+          <td>Build Script 1</td>
+          <td>65</td>
+          <td>90</td>
+        </tr>
+        <tr id="hidden_row12" class="hidden_row">
+            <td colspan=4>
+                <textarea rows="5" cols="100"></textarea>
+            </td>
+        </tr>
+        <tr onclick="showHideRow('hidden_row13');">
+          <td>Build Script 2</td>
+          <td>85</td>
+          <td>N/A</td>
+        </tr>
+        <tr id="hidden_row13" class="hidden_row">
+            <td colspan=4>
+                <textarea rows="5" cols="100"></textarea>
+            </td>
+        </tr>
+        <tr onclick="showHideRow('hidden_row14');">
+          <td>Build Script 3</td>
+          <td>70</td>
+          <td>100</td>
+        </tr>
+        <tr id="hidden_row14" class="hidden_row">
+            <td colspan=4>
+                <textarea rows="5" cols="100"></textarea>
+            </td>
+        </tr>
+        <tr onclick="showHideRow('hidden_row15');">
+          <td>Build Script 4</td>
+          <td>80</td>
+          <td>N/A</td>
+        </tr>
+        <tr id="hidden_row15" class="hidden_row">
+            <td colspan=4>
+                <textarea rows="5" cols="100"></textarea>
+            </td>
+        </tr>
+</table>
+<br></br>
+<div id="submit_header">
+<button onclick="myFunction()">Submit</button>
+</div>
+<br></br>
+<br></br>
+</div>
+</head>
+</html>
