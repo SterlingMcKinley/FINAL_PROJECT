@@ -14,7 +14,7 @@ body {
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: #d6d6d7;
+    background-color: #252c54;
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
@@ -53,7 +53,7 @@ body {
   
   .topnav {
     overflow: hidden;
-    background-color: #f06c07;
+    background-color: #F14C36;
   }
   
   .topnav a {
