@@ -20,6 +20,11 @@ function SetSessionAPIKey(ApiKey){
 	sessionStorage.setItem("FRANNS-API-Key", ApiKey);
 }
 
+//Remove the session Login API Key
+function RemoveSessionAPIKey(){
+	sessionStorage.removeItem("FRANNS-API-Key");
+}
+
 //Add a user
 function AddUser(JSONData){
 	var Request = new XMLHttpRequest();
@@ -86,6 +91,61 @@ function Login(JSONData){
 	}
 }
 
+//Logout
+function Logout(JSONData){
+	var Request = new XMLHttpRequest();
+	var PayLoad = JSON.stringify(JSONData);
+	Request.open('POST', APIRoot+':'+UserMicroServicePort+'/logout', true);
+	Request.setRequestHeader("accept", "application/json");
+	Request.setRequestHeader("Content-Type", "application/json");
+	try{
+		Request.send(PayLoad);
+		Request.onload = function(){
+			if(Request.status === 200){
+				RemoveSessionAPIKey();
+				location.href = APIRoot+'/';
+			}
+			else{
+				Log('Failed to use User Micro Service API, Request Error. Non 200 Status Code');
+				alert('Could not logout using that information!');
+			}
+		};
+		Request.onerror = function() {
+			Log('Failed to use User Micro Service API, Request Error');
+		};
+	}
+	catch(err){
+		Log('Failed to use User Micro Service API');
+	}
+}
+
+//Greet
+function Greet(JSONData){
+	var Request = new XMLHttpRequest();
+	var PayLoad = JSON.stringify(JSONData);
+	Request.open('GET', APIRoot+':'+UserMicroServicePort+'/get/session/user', true);
+	Request.setRequestHeader("accept", "application/json");
+	Request.setRequestHeader("Content-Type", "application/json");
+	try{
+		Request.send(PayLoad);
+		Request.onload = function(){
+			if(Request.status === 200){
+				Data = JSON.parse(Request.responseText);
+				document.getElementById('greeting').value = 'Hello '+Data.first_name
+			}
+			else{
+				Log('Failed to use User Micro Service API, Request Error. Non 200 Status Code');
+			}
+		};
+		Request.onerror = function() {
+			Log('Failed to use User Micro Service API, Request Error');
+		};
+	}
+	catch(err){
+		Log('Failed to use User Micro Service API');
+	}
+}
+
 //When the user clicks the register button
 function ClickedRegister(){
 	var Firstname = document.getElementById('first_name').value;
@@ -120,3 +180,56 @@ function ClickedLogin(){
 
 	Login(JsonObj);
 }
+
+//Greet the user
+function GreetUser(){
+	var GreetElement = document.getElementById('greeting');
+	if(GreetElement != null){
+		Session = GetSessionAPIKey();
+		if(Session != null){
+			var JsonObj = new Object();
+			JsonObj.apikey = Session;
+			Greet(JsonObj);
+		}
+		else{
+			Log('Failed to Greet User, No Session Found');
+		}
+	}
+	else{
+		Log('Failed to Greet User, No Element Found');
+	}
+}
+
+//Navigate
+function Navigate(){
+	Session = GetSessionAPIKey();
+	if(Session != null){
+		if(window.location.href == APIRoot+'/' || window.location.href == APIRoot+'/registration.html'){
+			Log('Loged in and On Login or Registration Page. Redirecting');
+			location.href = APIRoot+'/ss/home.html';
+		}
+		else{
+			Log('No Navigation Needed');
+		}
+	}
+	else{
+		if(window.location.href != APIRoot+'/' || window.location.href != APIRoot+'/registration.html'){
+			Log('Not Loged in and Not On Login or Registration Page. Redirecting');
+			location.href = APIRoot+'/';
+		}
+		else{
+			Log('No Navigation Needed');
+		}
+	}
+}
+
+//Main Function
+function main(){
+	//Navigate the User
+	Navigate();//If on login page and loged in go to home page. 
+	//Greet the User
+	GreetUser();
+}
+
+//Run the main function
+main();
