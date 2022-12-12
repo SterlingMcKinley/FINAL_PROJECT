@@ -1,7 +1,12 @@
 body {
     font-family: "Lato", sans-serif;
   }
-  
+  .wallpaper{
+    width: 100%; 
+    max-width:100%;
+    max-height: 100%;
+  }
+
   .sidenav {
     height: 100%;
     width: 0;
@@ -9,7 +14,7 @@ body {
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: #002366;
+    background-color: #d6d6d7;
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
@@ -19,7 +24,7 @@ body {
     padding: 8px 8px 8px 32px;
     text-decoration: none;
     font-size: 25px;
-    color: #ddd;
+    color: #000;
     display: block;
     transition: 0.3s;
   }
@@ -48,7 +53,7 @@ body {
   
   .topnav {
     overflow: hidden;
-    background-color: #e27602;
+    background-color: #f06c07;
   }
   
   .topnav a {
@@ -68,5 +73,90 @@ body {
   .align {
     margin-left: 15px
   }
+  
+  #myChart {
+    padding:0;
+    color: rgba(255, 26, 104, 1);
+    width: -50%;
+    height: -200px;
+  }
 
- 
+  .chartcard {
+    margin-right: 0;
+  }
+  
+  .center {
+    text-align: center;
+  }
+
+  * {
+    padding: 0;
+    font-family: sans-serif;
+  }
+
+  .chartBox_1 {
+    width:100%;
+    max-width:500px;
+    margin-left:55%;
+    margin-top: -10%;
+    padding: 20px;
+    border-radius: 20px;
+    border: solid 3px #adb4bf;
+    background: white;
+  }
+
+  .chartBox_2 {
+    width:100%;
+    max-width:500px;
+    margin-left:55%;
+    margin-top: 3%;
+    padding: 20px;
+    border-radius: 20px;
+    border: solid 3px rgb(255, 129, 26);
+    background: white;
+  }
+
+  .chartBox_3 {
+    width:100%;
+    max-width:500px;
+    margin-left:5%;
+    margin-top: -20%;
+    padding: 20px;
+    border-radius: 20px;
+    border: solid 3px #5b7c99;
+    background: white;
+  }
+
+.greeting {
+   margin-left:18%;
+   margin-top:5%;
+   font-family: Poppins-Regular;
+   font-size: 35px;
+
+}
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 75%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: center;
+  padding: 8px;
+}
+
+#table_detail .hidden_row {
+  display: none;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+  #submit_header {
+    text-align: center
+  }
