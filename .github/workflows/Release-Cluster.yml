@@ -19,6 +19,7 @@ jobs:
   release-cluster: 
     name: Release Cluster using Terraform
     runs-on: ubuntu-latest
+    environment: Staging
     defaults:
       run:
         shell: bash
