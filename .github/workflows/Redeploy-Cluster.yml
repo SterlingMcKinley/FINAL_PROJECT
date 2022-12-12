@@ -10,7 +10,6 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
   TABLE_NAME: ${{ secrets.TABLE_NAME }}
-  AWS_REGION: ${{ secrets.AWS_REGION }}
   DOCKERHUB_USR: ${{ secrets.DOCKERHUB_USR }}
   DOCKERHUB_PWD: ${{ secrets.DOCKERHUB_PWD }}
   AWS_ECS_ARN: ${{ secrets.AWS_ECS_ARN }}
