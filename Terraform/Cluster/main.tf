@@ -201,4 +201,9 @@ resource "aws_ecs_service" "aws-ecs-service" {
     container_port   = 9000
   }
 
+  setting {
+    name  = "containerInsights"
+    value = "enabled"
+  }
+
 }
