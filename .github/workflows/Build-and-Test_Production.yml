@@ -1,0 +1,27 @@
+name: Build and Test
+
+on: 
+  push: 
+    branches: 
+      - main
+  pull_request:
+    types: [opened, reopened]
+    branches: 
+      - main
+
+jobs: 
+  scripts-unit-tests: 
+    name: Scripts Unit Tests
+    runs-on: ubuntu-latest
+    environment: Staging
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./Scripts
+    steps: 
+    - uses: actions/checkout@v3
+      name: GitHub Checkout
+    - name: Docker Install Unit Test
+      run: sudo ./installdocker.sh
+    - name: Terraform Install Unit Test
+      run: sudo ./installterraform.sh

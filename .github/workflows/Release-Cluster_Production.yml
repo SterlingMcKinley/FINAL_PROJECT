@@ -1,0 +1,56 @@
+name: Release Cluster
+
+on: 
+  workflow_dispatch: 
+    branches: 
+      - main
+
+env: 
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
+  TABLE_NAME: ${{ secrets.TABLE_NAME }}
+  AWS_ECS_ARN: ${{ secrets.AWS_ECS_ARN }}
+  MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+  MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+
+jobs: 
+  release-cluster: 
+    name: Release Cluster using Terraform
+    runs-on: ubuntu-latest
+    environment: Staging
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./Terraform/Cluster_Staging
+    steps: 
+    - uses: actions/checkout@v3
+      name: GitHub Checkout
+    - name: Install Terraform
+      run: sudo ./installterraform.sh
+      working-directory: ./Scripts
+    - name: Install jq
+      run: sudo apt update && sudo apt install jq -y
+    - name: Set AWS_Region
+      run: echo "AWS_REGION=$(jq .region -r .config.json)" >> $GITHUB_ENV
+      working-directory: .
+    - name: Replace Backend Placeholder BUCKET_NAME
+      run: python3 ../../Utilities/replacer.py backend.tf backend.tf ~bucketname~ $BUCKET_NAME
+    - name: Replace Backend Placeholder TABLE_NAME
+      run: python3 ../../Utilities/replacer.py backend.tf backend.tf ~tablename~ $TABLE_NAME
+    - name: Replace Backend Placeholder AWS_REGION
+      run: python3 ../../Utilities/replacer.py backend.tf backend.tf ~region~ $AWS_REGION
+    - name: Replace Placeholder AWS_REGION
+      run: python3 ../../Utilities/replacer.py terraform.tfvars terraform.tfvars ~region~ $AWS_REGION
+    - name: Replace Placeholder AWS_ECS_ARN
+      run: python3 ../../Utilities/replacer.py main.tf main.tf ~awsecsarn~ $AWS_ECS_ARN
+    - name: Replace Placeholder MYSQL_ROOT_PASSWORD
+      run: python3 ../../Utilities/replacer.py main.tf main.tf ~mysqlrootpassword~ $MYSQL_ROOT_PASSWORD
+    - name: Replace Placeholder MYSQL_DATABASE
+      run: python3 ../../Utilities/replacer.py main.tf main.tf ~mysqldatabase~ $MYSQL_DATABASE
+    - name: Terraform Init
+      run: terraform init
+    - name: Terraform Validate
+      run: terraform validate
+    - name: Terraform Destroy
+      run: terraform destroy --auto-approve
