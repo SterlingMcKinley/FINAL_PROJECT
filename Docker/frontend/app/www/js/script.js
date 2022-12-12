@@ -227,7 +227,7 @@ function Navigate(){
 		}
 	}
 	else{
-		if(window.location.href != APIRoot+'/' || window.location.href != APIRoot+'/registration.html'){
+		if(window.location.href != APIRoot+'/' && window.location.href != APIRoot+'/registration.html'){
 			Log('Not Loged in and Not On Login or Registration Page. Redirecting');
 			location.href = APIRoot+'/';
 		}
