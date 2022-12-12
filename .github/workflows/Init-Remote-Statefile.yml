@@ -1,4 +1,4 @@
-name: Init Remote Statefile
+name: Init Remote Statefile Staging
 
 on: 
   workflow_dispatch: 

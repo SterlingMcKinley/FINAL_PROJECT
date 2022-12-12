@@ -1,4 +1,4 @@
-name: Redeploy Cluster
+name: Redeploy Cluster Staging
 
 on: 
   workflow_dispatch: 
