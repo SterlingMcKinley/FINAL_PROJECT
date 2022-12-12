@@ -4,6 +4,10 @@ resource "aws_ecs_cluster" "aws-ecs-cluster" {
   tags = {
     Name = "final-project-ecs"
   }
+  setting {
+    name  = "containerInsights"
+    value = "enabled"
+  }
 }
 
 resource "aws_cloudwatch_log_group" "log-group" {

@@ -265,6 +265,24 @@ def login():
     db.session.commit()
     return session_schema.jsonify(session)
 
+#Logout, delete the API key, Open for everyone
+@app.route('/logout', methods = ['POST'])
+def logout():
+    try:
+        form_apikey = request.json['apikey']
+        session = Session.query.filter_by(apikey=form_apikey).first()
+        if session == None:
+            raise
+        user = User.query.filter_by(username=session.username).first()
+        if user == None:
+            raise
+    except:
+        abort(401)
+
+    db.session.delete(session)
+    db.session.commit()
+    return session_schema.jsonify(session)
+
 #Get all sessions, Admin/Teacher only
 @app.route('/get/all/sessions', methods = ['GET'])
 def get_all_sessions():
@@ -284,6 +302,40 @@ def get_all_sessions():
 
     all_sessions = Session.query.all()
     results = sessions_schema.dump(all_sessions)
+    return jsonify(results)
+
+#Get session session, Open for everyone
+@app.route('/get/session/session', methods = ['GET'])
+def get_session_session():
+    try:
+        form_apikey = request.json['apikey']
+        session = Session.query.filter_by(apikey=form_apikey).first()
+        if session == None:
+            raise
+        user = User.query.filter_by(username=session.username).first()
+        if user == None:
+            raise
+    except:
+        abort(401)
+
+    results = session_schema.dump(session)
+    return jsonify(results)
+
+#Get session user, Open for everyone
+@app.route('/get/session/user', methods = ['GET'])
+def get_session_user():
+    try:
+        form_apikey = request.json['apikey']
+        session = Session.query.filter_by(apikey=form_apikey).first()
+        if session == None:
+            raise
+        user = User.query.filter_by(username=session.username).first()
+        if user == None:
+            raise
+    except:
+        abort(401)
+
+    results = user_schema.dump(user)
     return jsonify(results)
 
 #Health check
