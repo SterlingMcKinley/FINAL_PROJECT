@@ -35,8 +35,8 @@ jobs:
       working-directory: ./Scripts
     - name: Install jq
       run: sudo apt update && sudo apt install jq -y
-    - name: Set Region Variable
-      run: AWS_REGION=$(jq .region -r .config.json) && echo $AWS_REGION
+    - name: Set AWS_Region
+      run: echo "AWS_REGION=$(jq .region -r .config.json)" >> $GITHUB_ENV
       working-directory: .
     - name: DockerHub Login
       run: docker login --username $DOCKERHUB_USR --password $DOCKERHUB_PWD
