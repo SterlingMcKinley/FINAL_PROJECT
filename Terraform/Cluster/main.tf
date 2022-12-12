@@ -4,6 +4,10 @@ resource "aws_ecs_cluster" "aws-ecs-cluster" {
   tags = {
     Name = "final-project-ecs"
   }
+  setting {
+    name  = "containerInsights"
+    value = "enabled"
+  }
 }
 
 resource "aws_cloudwatch_log_group" "log-group" {
@@ -199,11 +203,6 @@ resource "aws_ecs_service" "aws-ecs-service" {
     target_group_arn = aws_lb_target_group.adminer-final-project.arn
     container_name   = "nginx-container"
     container_port   = 9000
-  }
-
-  setting {
-    name  = "containerInsights"
-    value = "enabled"
   }
 
 }
