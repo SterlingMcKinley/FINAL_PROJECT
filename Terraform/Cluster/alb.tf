@@ -10,7 +10,7 @@ resource "aws_lb_target_group" "frontend-final-project" {
     path = "/"
     port = 80
     healthy_threshold = 6
-    unhealthy_threshold = 2
+    unhealthy_threshold = 6
     timeout = 2
     interval = 5
     matcher = "200"
@@ -31,8 +31,8 @@ resource "aws_lb_target_group" "backend-user-final-project" {
     path = "/"
     port = 5000
     healthy_threshold = 6
-    unhealthy_threshold = 2
-    timeout = 2
+    unhealthy_threshold = 6
+    timeout = 50
     interval = 5
     matcher = "200"
   }
@@ -52,8 +52,8 @@ resource "aws_lb_target_group" "backend-assignment-final-project" {
     path = "/"
     port = 5500
     healthy_threshold = 6
-    unhealthy_threshold = 2
-    timeout = 2
+    unhealthy_threshold = 6
+    timeout = 50
     interval = 5
     matcher = "200"
   }
@@ -73,7 +73,7 @@ resource "aws_lb_target_group" "adminer-final-project" {
     path = "/"
     port = 9000
     healthy_threshold = 6
-    unhealthy_threshold = 2
+    unhealthy_threshold = 6
     timeout = 2
     interval = 5
     matcher = "200"
