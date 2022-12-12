@@ -36,6 +36,12 @@ function AddUser(JSONData){
 					location.href = APIRoot;
 				}
 			}
+			if(Request.status === 409){
+				alert('Account is already created!');
+				if(window.location.href == APIRoot+'/registration.html'){
+					location.href = APIRoot;
+				}
+			}
 			else{
 				Log('Failed to use User Micro Service API, Request Error. Non 200 Status Code');
 			}
