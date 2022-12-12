@@ -3,11 +3,11 @@ name: Build and Test
 on: 
   push: 
     branches: 
-      - main
+      - STAGING
   pull_request:
     types: [opened, reopened]
     branches: 
-      - main
+      - STAGING
 
 jobs: 
   scripts-unit-tests: 

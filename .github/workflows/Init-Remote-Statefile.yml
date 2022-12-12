@@ -3,7 +3,7 @@ name: Init Remote Statefile
 on: 
   workflow_dispatch: 
     branches: 
-      - main
+      - STAGING
 
 env: 
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
