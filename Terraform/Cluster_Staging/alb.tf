@@ -20,7 +20,7 @@ resource "aws_lb_target_group" "frontend-final-project" {
 }
 
 resource "aws_lb_target_group" "backend-user-final-project" {
-  name        = "backend-user-final-project-staging"
+  name        = "backend-user-f-proj-stage"
   port        = 5000
   protocol    = "HTTP"
   target_type = "ip"
@@ -41,7 +41,7 @@ resource "aws_lb_target_group" "backend-user-final-project" {
 }
 
 resource "aws_lb_target_group" "backend-assignment-final-project" {
-  name        = "backend-assignment-final-project-staging"
+  name        = "backend-assignment-f-proj-stage"
   port        = 5500
   protocol    = "HTTP"
   target_type = "ip"
