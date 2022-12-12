@@ -32,8 +32,8 @@ resource "aws_lb_target_group" "backend-user-final-project" {
     port = 5000
     healthy_threshold = 6
     unhealthy_threshold = 6
-    timeout = 50
-    interval = 5
+    timeout = 2
+    interval = 50
     matcher = "200"
   }
 
@@ -53,8 +53,8 @@ resource "aws_lb_target_group" "backend-assignment-final-project" {
     port = 5500
     healthy_threshold = 6
     unhealthy_threshold = 6
-    timeout = 50
-    interval = 5
+    timeout = 2
+    interval = 50
     matcher = "200"
   }
 
