@@ -29,6 +29,11 @@ jobs:
     - name: Install Terraform
       run: sudo ./installterraform.sh
       working-directory: ./Scripts
+    - name: Install jq
+      run: sudo apt update && sudo apt install jq -y
+    - name: Set AWS_Region
+      run: echo "AWS_REGION=$(jq .region -r .config.json)" >> $GITHUB_ENV
+      working-directory: .
     - name: Replace Backend Placeholder BUCKET_NAME
       run: python3 ../../Utilities/replacer.py backend.tf backend.tf ~bucketname~ $BUCKET_NAME
     - name: Replace Backend Placeholder TABLE_NAME
