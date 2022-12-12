@@ -16,7 +16,7 @@ jobs:
   init-remote-statefile: 
     name: Init Remote Statefile S3 using Terraform
     runs-on: ubuntu-latest
-    environment: staging
+    environment: STAGING
     defaults:
       run:
         shell: bash
