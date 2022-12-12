@@ -181,6 +181,20 @@ function ClickedLogin(){
 	Login(JsonObj);
 }
 
+//When the user clicks the logout button
+function ClickedLogout(){
+	Session = GetSessionAPIKey();
+	if(Session != null){
+		var JsonObj = new Object();
+		JsonObj.apikey = Session;
+
+		Logout(JsonObj);
+	}
+	else{
+		Log('Not Logged in Can Not Logout');
+	}
+}
+
 //Greet the user
 function GreetUser(){
 	var GreetElement = document.getElementById('greeting');
