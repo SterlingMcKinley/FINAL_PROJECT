@@ -22,7 +22,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./Terraform/Cluster
+        working-directory: ./Terraform/Cluster_Staging
     steps: 
     - uses: actions/checkout@v3
       name: GitHub Checkout
