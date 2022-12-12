@@ -1,4 +1,4 @@
-name: Deploy Cluster
+name: Deploy Cluster Staging
 
 on: 
   workflow_dispatch: 
