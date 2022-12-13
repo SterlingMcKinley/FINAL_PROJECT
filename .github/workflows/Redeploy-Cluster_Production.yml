@@ -20,7 +20,7 @@ jobs:
   redeploy-cluster: 
     name: Redeploy Cluster using Terraform
     runs-on: ubuntu-latest
-    environment: Staging
+    environment: Production
     defaults:
       run:
         shell: bash
