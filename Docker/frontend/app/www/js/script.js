@@ -134,6 +134,8 @@ function Greet(JSONData){
 			if(Request.status === 200){
 				Data = JSON.parse(Request.responseText);
 				document.getElementById('greeting').textContent = 'Hello '+Data.first_name;
+				document.getElementById('greeting').style.visibility = "visible";
+				style="visibility: hidden;"
 				APIUsername = Data.username;
 			}
 			else{
