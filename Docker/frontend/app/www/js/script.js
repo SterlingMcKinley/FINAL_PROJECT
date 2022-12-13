@@ -5,7 +5,6 @@ var UserMicroServicePort = 5000;
 
 var AssignmentMicroServicePort = 5500;
 
-var APIKey = null;
 var APIUsername = null;
 var APIGrades = null;
 var APIAssignments = null;
@@ -183,9 +182,10 @@ function GrabGrades(JSONData){
 
 //Load All Grades of User
 function LoadGrades(){
-	if(APIKey != null && APIUsername != null){
+	Session = GetSessionAPIKey();
+	if(Session != null && APIUsername != null){
 		var JsonObj = new Object();
-		JsonObj.apikey = APIKey;
+		JsonObj.apikey = Session;
 
 		GrabGrades(JsonObj);
 	}
@@ -318,9 +318,10 @@ function ClickedLogin(){
 
 //When the user clicks the logout button
 function ClickedLogout(){
-	if(APIKey != null){
+	Session = GetSessionAPIKey();
+	if(Session != null){
 		var JsonObj = new Object();
-		JsonObj.apikey = APIKey;
+		JsonObj.apikey = Session;
 
 		Logout(JsonObj);
 	}
@@ -340,9 +341,10 @@ function CheckSubmit(e, func) {
 function GreetUser(){
 	var GreetElement = document.getElementById('greeting');
 	if(GreetElement != null){
-		if(APIKey != null){
+		Session = GetSessionAPIKey();
+		if(Session != null){
 			var JsonObj = new Object();
-			JsonObj.apikey = APIKey;
+			JsonObj.apikey = Session;
 			Greet(JsonObj);
 		}
 		else{
@@ -356,8 +358,8 @@ function GreetUser(){
 
 //Navigate
 function Navigate(){
-	APIKey = GetSessionAPIKey();
-	if(APIKey != null){
+	Session = GetSessionAPIKey();
+	if(Session != null){
 		if(window.location.href == APIRoot+'/' || window.location.href == APIRoot+'/registration.html'){
 			Log('Loged in and On Login or Registration Page. Redirecting');
 			location.href = APIRoot+'/ss/home.html';
