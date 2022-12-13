@@ -1,7 +1,7 @@
 resource "aws_cloudwatch_composite_alarm" "CPU_and_Mem" {
   alarm_description = "Composite alarm that monitors CPU Utilization and Memory"
   alarm_name        = "CPU_MEM_Composite_Alarm"
-  alarm_actions = [sns_topic.CPU_MEM_topic.arn]
+  alarm_actions = [aws_sns_topic.CPU_MEM_topic.arn]
 
   alarm_rule = "ALARM(${aws_cloudwatch_metric_alarm.Grade-Tracker-ECS-High_CPU.alarm_name}) OR ALARM(${aws_cloudwatch_metric_alarm.Grade-Tracker-ECS-Low_CPU.alarm_name}) OR ALARM(${aws_cloudwatch_metric_alarm.Grade-Tracker-ECS-High_MEM.alarm_name}) OR ALARM(${aws_cloudwatch_metric_alarm.Grade-Tracker-ECS-Low_MEM.alarm_name})"
 
@@ -27,12 +27,12 @@ resource "aws_sns_topic" "CPU_MEM_topic" {
 # }
 
 resource "aws_sns_topic_subscription" "email-target" {
-  topic_arn = module.sns_topic.CPU_MEM_topic.arn
+  topic_arn = aws_sns_topic.CPU_MEM_topic.arn
   protocol  = "email"
   endpoint  = "teamfranns@gmail.com"
 
   depends_on = [
-    sns_topic.CPU_MEM_topic
+    aws_sns_topic.CPU_MEM_topic
   ]
 }
 
@@ -60,8 +60,8 @@ resource "aws_cloudwatch_metric_alarm" "ecs-alert_High-CPUReservation" {
 
   actions_enabled = true
   insufficient_data_actions = []
-  alarm_actions       = [sns_topic.CPU_MEM_topic]
-  ok_actions          = [sns_topic.CPU_MEM_topic]
+  alarm_actions       = [aws_sns_topic.CPU_MEM_topic]
+  ok_actions          = [aws_sns_topic.CPU_MEM_topic]
 }
 
 resource "aws_cloudwatch_metric_alarm" "ecs-alert_Low-CPUReservation" {
@@ -84,8 +84,8 @@ resource "aws_cloudwatch_metric_alarm" "ecs-alert_Low-CPUReservation" {
 
   actions_enabled = true
   insufficient_data_actions = []
-  alarm_actions       = [sns_topic.CPU_MEM_topic]
-  ok_actions          = [sns_topic.CPU_MEM_topic]
+  alarm_actions       = [aws_sns_topic.CPU_MEM_topic]
+  ok_actions          = [aws_sns_topic.CPU_MEM_topic]
 }
 
 resource "aws_cloudwatch_metric_alarm" "ecs-alert_High-MemReservation" {
@@ -108,8 +108,8 @@ resource "aws_cloudwatch_metric_alarm" "ecs-alert_High-MemReservation" {
 
   actions_enabled = true
   insufficient_data_actions = []
-  alarm_actions       = [sns_topic.CPU_MEM_topic]
-  ok_actions          = [sns_topic.CPU_MEM_topic]
+  alarm_actions       = [aws_sns_topic.CPU_MEM_topic]
+  ok_actions          = [aws_sns_topic.CPU_MEM_topic]
 }
 
 resource "aws_cloudwatch_metric_alarm" "ecs-alert_Low-MemReservation" {
@@ -132,8 +132,8 @@ resource "aws_cloudwatch_metric_alarm" "ecs-alert_Low-MemReservation" {
 
   actions_enabled = true
   insufficient_data_actions = []
-  alarm_actions       = [sns_topic.CPU_MEM_topic]
-  ok_actions          = [sns_topic.CPU_MEM_topic]
+  alarm_actions       = [aws_sns_topic.CPU_MEM_topic]
+  ok_actions          = [aws_sns_topic.CPU_MEM_topic]
 }
 
 # Cloudwatch Alarm for ASG (of ECS Cluster)
