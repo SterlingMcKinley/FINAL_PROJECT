@@ -394,7 +394,7 @@ function main(){
 	Navigate();//If on login page and loged in go to home page. 
 	//Greet the User
 	GreetUser();
-	//Load Data on page
+	//Load the page data
 	LoadPageData();
 }
 
