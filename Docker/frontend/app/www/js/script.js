@@ -181,8 +181,7 @@ function GrabGrades(JSONData){
 }
 
 //Load All Grades of User
-function LoadGrades(){
-	Session = GetSessionAPIKey();
+function LoadGrades(Session){
 	if(Session != null && APIUsername != null){
 		var JsonObj = new Object();
 		JsonObj.apikey = Session;
@@ -368,7 +367,7 @@ function Navigate(){
 			Log('No Navigation Needed');
 		}
 		if(window.location.href == APIRoot+'/ss/home.html' || window.location.href == APIRoot+'/ss/overview.html'){
-			LoadGrades();
+			LoadGrades(Session);
 			LoadAssignments();
 			Log('Loaded Userdata and Assignment Data');
 		}
