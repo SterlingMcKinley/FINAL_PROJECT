@@ -22,10 +22,10 @@ resource "aws_cloudwatch_metric_alarm" "ecs-alert_High-CPUReservation" {
   actions_enabled = true
   insufficient_data_actions = []
   ok_actions = []
-  alarm_actions = [
-    "${var.alarm_actions}",
+  #alarm_actions = [
+    #"${var.alarm_actions}",
     #"${aws_autoscaling_policy.ecs-asg_increase.arn}"
-    ]
+   # ]
 }
 
 resource "aws_cloudwatch_metric_alarm" "ecs-alert_Low-CPUReservation" {
@@ -49,10 +49,10 @@ resource "aws_cloudwatch_metric_alarm" "ecs-alert_Low-CPUReservation" {
   actions_enabled = true
   insufficient_data_actions = []
   ok_actions = []
-  alarm_actions = [
-    "${var.alarm_actions}",
+  #alarm_actions = [
+    #"${var.alarm_actions}",
     #"${aws_autoscaling_policy.ecs-asg_decrease.arn}",
-  ]
+  #]
 }
 
 resource "aws_cloudwatch_metric_alarm" "ecs-alert_High-MemReservation" {
@@ -76,10 +76,10 @@ resource "aws_cloudwatch_metric_alarm" "ecs-alert_High-MemReservation" {
   actions_enabled = true
   insufficient_data_actions = []
   ok_actions = []
-  alarm_actions = [
-    "${var.alarm_actions}",
+  #alarm_actions = [
+    #"${var.alarm_actions}",
     #"${aws_autoscaling_policy.ecs-asg_increase.arn}",
-  ]
+  #]
 }
 
 resource "aws_cloudwatch_metric_alarm" "ecs-alert_Low-MemReservation" {
@@ -103,10 +103,10 @@ resource "aws_cloudwatch_metric_alarm" "ecs-alert_Low-MemReservation" {
   actions_enabled = true
   insufficient_data_actions = []
   ok_actions = []
-  alarm_actions = [
-    "${var.alarm_actions}",
-    #"${aws_autoscaling_policy.ecs-asg_decrease.arn}",
-  ]
+  #alarm_actions = [
+  #  "${var.alarm_actions}",
+  #  #"${aws_autoscaling_policy.ecs-asg_decrease.arn}",
+  #]
 }
 
 # Cloudwatch Alarm for ASG (of ECS Cluster)
