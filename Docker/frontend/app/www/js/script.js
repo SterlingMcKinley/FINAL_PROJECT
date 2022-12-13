@@ -1,4 +1,4 @@
-var MasterSpeed = 2500;
+var MasterSpeed = 500;
 
 var Loop;
 
