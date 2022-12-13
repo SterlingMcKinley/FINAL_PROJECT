@@ -240,6 +240,13 @@ function ClickedLogout(){
 	}
 }
 
+//Check if the user press entered
+function CheckSubmit(e, func) {
+	if(e && e.keyCode == 13) {
+		func();
+	}
+}
+
 //Greet the user
 function GreetUser(){
 	var GreetElement = document.getElementById('greeting');
