@@ -123,7 +123,7 @@ function Logout(JSONData){
 function Greet(JSONData){
 	var Request = new XMLHttpRequest();
 	var PayLoad = JSON.stringify(JSONData);
-	Request.open('GET', APIRoot+':'+UserMicroServicePort+'/get/session/user', true);
+	Request.open('POST', APIRoot+':'+UserMicroServicePort+'/grab/session/user', true);
 	Request.setRequestHeader("accept", "application/json");
 	Request.setRequestHeader("Content-Type", "application/json");
 	try{

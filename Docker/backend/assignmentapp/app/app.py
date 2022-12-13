@@ -145,16 +145,16 @@ with app.app_context():
             print(str(e))
             time.sleep(15)
 
-#Get all assignments, Open for everyone
-@app.route('/get/all/assignments', methods = ['GET'])
-def get_all_assignments():
+#Grab all assignments, Open for everyone
+@app.route('/grab/all/assignments', methods = ['POST'])
+def grab_all_assignments():
     all_assignments = Assignment.query.all()
     results = assignments_schema.dump(all_assignments)
     return jsonify(results)
 
-#Get a assignment by id, Open for everyone
-@app.route('/get/assignment/<assignment_id>', methods = ['GET'])
-def get_assignment(assignment_id):
+#Grab a assignment by id, Open for everyone
+@app.route('/grab/assignment/<assignment_id>', methods = ['POST'])
+def grab_assignment(assignment_id):
     try:
         assignment = Assignment.query.filter_by(id=assignment_id).first()
         if assignment == None:
@@ -267,9 +267,9 @@ def delete_assignment(assignment_id):
 
 
 
-#Get all userdata, Admin/Teacher only
-@app.route('/get/all/userdata', methods = ['GET'])
-def get_all_userdata():
+#Grab all userdata, Admin/Teacher only
+@app.route('/grab/all/userdata', methods = ['POST'])
+def grab_all_userdata():
     #Needs a API Key Attached to a Admin/Teacher Account
     try:
         form_apikey = request.json['apikey']
@@ -288,9 +288,9 @@ def get_all_userdata():
     results = userdatas_schema.dump(all_userdata)
     return jsonify(results)
 
-#Get userdata by username, Admin/Teacher or logged in user only
-@app.route('/get/userdata/username/<userdata_username>', methods = ['GET'])
-def get_userdata_by_username(userdata_username):
+#Grab userdata by username, Admin/Teacher or logged in user only
+@app.route('/grab/userdata/username/<userdata_username>', methods = ['POST'])
+def grab_userdata_by_username(userdata_username):
     #Needs a API Key Attached to a Admin/Teacher Account or the account being pulled
     try:
         form_apikey = request.json['apikey']
@@ -320,9 +320,9 @@ def get_userdata_by_username(userdata_username):
 
     return userdatas_schema.jsonify(userdata)
 
-#Get userdata by id, Admin/Teacher or logged in user only
-@app.route('/get/userdata/id/<userdata_id>', methods = ['GET'])
-def get_userdata_by_id(userdata_id):
+#Grab userdata by id, Admin/Teacher or logged in user only
+@app.route('/grab/userdata/id/<userdata_id>', methods = ['POST'])
+def grab_userdata_by_id(userdata_id):
     #Needs a API Key Attached to a Admin/Teacher Account or the account being pulled
     try:
         form_apikey = request.json['apikey']

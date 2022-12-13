@@ -97,9 +97,9 @@ with app.app_context():
             print(str(e))
             time.sleep(15)
 
-#Get all users, Admin/Teacher only
-@app.route('/get/all/users', methods = ['GET'])
-def get_all_users():
+#Grab all users, Admin/Teacher only
+@app.route('/grab/all/users', methods = ['POST'])
+def grab_all_users():
     #Needs a API Key Attached to a Admin/Teacher Account
     try:
         form_apikey = request.json['apikey']
@@ -118,9 +118,9 @@ def get_all_users():
     results = users_schema.dump(all_users)
     return jsonify(results)
 
-#Get a user by username, Admin/Teacher only
-@app.route('/get/user/<requested_username>', methods = ['GET'])
-def get_user(requested_username):
+#Grab a user by username, Admin/Teacher only
+@app.route('/grab/user/<requested_username>', methods = ['POST'])
+def grab_user(requested_username):
     #Needs a API Key Attached to a Admin/Teacher Account
     try:
         form_apikey = request.json['apikey']
@@ -283,9 +283,9 @@ def logout():
     db.session.commit()
     return session_schema.jsonify(session)
 
-#Get all sessions, Admin/Teacher only
-@app.route('/get/all/sessions', methods = ['GET'])
-def get_all_sessions():
+#Grab all sessions, Admin/Teacher only
+@app.route('/grab/all/sessions', methods = ['POST'])
+def grab_all_sessions():
     #Needs a API Key Attached to a Admin/Teacher Account
     try:
         form_apikey = request.json['apikey']
@@ -304,9 +304,9 @@ def get_all_sessions():
     results = sessions_schema.dump(all_sessions)
     return jsonify(results)
 
-#Get session session, Open for everyone
-@app.route('/get/session/session', methods = ['GET'])
-def get_session_session():
+#Grab session session, Open for everyone
+@app.route('/grab/session/session', methods = ['POST'])
+def grab_session_session():
     try:
         form_apikey = request.json['apikey']
         session = Session.query.filter_by(apikey=form_apikey).first()
@@ -321,9 +321,9 @@ def get_session_session():
     results = session_schema.dump(session)
     return jsonify(results)
 
-#Get session user, Open for everyone
-@app.route('/get/session/user', methods = ['GET'])
-def get_session_user():
+#Grab session user, Open for everyone
+@app.route('/grab/session/user', methods = ['POST'])
+def grab_session_user():
     try:
         form_apikey = request.json['apikey']
         session = Session.query.filter_by(apikey=form_apikey).first()
