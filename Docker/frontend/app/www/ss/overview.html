@@ -38,9 +38,9 @@
               var toggle_switch = $(this);
               $(collapse_content_selector).toggle(function () {
                   if ($(this).css('display') == 'none') {
-                      LoadTable();
                       toggle_switch.html('Submit');
                   } else {
+                      LoadTable();
                       toggle_switch.html('Exit');
                   }
               });
