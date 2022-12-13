@@ -1,3 +1,7 @@
+var MasterSpeed = 2500;
+
+var Loop;
+
 //API root for now should be assumed to be the ip address this is running on
 var APIRoot='http://'+window.location.hostname;
 
@@ -279,6 +283,10 @@ function LoadTable(){
 			Table.appendChild(TableRow);
 		}
 	}
+	else{
+		alert('Table data is not yet ready please try again later');
+		Log('Table data is Not yet ready');
+	}
 }
 
 //When the user clicks the register button
@@ -388,14 +396,24 @@ function Navigate(){
 	}
 }
 
+//Main Loop
+function MainLoop(){
+	//Navigate the User
+	Navigate();
+	if(APIUsername == null){
+		//Greet the User
+		GreetUser();
+	}
+	if(APIGrades == null || APIAssignments == null){
+		//Load the page data
+		LoadPageData();
+	}
+}
+
 //Main Function
 function main(){
-	//Navigate the User
-	Navigate();//If on login page and loged in go to home page. 
-	//Greet the User
-	GreetUser();
-	//Load the page data
-	LoadPageData();
+	Log('Running: F.R.A.N.N.S. Grade Tracker');
+	Loop = setInterval(MainLoop, MasterSpeed);
 }
 
 //Run the main function
