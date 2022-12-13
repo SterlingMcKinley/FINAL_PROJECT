@@ -5,6 +5,8 @@ var UserMicroServicePort = 5000;
 
 var AssignmentMicroServicePort = 5500;
 
+var APIUsername = null;
+
 //Log to console
 function Log(Msg){
 	console.log(Msg);
@@ -132,6 +134,7 @@ function Greet(JSONData){
 			if(Request.status === 200){
 				Data = JSON.parse(Request.responseText);
 				document.getElementById('greeting').textContent = 'Hello '+Data.first_name;
+				APIUsername = Data.username;
 			}
 			else{
 				Log('Failed to use User Micro Service API, Request Error. Non 200 Status Code');
@@ -143,6 +146,48 @@ function Greet(JSONData){
 	}
 	catch(err){
 		Log('Failed to use User Micro Service API');
+	}
+}
+
+//Grab Grades
+function GrabGrades(JSONData){
+	var Request = new XMLHttpRequest();
+	var PayLoad = JSON.stringify(JSONData);
+	Request.open('POST', APIRoot+':'+AssignmentMicroServicePort+'/grab/userdata/username/'+APIUsername, true);
+	Request.setRequestHeader("accept", "application/json");
+	Request.setRequestHeader("Content-Type", "application/json");
+	try{
+		Request.send(PayLoad);
+		Request.onload = function(){
+			if(Request.status === 200){
+				Data = JSON.parse(Request.responseText);
+				Log(Data)
+				//document.getElementById('greeting').textContent = 'Hello '+Data.first_name;
+			}
+			else{
+				Log('Failed to use User Micro Service API, Request Error. Non 200 Status Code');
+			}
+		};
+		Request.onerror = function() {
+			Log('Failed to use User Micro Service API, Request Error');
+		};
+	}
+	catch(err){
+		Log('Failed to use User Micro Service API');
+	}
+}
+
+//Load All Grades of User
+function LoadGrades(){
+	Session = GetSessionAPIKey();
+	if(Session != null && APIUsername != null){
+		var JsonObj = new Object();
+		JsonObj.apikey = Session;
+
+		GrabGrades(JsonObj);
+	}
+	else{
+		Log('Not Logged in Can Not Load Grades');
 	}
 }
 
