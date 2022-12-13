@@ -1,3 +1,21 @@
+resource "aws_cloudwatch_composite_alarm" "CPU_and_Mem" {
+  alarm_description = "Composite alarm that monitors CPU Utilization and Memory"
+  alarm_name        = "CPU_MEM_Composite_Alarm"
+  alarm_actions = [module.sns_topic.sns_topic_arn]
+
+  alarm_rule = "ALARM(${aws_cloudwatch_metric_alarm.Grade-Tracker-ECS-High_CPU.alarm_name}) OR ALARM(${aws_cloudwatch_metric_alarm.Grade-Tracker-ECS-Low_CPU.alarm_name}) OR ALARM(${aws_cloudwatch_metric_alarm.Grade-Tracker-ECS-High_MEM.alarm_name}) OR ALARM(${aws_cloudwatch_metric_alarm.Grade-Tracker-ECS-Low_MEM.alarm_name})"
+
+
+  depends_on = [
+    aws_cloudwatch_metric_alarm.Grade-Tracker-ECS-High_CPU,
+    aws_cloudwatch_metric_alarm.Grade-Tracker-ECS-Low_CPU,
+    aws_cloudwatch_metric_alarm.Grade-Tracker-ECS-High_MEM,
+    aws_cloudwatch_metric_alarm.Grade-Tracker-ECS-Low_MEM,
+    aws_sns_topic.Grade_Tracker_Resources,
+    aws_sns_topic_subscription.email-target
+  ]
+}
+
 module "sns_topic" {
   source  = "terraform-aws-modules/sns/aws"
   version = "~> 3.0"
@@ -13,6 +31,10 @@ resource "aws_sns_topic_subscription" "email-target" {
   topic_arn = module.sns_topic.sns_topic_arn
   protocol  = "email"
   endpoint  = "teamfranns@gmail.com"
+
+  depends_on = [
+    aws_sns_topic.Grade_Tracker_Resources
+  ]
 }
 
 
