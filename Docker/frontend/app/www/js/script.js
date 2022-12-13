@@ -338,7 +338,7 @@ function CheckSubmit(e, func) {
 }
 
 //Load the page data
-function LoadData(){
+function LoadPageData(){
 	if(window.location.href == APIRoot+'/ss/home.html' || window.location.href == APIRoot+'/ss/overview.html'){
 		LoadGrades();
 		LoadAssignments();
@@ -395,7 +395,7 @@ function main(){
 	//Greet the User
 	GreetUser();
 	//Load Data on page
-	LoadData();
+	LoadPageData();
 }
 
 //Run the main function
