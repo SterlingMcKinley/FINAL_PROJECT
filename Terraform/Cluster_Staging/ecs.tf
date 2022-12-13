@@ -5,6 +5,17 @@ module "sns_topic" {
   name  = "my-topic"
 }
 
+resource "aws_sns_topic" "topic" {
+  name = "topic-name"
+}
+
+resource "aws_sns_topic_subscription" "email-target" {
+  topic_arn = aws_sns_topic.topic.arn
+  protocol  = "email"
+  endpoint  = "teamfranns@gmail.com"
+}
+
+
 # Cloudwatch Alarm for ECS Cluster
 
 resource "aws_cloudwatch_metric_alarm" "ecs-alert_High-CPUReservation" {
