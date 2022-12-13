@@ -6,6 +6,8 @@ var UserMicroServicePort = 5000;
 var AssignmentMicroServicePort = 5500;
 
 var APIUsername = null;
+var APIGrades = null;
+var APIAssignments = null;
 
 //Log to console
 function Log(Msg){
@@ -134,6 +136,8 @@ function Greet(JSONData){
 			if(Request.status === 200){
 				Data = JSON.parse(Request.responseText);
 				document.getElementById('greeting').textContent = 'Hello '+Data.first_name;
+				document.getElementById('greeting').style.visibility = "visible";
+				style="visibility: hidden;"
 				APIUsername = Data.username;
 			}
 			else{
@@ -161,19 +165,18 @@ function GrabGrades(JSONData){
 		Request.onload = function(){
 			if(Request.status === 200){
 				Data = JSON.parse(Request.responseText);
-				Log(Data)
-				//document.getElementById('greeting').textContent = 'Hello '+Data.first_name;
+				APIGrades = Data;
 			}
 			else{
-				Log('Failed to use User Micro Service API, Request Error. Non 200 Status Code');
+				Log('Failed to use Assignment Micro Service API, Request Error. Non 200 Status Code');
 			}
 		};
 		Request.onerror = function() {
-			Log('Failed to use User Micro Service API, Request Error');
+			Log('Failed to use Assignment Micro Service API, Request Error');
 		};
 	}
 	catch(err){
-		Log('Failed to use User Micro Service API');
+		Log('Failed to use Assignment Micro Service API');
 	}
 }
 
@@ -188,6 +191,93 @@ function LoadGrades(){
 	}
 	else{
 		Log('Not Logged in Can Not Load Grades');
+	}
+}
+
+//Grab Assignments
+function GrabAssignments(){
+	var Request = new XMLHttpRequest();
+	Request.open('POST', APIRoot+':'+AssignmentMicroServicePort+'/grab/all/assignments', true);
+	Request.setRequestHeader("accept", "application/json");
+	Request.setRequestHeader("Content-Type", "application/json");
+	try{
+		Request.send();
+		Request.onload = function(){
+			if(Request.status === 200){
+				Data = JSON.parse(Request.responseText);
+				APIAssignments = Data;
+			}
+			else{
+				Log('Failed to use Assignment Micro Service API, Request Error. Non 200 Status Code');
+			}
+		};
+		Request.onerror = function() {
+			Log('Failed to use Assignment Micro Service API, Request Error');
+		};
+	}
+	catch(err){
+		Log('Failed to use Assignment Micro Service API');
+	}
+}
+
+//Load All Assignments
+function LoadAssignments(){
+	GrabAssignments();
+}
+
+//Find the Highest Grade from the Grades String
+function HighestGrade(String){
+	if(String.search('/') > 0){
+		var Grades = String.split('/');
+		var HighestGrade = null;
+		for(let i = 0; i < Grades.length; i++) {
+			if(HighestGrade == null){
+				HighestGrade = Grades[i];
+			}
+			else if(parseInt(HighestGrade) < parseInt(Grades[i])){
+				HighestGrade = Grades[i];
+			}
+		}
+		return HighestGrade
+	}
+	else{
+		return String;
+	}
+}
+
+//Match Assingment to Userdata
+function MatchAssignment(Id, Assignments){
+	for(let i = 0; i < Assignments.length; i++) {
+		if(Assignments[i].id == Id){
+			return Assignments[i].assignment_name;
+		}
+	}
+	return 'N/A';
+}
+
+//Load All Assignments
+function LoadTable(){
+	var Table = document.getElementById('table');
+	if(Table != null && APIGrades != null && APIAssignments != null){
+		Table.innerHTML = "";
+		var TableHeaderRow = document.createElement('tr');
+		var TableHeaderAssignment = document.createElement('th');
+		TableHeaderAssignment.textContent = 'Assignment';
+		var TableHeaderHighestGrade = document.createElement('th');
+		TableHeaderHighestGrade.textContent = 'Highest Grade';
+		TableHeaderRow.appendChild(TableHeaderAssignment);
+		TableHeaderRow.appendChild(TableHeaderHighestGrade);
+		Table.appendChild(TableHeaderRow);
+		for(let i = 0; i < APIGrades.length; i++) {
+			var TableRow = document.createElement('tr');
+			var RowAssignment = document.createElement('th');
+			RowAssignment.textContent = MatchAssignment(APIGrades[i].assignment_id, APIAssignments)
+			var RowGrade = document.createElement('th');
+			RowGrade.textContent = HighestGrade(APIGrades[i].grades);
+			TableRow.appendChild(RowAssignment);
+			TableRow.appendChild(RowGrade);
+			Table.appendChild(TableRow);
+		}
 	}
 }
 
@@ -240,6 +330,13 @@ function ClickedLogout(){
 	}
 }
 
+//Check if the user press entered
+function CheckSubmit(e, func) {
+	if(e && e.keyCode == 13) {
+		func();
+	}
+}
+
 //Greet the user
 function GreetUser(){
 	var GreetElement = document.getElementById('greeting');
@@ -269,6 +366,11 @@ function Navigate(){
 		}
 		else{
 			Log('No Navigation Needed');
+		}
+		if(window.location.href == APIRoot+'/ss/home.html' || window.location.href == APIRoot+'/ss/overview.html'){
+			LoadGrades();
+			LoadAssignments();
+			Log('Loaded Userdata and Assignment Data');
 		}
 	}
 	else{
