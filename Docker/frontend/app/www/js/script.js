@@ -181,7 +181,8 @@ function GrabGrades(JSONData){
 }
 
 //Load All Grades of User
-function LoadGrades(Session){
+function LoadGrades(){
+	Session = GetSessionAPIKey();
 	if(Session != null && APIUsername != null){
 		var JsonObj = new Object();
 		JsonObj.apikey = Session;
@@ -336,6 +337,15 @@ function CheckSubmit(e, func) {
 	}
 }
 
+//Load the page data
+function LoadPageData(){
+	if(window.location.href == APIRoot+'/ss/home.html' || window.location.href == APIRoot+'/ss/overview.html'){
+		LoadGrades();
+		LoadAssignments();
+		Log('Loaded Userdata and Assignment Data');
+	}
+}
+
 //Greet the user
 function GreetUser(){
 	var GreetElement = document.getElementById('greeting');
@@ -366,11 +376,6 @@ function Navigate(){
 		else{
 			Log('No Navigation Needed');
 		}
-		if(window.location.href == APIRoot+'/ss/home.html' || window.location.href == APIRoot+'/ss/overview.html'){
-			LoadGrades(Session);
-			LoadAssignments();
-			Log('Loaded Userdata and Assignment Data');
-		}
 	}
 	else{
 		if(window.location.href != APIRoot+'/' && window.location.href != APIRoot+'/registration.html'){
@@ -389,6 +394,8 @@ function main(){
 	Navigate();//If on login page and loged in go to home page. 
 	//Greet the User
 	GreetUser();
+	//Load the page data
+	LoadPageData();
 }
 
 //Run the main function
