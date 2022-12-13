@@ -1,3 +1,10 @@
+module "sns_topic" {
+  source  = "terraform-aws-modules/sns/aws"
+  version = "~> 3.0"
+
+  name  = "my-topic"
+}
+
 # Cloudwatch Alarm for ECS Cluster
 
 resource "aws_cloudwatch_metric_alarm" "ecs-alert_High-CPUReservation" {
@@ -21,8 +28,8 @@ resource "aws_cloudwatch_metric_alarm" "ecs-alert_High-CPUReservation" {
 
   actions_enabled = true
   insufficient_data_actions = []
-  alarm_actions       = [aws_sns_topic.sns.arn]
-  ok_actions          = [aws_sns_topic.sns.arn]
+  alarm_actions       = [aws_sns_topic.sns_topic.arn]
+  ok_actions          = [aws_sns_topic.sns_topic.arn]
 }
 
 resource "aws_cloudwatch_metric_alarm" "ecs-alert_Low-CPUReservation" {
@@ -45,8 +52,8 @@ resource "aws_cloudwatch_metric_alarm" "ecs-alert_Low-CPUReservation" {
 
   actions_enabled = true
   insufficient_data_actions = []
-  alarm_actions       = [aws_sns_topic.sns.arn]
-  ok_actions          = [aws_sns_topic.sns.arn]
+  alarm_actions       = [aws_sns_topic.sns_topic.arn]
+  ok_actions          = [aws_sns_topic.sns_topic.arn]
 }
 
 resource "aws_cloudwatch_metric_alarm" "ecs-alert_High-MemReservation" {
@@ -69,8 +76,8 @@ resource "aws_cloudwatch_metric_alarm" "ecs-alert_High-MemReservation" {
 
   actions_enabled = true
   insufficient_data_actions = []
-  alarm_actions       = [aws_sns_topic.sns.arn]
-  ok_actions          = [aws_sns_topic.sns.arn]
+  alarm_actions       = [aws_sns_topic.sns_topic.arn]
+  ok_actions          = [aws_sns_topic.sns_topic.arn]
 }
 
 resource "aws_cloudwatch_metric_alarm" "ecs-alert_Low-MemReservation" {
@@ -93,8 +100,8 @@ resource "aws_cloudwatch_metric_alarm" "ecs-alert_Low-MemReservation" {
 
   actions_enabled = true
   insufficient_data_actions = []
-  alarm_actions       = [aws_sns_topic.sns.arn]
-  ok_actions          = [aws_sns_topic.sns.arn]
+  alarm_actions       = [aws_sns_topic.sns_topic.arn]
+  ok_actions          = [aws_sns_topic.sns_topic.arn]
 }
 
 # Cloudwatch Alarm for ASG (of ECS Cluster)
