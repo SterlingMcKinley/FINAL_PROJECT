@@ -131,7 +131,7 @@ function Greet(JSONData){
 		Request.onload = function(){
 			if(Request.status === 200){
 				Data = JSON.parse(Request.responseText);
-				document.getElementById('greeting').value = 'Hello '+Data.first_name
+				document.getElementById('greeting').textContent = 'Hello '+Data.first_name;
 			}
 			else{
 				Log('Failed to use User Micro Service API, Request Error. Non 200 Status Code');
