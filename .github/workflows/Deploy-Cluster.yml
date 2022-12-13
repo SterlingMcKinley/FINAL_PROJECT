@@ -101,4 +101,4 @@ jobs:
       run: terraform apply --auto-approve
     - name: App Link
       if: always()
-      run: printf "\033[0;32mApp Link ~>\033[0m http://$(terraform output -raw alb_url )/\n"
+      run: printf "\033[0;32mApp Link ~>\033[0m $(terraform output -raw alb_url )/\n"
