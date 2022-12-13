@@ -285,7 +285,7 @@ function LoadTable(){
 	}
 	else{
 		alert('Table data is not yet ready please try again later');
-		Log('Table data is Not yet ready');
+		Log('Table data is not yet ready');
 	}
 }
 
