@@ -10,10 +10,10 @@ on:
       - main
 
 jobs: 
-  scripts-unit-tests: 
-    name: Scripts Unit Tests
+  docker-unit-tests: 
+    name: Docker Unit Test
     runs-on: ubuntu-latest
-    environment: Production
+    environment: Staging
     defaults:
       run:
         shell: bash
@@ -23,5 +23,17 @@ jobs:
       name: GitHub Checkout
     - name: Docker Install Unit Test
       run: sudo ./installdocker.sh
+
+  terraform-unit-tests: 
+    name: Terraform Unit Test
+    runs-on: ubuntu-latest
+    environment: Staging
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./Scripts
+    steps: 
+    - uses: actions/checkout@v3
+      name: GitHub Checkout
     - name: Terraform Install Unit Test
       run: sudo ./installterraform.sh
