@@ -85,9 +85,6 @@ function Login(JSONData){
 			if(Request.status === 200){
 				Data = JSON.parse(Request.responseText);
 				SetSessionAPIKey(Data.apikey)
-				if(window.location.href == APIRoot+'/'){
-					location.href = APIRoot+'/student/home.html';
-				}
 			}
 			else{
 				Log('Failed to use User Micro Service API, Request Error. Non 200 Status Code');
