@@ -371,20 +371,22 @@ function GreetUser(){
 //Navigate
 function Navigate(){
 	Session = GetSessionAPIKey();
-	if(Session != null && APIUser != null){
-		if(window.location.href == APIRoot+'/' || window.location.href == APIRoot+'/registration.html'){
-			if(APIUser.is_admin != true){
-				Log('Loged in and On Login or Registration Page. Redirecting to Student Pages');
-				location.href = APIRoot+'/student/home.html';
+	if(Session != null){
+		if(APIUser != null){
+			if(window.location.href == APIRoot+'/' || window.location.href == APIRoot+'/registration.html'){
+				if(APIUser.is_admin != true){
+					Log('Loged in and On Login or Registration Page. Redirecting to Student Pages');
+					location.href = APIRoot+'/student/home.html';
+				}
+				else if(APIUser.is_admin == true){
+					Log('Loged in and On Login or Registration Page. Redirecting to Admin Pages');
+					location.href = APIRoot+'/admin/dashboard.html';
+				}
 			}
-			else if(APIUser.is_admin == true){
-				Log('Loged in and On Login or Registration Page. Redirecting to Admin Pages');
-				location.href = APIRoot+'/admin/dashboard.html';
-			}
+			// else{
+			// 	Log('No Navigation Needed');
+			// }
 		}
-		// else{
-		// 	Log('No Navigation Needed');
-		// }
 	}
 	else{
 		if(window.location.href != APIRoot+'/' && window.location.href != APIRoot+'/registration.html'){
