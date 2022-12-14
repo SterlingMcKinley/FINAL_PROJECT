@@ -55,12 +55,12 @@ resource "aws_cloudwatch_metric_alarm" "Grade-Tracker-ECS-High_CPU" {
   metric_name = "CPU_High_Usage"
   namespace = "AWS/ECS"
   dimensions = {
-    ClusterName = "final-project-ecs-service-staging"
+    ClusterName = "final-project-cluster-staging"
   }
 
   actions_enabled = true
   insufficient_data_actions = []
-  alarm_actions = [arn:aws:sns:us-east-1:935884938307:CPU_MEM_topic]
+  alarm_actions = ["arn:aws:sns:us-east-1:935884938307:CPU_MEM_topic"]
 }
 
 resource "aws_cloudwatch_metric_alarm" "Grade-Tracker-ECS-Low_CPU" {
@@ -78,12 +78,13 @@ resource "aws_cloudwatch_metric_alarm" "Grade-Tracker-ECS-Low_CPU" {
   metric_name = "CPU_Low_Usage"
   namespace = "AWS/ECS"
   dimensions = {
-    ClusterName = "final-project-ecs-service-staging"
+    ClusterName = "final-project-cluster-staging"
   }
 
   actions_enabled = true
   insufficient_data_actions = []
-  alarm_actions = [arn:aws:sns:us-east-1:935884938307:CPU_MEM_topic]
+  alarm_actions = ["arn:aws:sns:us-east-1:935884938307:CPU_MEM_topic"]
+
 }
 
 resource "aws_cloudwatch_metric_alarm" "Grade-Tracker-ECS-High_MEM" {
@@ -101,12 +102,12 @@ resource "aws_cloudwatch_metric_alarm" "Grade-Tracker-ECS-High_MEM" {
   metric_name = "Memory_High_Usage"
   namespace = "AWS/ECS"
   dimensions = {
-    ClusterName = "final-project-ecs-service-staging"
+    ClusterName = "final-project-cluster-staging"
   }
 
   actions_enabled = true
   insufficient_data_actions = []
-  alarm_actions = [arn:aws:sns:us-east-1:935884938307:CPU_MEM_topic]
+  alarm_actions = ["arn:aws:sns:us-east-1:935884938307:CPU_MEM_topic"]
 }
 
 resource "aws_cloudwatch_metric_alarm" "Grade-Tracker-ECS-Low_MEM" {
@@ -124,10 +125,10 @@ resource "aws_cloudwatch_metric_alarm" "Grade-Tracker-ECS-Low_MEM" {
   metric_name = "Memory_Low_Usage"
   namespace = "AWS/ECS"
   dimensions = {
-    ClusterName = "final-project-ecs-service-staging"
+    ClusterName = "final-project-cluster-staging"
   }
 
   actions_enabled = true
   insufficient_data_actions = []
-  alarm_actions = [arn:aws:sns:us-east-1:935884938307:CPU_MEM_topic]
+  alarm_actions = ["arn:aws:sns:us-east-1:935884938307:CPU_MEM_topic"]
 }
