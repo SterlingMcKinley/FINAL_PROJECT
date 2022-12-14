@@ -414,7 +414,7 @@ function Whoami(){
 		var JsonObj = new Object();
 		JsonObj.apikey = Session;
 
-		GrabWhoami(Session);
+		GrabWhoami(JsonObj);
 	}
 }
 
