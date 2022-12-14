@@ -8,6 +8,6 @@ resource "aws_route53_record" "www" {
   name    = "dev.${data.aws_route53_zone.selected.name}"
   type    = "CNAME"
   ttl     = 300
-  records = ["http://${aws_alb.final-project.dns_name}"]
+  records = [aws_alb.final-project.dns_name]
   depends_on = [aws_alb.final-project]
 }
