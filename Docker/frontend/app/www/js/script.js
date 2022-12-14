@@ -82,7 +82,7 @@ function Login(JSONData){
 				Data = JSON.parse(Request.responseText);
 				SetSessionAPIKey(Data.apikey)
 				if(window.location.href == APIRoot+'/'){
-					location.href = APIRoot+'/ss/home.html';
+					location.href = APIRoot+'/student/home.html';
 				}
 			}
 			else{
@@ -347,7 +347,7 @@ function CheckSubmit(e, func) {
 
 //Load the page data
 function LoadPageData(){
-	if(window.location.href == APIRoot+'/ss/home.html' || window.location.href == APIRoot+'/ss/overview.html'){
+	if(window.location.href == APIRoot+'/student/home.html' || window.location.href == APIRoot+'/student/overview.html'){
 		LoadGrades();
 		LoadAssignments();
 		Log('Loaded Userdata and Assignment Data');
@@ -379,7 +379,7 @@ function Navigate(){
 	if(Session != null){
 		if(window.location.href == APIRoot+'/' || window.location.href == APIRoot+'/registration.html'){
 			Log('Loged in and On Login or Registration Page. Redirecting');
-			location.href = APIRoot+'/ss/home.html';
+			location.href = APIRoot+'/student/home.html';
 		}
 		else{
 			Log('No Navigation Needed');
