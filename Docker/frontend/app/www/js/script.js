@@ -9,9 +9,11 @@ var UserMicroServicePort = 5000;
 
 var AssignmentMicroServicePort = 5500;
 
-var APIUsername = null;
+var APIUser = null;
 var APIGrades = null;
 var APIAssignments = null;
+
+var Greeted = False;
 
 //Log to console
 function Log(Msg){
@@ -127,8 +129,8 @@ function Logout(JSONData){
 	}
 }
 
-//Greet
-function Greet(JSONData){
+//Grab Who am i
+function GrabWhoami(JSONData){
 	var Request = new XMLHttpRequest();
 	var PayLoad = JSON.stringify(JSONData);
 	Request.open('POST', APIRoot+':'+UserMicroServicePort+'/grab/session/user', true);
@@ -139,10 +141,7 @@ function Greet(JSONData){
 		Request.onload = function(){
 			if(Request.status === 200){
 				Data = JSON.parse(Request.responseText);
-				document.getElementById('greeting').textContent = 'Hello '+Data.first_name;
-				document.getElementById('greeting').style.visibility = "visible";
-				style="visibility: hidden;"
-				APIUsername = Data.username;
+				APIUser = Data;
 			}
 			else{
 				Log('Failed to use User Micro Service API, Request Error. Non 200 Status Code');
@@ -161,7 +160,7 @@ function Greet(JSONData){
 function GrabGrades(JSONData){
 	var Request = new XMLHttpRequest();
 	var PayLoad = JSON.stringify(JSONData);
-	Request.open('POST', APIRoot+':'+AssignmentMicroServicePort+'/grab/userdata/username/'+APIUsername, true);
+	Request.open('POST', APIRoot+':'+AssignmentMicroServicePort+'/grab/userdata/username/'+APIUser.username, true);
 	Request.setRequestHeader("accept", "application/json");
 	Request.setRequestHeader("Content-Type", "application/json");
 	try{
@@ -187,7 +186,7 @@ function GrabGrades(JSONData){
 //Load All Grades of User
 function LoadGrades(){
 	Session = GetSessionAPIKey();
-	if(Session != null && APIUsername != null){
+	if(Session != null && APIUser != null){
 		var JsonObj = new Object();
 		JsonObj.apikey = Session;
 
@@ -358,15 +357,9 @@ function LoadPageData(){
 function GreetUser(){
 	var GreetElement = document.getElementById('greeting');
 	if(GreetElement != null){
-		Session = GetSessionAPIKey();
-		if(Session != null){
-			var JsonObj = new Object();
-			JsonObj.apikey = Session;
-			Greet(JsonObj);
-		}
-		else{
-			Log('Failed to Greet User, No Session Found');
-		}
+		document.getElementById('greeting').textContent = 'Hello '+APIUser.first_name;
+		document.getElementById('greeting').style.visibility = "visible";
+		Greeted = true;
 	}
 	else{
 		Log('Failed to Greet User, No Element Found');
@@ -376,31 +369,49 @@ function GreetUser(){
 //Navigate
 function Navigate(){
 	Session = GetSessionAPIKey();
-	if(Session != null){
+	if(Session != null && APIUser != null){
 		if(window.location.href == APIRoot+'/' || window.location.href == APIRoot+'/registration.html'){
-			Log('Loged in and On Login or Registration Page. Redirecting');
-			location.href = APIRoot+'/student/home.html';
+			if(APIUser.is_admin != true){
+				Log('Loged in and On Login or Registration Page. Redirecting to Student Pages');
+				location.href = APIRoot+'/student/home.html';
+			}
+			else if(APIUser.is_admin == true){
+				Log('Loged in and On Login or Registration Page. Redirecting to Admin Pages');
+				location.href = APIRoot+'/admin/dashboard.html';
+			}
 		}
-		else{
-			Log('No Navigation Needed');
-		}
+		// else{
+		// 	Log('No Navigation Needed');
+		// }
 	}
 	else{
 		if(window.location.href != APIRoot+'/' && window.location.href != APIRoot+'/registration.html'){
 			Log('Not Loged in and Not On Login or Registration Page. Redirecting');
 			location.href = APIRoot+'/';
 		}
-		else{
-			Log('No Navigation Needed');
-		}
+		// else{
+		// 	Log('No Navigation Needed');
+		// }
+	}
+}
+
+//Who am i
+function Whoami(){
+	Session = GetSessionAPIKey();
+	if(Session != null){
+		GrabWhoami();
 	}
 }
 
 //Main Loop
 function MainLoop(){
+	if(APIUser == null){
+		//Who am i
+		Whoami()
+	}
 	//Navigate the User
 	Navigate();
-	if(APIUsername == null){
+	if(APIUser != null && Greeted == false){
 		//Greet the User
 		GreetUser();
 	}
@@ -413,6 +424,7 @@ function MainLoop(){
 //Main Function
 function main(){
 	Log('Running: F.R.A.N.N.S. Grade Tracker');
+	MainLoop();
 	Loop = setInterval(MainLoop, MasterSpeed);
 }
 
