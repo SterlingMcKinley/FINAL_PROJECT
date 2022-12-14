@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Login V1</title>
+	<title>Login</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->	
@@ -48,7 +48,7 @@
 					</div>
 
 					<div class="wrap-input100 validate-input" data-validate = "Password is required">
-						<input id="password" class="input100" type="password" name="password" placeholder="Password">
+						<input id="password" class="input100" type="password" name="password" placeholder="Password" onKeyPress="CheckSubmit(event,ClickedLogin);return true;">
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
 							<i class="fa fa-lock" aria-hidden="true"></i>
@@ -98,6 +98,6 @@
 			scale: 1.1
 		})
 	</script>
-	<script src="js/script.js"></script>
+<script src="/js/script.js" defer></script>
 </body>
 </html>

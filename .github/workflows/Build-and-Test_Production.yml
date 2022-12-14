@@ -1,19 +1,19 @@
-name: Build and Test Staging
+name: Build and Test
 
 on: 
   push: 
     branches: 
-      - STAGING
+      - main
   pull_request:
     types: [opened, reopened]
     branches: 
-      - STAGING
+      - main
 
 jobs: 
   scripts-unit-tests: 
     name: Scripts Unit Tests
     runs-on: ubuntu-latest
-    environment: Staging
+    environment: Production
     defaults:
       run:
         shell: bash

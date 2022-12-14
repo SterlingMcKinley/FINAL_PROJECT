@@ -3,6 +3,7 @@
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
     <head>
+        <title>Student Home</title>
         <link rel="stylesheet" href="version2.css">
     </head>
     <body>
@@ -16,7 +17,7 @@
         <a href="home.html">Home</a>
         <a href="overview.html">Overview</a>
         <a href="submissions.html">Submissions</a>
-        <a href="javascript:void(0)" onclick="closeNav()">Logout</a>
+        <a href="javascript:void(0)" onclick="ClickedLogout()">Logout</a>
       </div>
       <br><br>
       <br><br>
@@ -35,7 +36,7 @@
 <head>
   <body>
     <div>
-      <h1 id="greeting" class="greeting">Hello Nicole</h1>
+      <h1 id="greeting" class="greeting" style="visibility: hidden;">Hello Nicole</h1>
     </div>
  </body>
 </head>
@@ -200,7 +201,6 @@
       }
     });
   </script>
-  <script src="/js/script.js"></script>
+  <script src="/js/script.js" defer></script>
   </body>
 </html>
-

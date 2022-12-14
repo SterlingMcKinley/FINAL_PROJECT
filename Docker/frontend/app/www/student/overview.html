@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+      <title>Grades Overview</title>
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <link rel="stylesheet" href="version2.css">
     </head>
@@ -14,7 +15,7 @@
           <a href="home.html">Home</a>
           <a href="overview.html">Overview</a>
           <a href="submissions.html">Submissions</a>
-          <a href="javascript:void(0)" onclick="closeNav()">Logout</a>
+          <a href="javascript:void(0)" onclick="ClickedLogout()">Logout</a>
         </div>
         <!-- <br><br>
         <br><br> -->
@@ -40,6 +41,7 @@
                   if ($(this).css('display') == 'none') {
                       toggle_switch.html('Submit');
                   } else {
+                      LoadTable();
                       toggle_switch.html('Exit');
                   }
               });
@@ -70,79 +72,15 @@
           </a>
         <div class="elementor-image"></div>
         <p style="color: #000; font-size: 25px; margin: 0px;">F.R.A.N.N.S. Grade Tracker</p>
-        <h3 id="greeting" class="greeting" style="margin: 8px;">Hello Nicole</h3>
+        <h3 id="greeting" class="greeting" style="margin: 8px; visibility: hidden;">Hello Nicole</h3>
         <p>Would you like to view your grades?</p>
         
         <button href="#collapse" class="nav-toggle">Submit</button>
         <br></br>
         <div id="collapse" style="display:none">
-          <table style="margin: auto;">
-            <tr>
-              <th>Assignment</th>
-              <th>Highest Grade</th>
-            </tr>
-            <tr>
-              <td>Diagnostic 1</td>
-              <td>20</td>
-            </tr>
-            <tr>
-            <td>Diagnostic 2</td>
-              <td>60</td>
-            </tr>
-            <tr>
-            <td>Diagnostic 3</td>
-              <td>45</td>
-            </tr>
-            <tr>
-            <td>Diagnostic 4</td>
-              <td>90</td>
-            </tr>
-            <tr>
-            <td>Diagnostic 5</td>
-              <td>90</td>
-            </tr>
-            <tr>
-            <td>Diagnostic 6</td>
-              <td>85</td>
-            </tr>
-            <tr>
-            <td>Deployment 1</td>
-              <td>85</td>
-            </tr>
-            <tr>
-            <td>Deployment 2</td>
-              <td>75</td>
-            </tr>
-            <tr>
-            <td>Deployment 3</td>
-              <td>100</td>
-            </tr>
-            <tr>
-            <td>Deployment 4</td>
-              <td>75</td>
-            </tr>
-            <tr>
-            <td>Deployment 5</td>
-              <td>100</td>
-            </tr>
-            <tr>
-            <td>Build Script 1</td>
-              <td>65</td>
-            </tr>
-            <tr>
-            <td>Build Script 1</td>
-              <td>85</td>
-            </tr>
-            <tr>
-            <td>Build Script 3</td>
-              <td>70</td>
-            </tr>
-            <tr>
-            <td>Build Script 4</td>
-              <td>80</td>
-            </tr>
+          <table id="table" style="margin: auto;">
           </table>
       </div>
-    <script src="/js/script.js"></script>
+    <script src="/js/script.js" defer></script>
     </body>
 </html>
