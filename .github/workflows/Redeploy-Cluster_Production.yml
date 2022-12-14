@@ -20,7 +20,7 @@ jobs:
   redeploy-cluster: 
     name: Redeploy Cluster using Terraform
     runs-on: ubuntu-latest
-    environment: Staging
+    environment: Production
     defaults:
       run:
         shell: bash
@@ -101,3 +101,6 @@ jobs:
       run: terraform destroy --auto-approve
     - name: Terraform Apply
       run: terraform apply --auto-approve
+    - name: App Link
+      if: always()
+      run: printf "\033[0;32mApp Link ~>\033[0m $(terraform output -raw alb_url )/\n"

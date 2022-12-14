@@ -1,4 +1,4 @@
-name: Deploy Cluster
+name: Deploy Cluster Staging
 
 on: 
   workflow_dispatch: 
@@ -99,3 +99,6 @@ jobs:
       run: terraform validate
     - name: Terraform Apply
       run: terraform apply --auto-approve
+    - name: App Link
+      if: always()
+      run: printf "\033[0;32mApp Link ~>\033[0m $(terraform output -raw alb_url )/\n"
