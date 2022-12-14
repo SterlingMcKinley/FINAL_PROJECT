@@ -15,6 +15,8 @@ var APIAssignments = null;
 
 var Greeted = false;
 
+var WhoamiErrors = 0;
+
 //Log to console
 function Log(Msg){
 	console.log(Msg);
@@ -143,10 +145,16 @@ function GrabWhoami(JSONData){
 			if(Request.status === 200){
 				Data = JSON.parse(Request.responseText);
 				APIUser = Data;
+				if(WhoamiErrors > 0){
+					WhoamiErrors = 0;
+				}
 			}
 			else{
 				Log('Failed to use User Micro Service API, Request Error. Non 200 Status Code');
-				RemoveSessionAPIKey();
+				WhoamiErrors = WhoamiErrors + 1;
+				if(WhoamiErrors > 100){
+					RemoveSessionAPIKey();
+				}
 			}
 		};
 		Request.onerror = function() {
