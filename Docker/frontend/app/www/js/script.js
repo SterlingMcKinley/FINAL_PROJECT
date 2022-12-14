@@ -118,6 +118,7 @@ function Logout(JSONData){
 			else{
 				Log('Failed to use User Micro Service API, Request Error. Non 200 Status Code');
 				alert('Could not logout using that information!');
+				RemoveSessionAPIKey();
 			}
 		};
 		Request.onerror = function() {
@@ -145,6 +146,7 @@ function GrabWhoami(JSONData){
 			}
 			else{
 				Log('Failed to use User Micro Service API, Request Error. Non 200 Status Code');
+				RemoveSessionAPIKey();
 			}
 		};
 		Request.onerror = function() {
@@ -399,7 +401,10 @@ function Navigate(){
 function Whoami(){
 	Session = GetSessionAPIKey();
 	if(Session != null){
-		GrabWhoami();
+		var JsonObj = new Object();
+		JsonObj.apikey = Session;
+
+		GrabWhoami(Session);
 	}
 }
 
