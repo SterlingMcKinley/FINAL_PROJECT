@@ -1,3 +1,7 @@
+var MasterSpeed = 500;
+
+var Loop;
+
 //API root for now should be assumed to be the ip address this is running on
 var APIRoot='http://'+window.location.hostname;
 
@@ -279,6 +283,10 @@ function LoadTable(){
 			Table.appendChild(TableRow);
 		}
 	}
+	else{
+		alert('Table data is not yet ready please try again later');
+		Log('Table data is not yet ready');
+	}
 }
 
 //When the user clicks the register button
@@ -337,6 +345,15 @@ function CheckSubmit(e, func) {
 	}
 }
 
+//Load the page data
+function LoadPageData(){
+	if(window.location.href == APIRoot+'/ss/home.html' || window.location.href == APIRoot+'/ss/overview.html'){
+		LoadGrades();
+		LoadAssignments();
+		Log('Loaded Userdata and Assignment Data');
+	}
+}
+
 //Greet the user
 function GreetUser(){
 	var GreetElement = document.getElementById('greeting');
@@ -367,11 +384,6 @@ function Navigate(){
 		else{
 			Log('No Navigation Needed');
 		}
-		if(window.location.href == APIRoot+'/ss/home.html' || window.location.href == APIRoot+'/ss/overview.html'){
-			LoadGrades();
-			LoadAssignments();
-			Log('Loaded Userdata and Assignment Data');
-		}
 	}
 	else{
 		if(window.location.href != APIRoot+'/' && window.location.href != APIRoot+'/registration.html'){
@@ -384,12 +396,24 @@ function Navigate(){
 	}
 }
 
+//Main Loop
+function MainLoop(){
+	//Navigate the User
+	Navigate();
+	if(APIUsername == null){
+		//Greet the User
+		GreetUser();
+	}
+	if(APIGrades == null || APIAssignments == null){
+		//Load the page data
+		LoadPageData();
+	}
+}
+
 //Main Function
 function main(){
-	//Navigate the User
-	Navigate();//If on login page and loged in go to home page. 
-	//Greet the User
-	GreetUser();
+	Log('Running: F.R.A.N.N.S. Grade Tracker');
+	Loop = setInterval(MainLoop, MasterSpeed);
 }
 
 //Run the main function

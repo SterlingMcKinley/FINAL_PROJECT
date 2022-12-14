@@ -13,7 +13,7 @@ jobs:
   scripts-unit-tests: 
     name: Scripts Unit Tests
     runs-on: ubuntu-latest
-    environment: Staging
+    environment: Production
     defaults:
       run:
         shell: bash
