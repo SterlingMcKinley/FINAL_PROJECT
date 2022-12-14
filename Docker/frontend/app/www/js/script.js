@@ -13,7 +13,7 @@ var APIUser = null;
 var APIGrades = null;
 var APIAssignments = null;
 
-var Greeted = False;
+var Greeted = false;
 
 //Log to console
 function Log(Msg){
