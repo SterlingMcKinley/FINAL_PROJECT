@@ -27,7 +27,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
   [
   {
       "name": "frontend-container",
-      "image": "svmckinley/grade_tracker_frontend:latest",
+      "image": "teamfranns/grade_tracker_frontend:latest",
       "essential": false,
       "logConfiguration": {
         "logDriver": "awslogs",
@@ -41,7 +41,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
     },
       {
       "name": "backend-user-container",
-      "image": "svmckinley/grade_tracker_backend_microservice_user:latest",
+      "image": "teamfranns/grade_tracker_backend_microservice_user:latest",
       "essential": false,
       "dependsOn": [{
        "containerName": "mysql-container",
@@ -58,7 +58,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
     },
       {
       "name": "backend-assignment-container",
-      "image": "svmckinley/grade_tracker_backend_microservice_assignment:latest",
+      "image": "teamfranns/grade_tracker_backend_microservice_assignment:latest",
       "essential": false,
       "dependsOn": [{
        "containerName": "mysql-container",
@@ -75,7 +75,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
     },
       {
       "name": "mysql-container",
-      "image": "svmckinley/grade_tracker_mysql:latest",
+      "image": "teamfranns/grade_tracker_mysql:latest",
       "essential": false,
       "environment": [
                 {
@@ -99,7 +99,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
     },
       {
       "name": "adminer-container",
-      "image": "svmckinley/grade_tracker_adminer:latest",
+      "image": "teamfranns/grade_tracker_adminer:latest",
       "essential": false,
       "dependsOn": [{
        "containerName": "mysql-container",
@@ -122,7 +122,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
     },
       {
       "name": "nginx-container",
-      "image": "svmckinley/grade_tracker_nginx:latest",
+      "image": "teamfranns/grade_tracker_nginx:latest",
       "essential": true,
       "dependsOn": [{
        "containerName": "adminer-container",
