@@ -1,5 +1,5 @@
 data "aws_route53_zone" "selected" {
-  name         = "www.franns.net."
+  name         = "franns.net."
   private_zone = false
 }
 
