@@ -11,7 +11,7 @@ on:
 
 jobs: 
   docker-unit-tests: 
-    name: Docker Unit Test
+    name: Docker Install Unit Test
     runs-on: ubuntu-latest
     environment: Staging
     defaults:
@@ -25,7 +25,7 @@ jobs:
       run: sudo ./installdocker.sh
 
   terraform-unit-tests: 
-    name: Terraform Unit Test
+    name: Terraform Install Unit Test
     runs-on: ubuntu-latest
     environment: Staging
     defaults:
