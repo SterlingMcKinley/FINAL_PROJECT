@@ -71,7 +71,7 @@ resource "aws_cloudwatch_metric_alarm" "Grade-Tracker-ECS-Low_CPU" {
   datapoints_to_alarm = 1
 
   statistic = "Average"
-  threshold = "10"
+  threshold = "1"
   alarm_description = ""
 
   metric_name = "CPU_Low_Usage"
@@ -115,7 +115,7 @@ resource "aws_cloudwatch_metric_alarm" "Grade-Tracker-ECS-Low_MEM" {
   datapoints_to_alarm = 1
 
   statistic = "Average"
-  threshold = "40"
+  threshold = "1"
   alarm_description = ""
 
   metric_name = "Memory_Low_Usage"
@@ -127,32 +127,3 @@ resource "aws_cloudwatch_metric_alarm" "Grade-Tracker-ECS-Low_MEM" {
   actions_enabled = true
   insufficient_data_actions = []
 }
-
-# Cloudwatch Alarm for ASG (of ECS Cluster)
-
-# resource "aws_cloudwatch_metric_alarm" "ecs-asg-alert_Has-SystemCheckFailure" {
-#   alarm_name = "${var.company}/${var.project}-ECS-Has_SysCheckFailure"
-#   comparison_operator = "GreaterThanOrEqualToThreshold"
-
-#   period = "60"
-#   evaluation_periods = "1"
-#   datapoints_to_alarm = 1
-
-#   # second
-#   statistic = "Sum"
-#   threshold = "1"
-#   alarm_description = ""
-
-#   metric_name = "StatusCheckFailed"
-#   namespace = "AWS/EC2"
-#   dimensions = {
-#     AutoScalingGroupName = "${aws_autoscaling_group.ecs.name}"
-#   }
-
-#   actions_enabled = true
-#   insufficient_data_actions = []
-#   ok_actions = []
-#   alarm_actions = [
-#     "${var.sns_topic_cloudwatch_alarm_arn}",
-#   ]
-# }
