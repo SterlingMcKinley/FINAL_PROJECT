@@ -14,6 +14,7 @@ var APIGrades = null;
 var APIAssignments = null;
 
 var Greeted = false;
+var Charted = false;
 
 var WhoamiErrors = 0;
 
@@ -255,6 +256,22 @@ function HighestGrade(String){
 	}
 }
 
+//Find the Given Position Grade from the Grades String
+function PositionGrade(String, Position){
+	if(String.search('/') > 0){
+		var Grades = String.split('/');
+		if(Grades[Position] != null){
+			return Grades[Position];
+		}
+		else{
+			return null
+		}
+	}
+	else{
+		return String;
+	}
+}
+
 //Match Assingment to Userdata
 function MatchAssignment(Id, Assignments){
 	for(let i = 0; i < Assignments.length; i++) {
@@ -373,6 +390,158 @@ function GreetUser(){
 	}
 }
 
+function GenerateChart(Ctx, Labels, Attempt1, Attempt2, Attempt3){
+	var GenChart = new Chart(Ctx, {
+		type: 'line',
+		data: {
+		  labels: Labels,
+		  datasets: [{
+			  label: 'Attempt 1',
+			  data: Attempt1,
+			  borderColor: 'rgba(255, 99, 132, 0.2)',
+			  backgroundColor: 'rgba(255, 99, 132, 0.2)',
+			  fill: false,
+			  borderWidth: 2
+			},
+			{
+			  label: 'Attempt 2',
+			  data: Attempt2,
+			  borderColor: 'rgba(34, 139, 34, 0.2)',
+			  backgroundColor: 'rgba(255, 206, 86, 0.2)',
+			  fill: false,
+			  borderWidth: 2
+			},
+			{
+			  label: 'Attempt 3',
+			  data: Attempt3,
+			  borderColor: 'rgba(54, 162, 235, 0.2)',
+			  backgroundColor: 'rgba(54, 162, 235, 0.2)',
+			  fill: false,
+			  borderWidth: 2
+			}
+		  ]
+		},
+		options: {
+		  scales: {
+			yAxes: [{
+			  ticks: {
+				beginAtZero: true
+			  }
+			}]
+		  }
+		}
+	  });
+	
+	return GenChart
+}
+
+//Chart the data
+function ChartData(){
+	if(chart_1 != null && chart_2 != null && chart_3 != null){
+		var DiagnosticList = [];
+		var DiagnosticLabelList = [];
+		var DiagnosticTake1List = [];
+		var DiagnosticTake2List = [];
+		var DiagnosticTake3List = [];
+
+		var BuildScriptList = [];
+		var BuildScriptLabelList = [];
+		var BuildScriptTake1List = [];
+		var BuildScriptTake2List = [];
+		var BuildScriptTake3List = [];
+
+		var DeploymentList = [];
+		var DeploymentLabelList = [];
+		var DeploymentTake1List = [];
+		var DeploymentTake2List = [];
+		var DeploymentTake3List = [];
+		
+		for(let i = 0; i < APIAssignments.length; i++) {
+			if(APIAssignments[i].assignment_name.search('Diagnostic') > 0){
+				DiagnosticList.push(APIAssignments[i]);
+				DiagnosticLabelList.push(APIAssignments[i].assignment_name);
+			}
+			else if(APIAssignments[i].assignment_name.search('Build Script') > 0){
+				BuildScriptList.push(APIAssignments[i]);
+				BuildScriptLabelList.push(APIAssignments[i].assignment_name);
+			}
+			else if(APIAssignments[i].assignment_name.search('Deployment') > 0){
+				DeploymentList.push(APIAssignments[i]);
+				DeploymentLabelList.push(APIAssignments[i].assignment_name);
+			}
+		}
+
+		for(let i = 0; i < DiagnosticList.length; i++) {
+			var Grade = null;
+			for(let j = 0; j < APIGrades.length; j++) {
+				if(APIGrades[j].assignment_id == DiagnosticList[i].id){
+					Grade = APIGrades[j];
+					break;
+				}
+			}
+			if(Grade == null){
+				DiagnosticTake1List.push(null);
+				DiagnosticTake2List.push(null);
+				DiagnosticTake3List.push(null);
+			}
+			else{
+				DiagnosticTake1List.push(PositionGrade(Grade.grades, 0));
+				DiagnosticTake2List.push(PositionGrade(Grade.grades, 1));
+				DiagnosticTake3List.push(PositionGrade(Grade.grades, 2));
+			}
+		}
+
+		for(let i = 0; i < BuildScriptList.length; i++) {
+			var Grade = null;
+			for(let j = 0; j < APIGrades.length; j++) {
+				if(APIGrades[j].assignment_id == BuildScriptList[i].id){
+					Grade = APIGrades[j];
+					break;
+				}
+			}
+			if(Grade == null){
+				BuildScriptTake1List.push(null);
+				BuildScriptTake2List.push(null);
+				BuildScriptTake3List.push(null);
+			}
+			else{
+				BuildScriptTake1List.push(PositionGrade(Grade.grades, 0));
+				BuildScriptTake2List.push(PositionGrade(Grade.grades, 1));
+				BuildScriptTake3List.push(PositionGrade(Grade.grades, 2));
+			}
+		}
+
+		for(let i = 0; i < DeploymentList.length; i++) {
+			var Grade = null;
+			for(let j = 0; j < APIGrades.length; j++) {
+				if(APIGrades[j].assignment_id == DeploymentList[i].id){
+					Grade = APIGrades[j];
+					break;
+				}
+			}
+			if(Grade == null){
+				DeploymentTake1List.push(null);
+				DeploymentTake2List.push(null);
+				DeploymentTake3List.push(null);
+			}
+			else{
+				DeploymentTake1List.push(parseInt(PositionGrade(Grade.grades, 0)));
+				DeploymentTake2List.push(parseInt(PositionGrade(Grade.grades, 1)));
+				DeploymentTake3List.push(parseInt(PositionGrade(Grade.grades, 2)));
+			}
+		}
+
+		chart_1 = GenerateChart(ctx_1, DiagnosticLabelList, DiagnosticTake1List, DiagnosticTake2List, DiagnosticTake3List)
+		chart_2 = GenerateChart(ctx_2, BuildScriptLabelList, BuildScriptTake1List, BuildScriptTake2List, BuildScriptTake3List)
+		chart_3 = GenerateChart(ctx_3, DeploymentLabelList, DeploymentTake1List, DeploymentTake2List, DeploymentTake3List)
+
+		Charted = true;
+	}
+	else{
+		Log('Failed to Chart Data, No Chart Page Data Found');
+	}
+}
+
 //Navigate
 function Navigate(){
 	Session = GetSessionAPIKey();
@@ -430,6 +599,10 @@ function MainLoop(){
 	if(APIGrades == null || APIAssignments == null){
 		//Load the page data
 		LoadPageData();
+	}
+	if(APIUser != null && APIGrades != null && APIAssignments != null && ChartPage == true && Charted == false){
+		//Chart the data
+		ChartData();
 	}
 }
 
