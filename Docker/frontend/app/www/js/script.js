@@ -15,6 +15,7 @@ var APIAssignments = null;
 
 var Greeted = false;
 var Charted = false;
+var LoadStudents = false;
 
 var WhoamiErrors = 0;
 
@@ -592,17 +593,21 @@ function MainLoop(){
 	}
 	//Navigate the User
 	Navigate();
-	if(APIUser != null && Greeted == false){
+	if(APIUser != null && APIUser.is_admin == false && Greeted == false){
 		//Greet the User
 		GreetUser();
 	}
-	if(APIGrades == null || APIAssignments == null){
+	if(APIUser != null && APIUser.is_admin == false && APIGrades == null || APIAssignments == null){
 		//Load the page data
 		LoadPageData();
 	}
-	if(APIUser != null && APIGrades != null && APIAssignments != null && ChartPage == true && Charted == false){
+	if(APIUser != null && APIUser.is_admin == false && APIGrades != null && APIAssignments != null && ChartPage != null && ChartPage == true && Charted == false){
 		//Chart the data
 		ChartData();
+	}
+	if(APIUser != null && APIUser.is_admin == true && AdminDashboardPage != null && AdminDashboardPage == true && LoadStudents == false){
+		//Chart the data
+		AdminLoadStudents();
 	}
 }
 
