@@ -99,7 +99,7 @@ jobs:
       run: terraform validate
     - name: Terraform Apply
       run: terraform apply --auto-approve
-    - name: Terraform ECS Force Update Images
+    - name: Terraform ECS Force Update Cluster
       run: aws ecs update-service --cluster final-project-cluster --service final-project-ecs-service --force-new-deployment
     - name: App Link
       if: always()
