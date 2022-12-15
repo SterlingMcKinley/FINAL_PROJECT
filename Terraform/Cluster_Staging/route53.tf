@@ -11,3 +11,7 @@ resource "aws_route53_record" "www" {
   records = [aws_alb.final-project.dns_name]
   depends_on = [aws_alb.final-project]
 }
+
+output "app_url" {
+  value = "${aws_route53_record.www.name}"
+}
