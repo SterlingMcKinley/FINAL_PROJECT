@@ -5,18 +5,18 @@ resource "aws_db_instance" "default" {
   engine                 = "mysql"
   engine_version         = "8.0.28"
   instance_class         = "db.t3.micro"
-  db_name                = "test"
-  username               = "admin"
-  password               = "example"
+  db_name                = var.mysqldatabase
+  username               = var.mysqlrootuser
+  password               = var.mysqlrootpassword
   skip_final_snapshot    = true
   publicly_accessible    = true
   multi_az               = true
   vpc_security_group_ids = [aws_security_group.ingress_db.id]
-  depends_on = [aws_security_group.ingress_db]
+  depends_on             = [aws_security_group.ingress_db]
 }
 
 resource "aws_security_group" "ingress_db" {
-  name        = "ingress-db-staging"
+  name        = "ingress-db-prod"
   description = "Allow ingress to db"
 
   ingress {
