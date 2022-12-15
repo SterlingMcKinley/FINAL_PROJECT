@@ -12,9 +12,11 @@ var AssignmentMicroServicePort = 5500;
 var APIUser = null;
 var APIGrades = null;
 var APIAssignments = null;
+var APIStudents = null;
 
 var Greeted = false;
 var Charted = false;
+var LoadStudents = false;
 
 var WhoamiErrors = 0;
 
@@ -234,6 +236,39 @@ function GrabAssignments(){
 //Load All Assignments
 function LoadAssignments(){
 	GrabAssignments();
+}
+
+//Grab Students
+function GrabStudents(JSONData){
+	var Request = new XMLHttpRequest();
+	var PayLoad = JSON.stringify(JSONData);
+	Request.open('POST', APIRoot+':'+UserMicroServicePort+'/grab/all/users', true);
+	Request.setRequestHeader("accept", "application/json");
+	Request.setRequestHeader("Content-Type", "application/json");
+	try{
+		Request.send(PayLoad);
+		Request.onload = function(){
+			if(Request.status === 200){
+				Data = JSON.parse(Request.responseText);
+				var Students = [];
+				for(let i = 0; i < Data.length; i++) {
+					if(Data[i].is_admin == false){
+						Students.push(Data[i]);
+					}
+				}
+				APIStudents = Students;
+			}
+			else{
+				Log('Failed to use User Micro Service API, Request Error. Non 200 Status Code');
+			}
+		};
+		Request.onerror = function() {
+			Log('Failed to use User Micro Service API, Request Error');
+		};
+	}
+	catch(err){
+		Log('Failed to use User Micro Service API');
+	}
 }
 
 //Find the Highest Grade from the Grades String
@@ -542,6 +577,57 @@ function ChartData(){
 	}
 }
 
+//Admin dashboard load students
+function AdminLoadStudents(){
+	var Table = document.getElementById('studentlist');
+	if(Table != null && APIStudents != null){
+		Table.innerHTML = "";
+		for(let i = 0; i < APIStudents.length; i++) {
+			var TableRow = document.createElement('tr');
+			var TableDataName = document.createElement('td');
+			TableDataName.textContent = APIStudents[i].first_name+' '+APIStudents[i].last_name;
+			var TableDataEmail = document.createElement('td');
+			TableDataEmail.textContent = APIStudents[i].email;
+			var TableDataEditScores = document.createElement('td');
+			var TableDataEditScoresButton = document.createElement('button');
+			TableDataEditScoresButton.type = "button";
+			TableDataEditScoresButton.className = "btn btn-link btn-rounded btn-sm fw-bold";
+			TableDataEditScoresButton.setAttribute("data-mdb-ripple-color", "dark");
+			TableDataEditScoresButton.onclick = ClickedLoadStudentsGrades();
+			TableDataEditScoresButton.setAttribute("student", APIStudents[i].username);
+			TableDataEditScores.appendChild(TableDataEditScoresButton);
+			var TableHiddenScoreRow = document.createElement('tr');
+			TableHiddenScoreRow.id = APIStudents[i].username;
+			TableHiddenScoreRow.className = "hidden_row";
+			TableHiddenScoreRow.style.display = "none";
+			TableHiddenScoreRow.style.textAlign = "center";
+			TableRow.appendChild(TableDataName);
+			TableRow.appendChild(TableDataEmail);
+			TableRow.appendChild(TableDataEditScores);
+			Table.appendChild(TableRow);
+			Table.appendChild(TableHiddenScoreRow);
+		}
+		LoadStudents = true;
+	}
+	else{
+		Log('Admin Student data is not yet ready');
+	}
+}
+
+//Load students data
+function LoadStudentsData(){
+	Session = GetSessionAPIKey();
+	if(Session != null){
+		var JsonObj = new Object();
+		JsonObj.apikey = Session;
+
+		GrabStudents(JsonObj);
+	}
+	else{
+		Log('Not Logged in Can Grab Students Data');
+	}
+}
+
 //Navigate
 function Navigate(){
 	Session = GetSessionAPIKey();
@@ -592,17 +678,25 @@ function MainLoop(){
 	}
 	//Navigate the User
 	Navigate();
-	if(APIUser != null && Greeted == false){
+	if(APIUser != null && APIUser.is_admin == false && Greeted == false){
 		//Greet the User
 		GreetUser();
 	}
-	if(APIGrades == null || APIAssignments == null){
+	if(APIUser != null && APIUser.is_admin == false && APIGrades == null || APIAssignments == null){
 		//Load the page data
 		LoadPageData();
 	}
-	if(APIUser != null && APIGrades != null && APIAssignments != null && ChartPage == true && Charted == false){
+	if(APIUser != null && APIUser.is_admin == false && APIGrades != null && APIAssignments != null && ChartPage != null && ChartPage == true && Charted == false){
 		//Chart the data
 		ChartData();
+	}
+	if(APIUser != null && APIUser.is_admin == true && AdminDashboardPage != null && AdminDashboardPage == true && APIStudents == null){
+		//load students data
+		LoadStudentsData();
+	}
+	if(APIUser != null && APIUser.is_admin == true && AdminDashboardPage != null && AdminDashboardPage == true && LoadStudents == false){
+		//Admin dashboard load students
+		AdminLoadStudents();
 	}
 }
 
