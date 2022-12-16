@@ -13,5 +13,5 @@ resource "aws_route53_record" "www" {
 }
 
 output "app_url" {
-  value = "${aws_route53_record.www.name}"
+  value = "http://${aws_route53_record.www.name}"
 }
