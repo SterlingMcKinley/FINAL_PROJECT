@@ -69,9 +69,6 @@ jobs:
     - name: Create Backend Microservice Assignment Image
       run: docker build -t $DOCKERHUB_USR/grade_tracker_backend_microservice_assignment:latest .
       working-directory: ./Docker/backend/assignmentapp
-    - name: Create MYSQL Image
-      run: docker build -t $DOCKERHUB_USR/grade_tracker_mysql:latest .
-      working-directory: ./Docker/mysql
     - name: Create Adminer Image
       run: docker build -t $DOCKERHUB_USR/grade_tracker_adminer:latest .
       working-directory: ./Docker/adminer
@@ -84,8 +81,6 @@ jobs:
       run: docker push $DOCKERHUB_USR/grade_tracker_backend_microservice_user:latest
     - name: Push Backend Microservice Assignment Image
       run: docker push $DOCKERHUB_USR/grade_tracker_backend_microservice_assignment:latest
-    - name: Push MYSQL Image
-      run: docker push $DOCKERHUB_USR/grade_tracker_mysql:latest
     - name: Push Adminer Image
       run: docker push $DOCKERHUB_USR/grade_tracker_adminer:latest
     - name: Push Nginx Image
@@ -100,10 +95,8 @@ jobs:
       run: python3 ../../Utilities/replacer.py terraform.tfvars terraform.tfvars ~region~ $AWS_REGION
     - name: Replace Placeholder AWS_ECS_ARN
       run: python3 ../../Utilities/replacer.py main.tf main.tf ~awsecsarn~ $AWS_ECS_ARN
-    - name: Replace Placeholder MYSQL_ROOT_PASSWORD
-      run: python3 ../../Utilities/replacer.py main.tf main.tf ~mysqlrootpassword~ $MYSQL_ROOT_PASSWORD
-    - name: Replace Placeholder MYSQL_DATABASE
-      run: python3 ../../Utilities/replacer.py main.tf main.tf ~mysqldatabase~ $MYSQL_DATABASE
+    - name: Replace Placeholder MYSQL_DB_URL
+      run: python3 ../../Utilities/replacer.py main.tf main.tf ~mysqldburl~ $MYSQL_DB_URL
     - name: Terraform Init
       run: terraform init
     - name: Terraform Validate
