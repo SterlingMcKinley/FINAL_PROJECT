@@ -686,18 +686,18 @@ function MainLoop(){
 		//Load the page data
 		LoadPageData();
 	}
-	if(APIUser != null && APIUser.is_admin == false && APIGrades != null && APIAssignments != null && ChartPage != null && ChartPage == true && Charted == false){
+	//if(APIUser != null && APIUser.is_admin == false && APIGrades != null && APIAssignments != null && ChartPage != null && ChartPage == true && Charted == false){
 		//Chart the data
-		ChartData();
-	}
-	if(APIUser != null && APIUser.is_admin == true && AdminDashboardPage != null && AdminDashboardPage == true && APIStudents == null){
+		//ChartData();
+	//}
+	//if(APIUser != null && APIUser.is_admin == true && AdminDashboardPage != null && AdminDashboardPage == true && APIStudents == null){
 		//load students data
-		LoadStudentsData();
-	}
-	if(APIUser != null && APIUser.is_admin == true && AdminDashboardPage != null && AdminDashboardPage == true && LoadStudents == false){
+	//	LoadStudentsData();
+	//}
+	//if(APIUser != null && APIUser.is_admin == true && AdminDashboardPage != null && AdminDashboardPage == true && LoadStudents == false){
 		//Admin dashboard load students
-		AdminLoadStudents();
-	}
+		//AdminLoadStudents();
+	//}
 }
 
 //Main Function
