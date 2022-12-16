@@ -39,6 +39,8 @@ jobs:
     - name: Set AWS_Region
       run: echo "AWS_REGION=$(jq .region -r .config.json)" >> $GITHUB_ENV
       working-directory: .
+    - name: Set MYSQL_DB_URL
+      run: echo "MYSQL_DB_URL=db-app.team.franns.net" >> $GITHUB_ENV
     - name: DockerHub Login
       run: docker login --username $DOCKERHUB_USR --password $DOCKERHUB_PWD
     - name: Create Frontend Image
