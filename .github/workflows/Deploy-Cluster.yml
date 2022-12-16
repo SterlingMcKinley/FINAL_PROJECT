@@ -44,9 +44,6 @@ jobs:
         shell: bash
         working-directory: .
     steps: 
-    - uses: actions/checkout@v3
-      name: GitHub Checkout
-
     - name: Set AWS_Region ENV
       run: echo "AWS_REGION=$(jq .region -r .config.json)" >> $GITHUB_ENV
 
