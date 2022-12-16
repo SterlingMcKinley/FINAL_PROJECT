@@ -39,22 +39,32 @@ jobs:
     - name: Set AWS_Region
       run: echo "AWS_REGION=$(jq .region -r .config.json)" >> $GITHUB_ENV
       working-directory: .
+    - name: Set MYSQL_DB_URL
+      run: echo "MYSQL_DB_URL=db-app.team.franns.net" >> $GITHUB_ENV
     - name: DockerHub Login
       run: docker login --username $DOCKERHUB_USR --password $DOCKERHUB_PWD
     - name: Create Frontend Image
       run: docker build -t $DOCKERHUB_USR/grade_tracker_frontend:latest .
       working-directory: ./Docker/frontend
-    - name: Replace User Placeholder MYSQL_ROOT_PASSWORD
-      run: python3 ../../Utilities/replacer.py ../../Docker/backend/userapp/app/app.py ../../Docker/backend/userapp/app/app.py ~mysqlrootpassword~ $MYSQL_ROOT_PASSWORD
     - name: Replace User Placeholder MYSQL_DATABASE
       run: python3 ../../Utilities/replacer.py ../../Docker/backend/userapp/app/app.py ../../Docker/backend/userapp/app/app.py ~mysqldatabase~ $MYSQL_DATABASE
+    - name: Replace User Placeholder MYSQL_ROOT_USER
+      run: python3 ../../Utilities/replacer.py ../../Docker/backend/userapp/app/app.py ../../Docker/backend/userapp/app/app.py ~mysqlrootuser~ $MYSQL_ROOT_USER
+    - name: Replace User Placeholder MYSQL_ROOT_PASSWORD
+      run: python3 ../../Utilities/replacer.py ../../Docker/backend/userapp/app/app.py ../../Docker/backend/userapp/app/app.py ~mysqlrootpassword~ $MYSQL_ROOT_PASSWORD
+    - name: Replace User Placeholder MYSQL_DB_URL
+      run: python3 ../../Utilities/replacer.py ../../Docker/backend/userapp/app/app.py ../../Docker/backend/userapp/app/app.py ~mysqldburl~ $MYSQL_DB_URL
     - name: Create Backend Microservice User Image
       run: docker build -t $DOCKERHUB_USR/grade_tracker_backend_microservice_user:latest .
       working-directory: ./Docker/backend/userapp
-    - name: Replace Assignment Placeholder MYSQL_ROOT_PASSWORD
-      run: python3 ../../Utilities/replacer.py ../../Docker/backend/assignmentapp/app/app.py ../../Docker/backend/assignmentapp/app/app.py ~mysqlrootpassword~ $MYSQL_ROOT_PASSWORD
     - name: Replace Assignment Placeholder MYSQL_DATABASE
       run: python3 ../../Utilities/replacer.py ../../Docker/backend/assignmentapp/app/app.py ../../Docker/backend/assignmentapp/app/app.py ~mysqldatabase~ $MYSQL_DATABASE
+    - name: Replace Assignment Placeholder MYSQL_ROOT_USER
+      run: python3 ../../Utilities/replacer.py ../../Docker/backend/assignmentapp/app/app.py ../../Docker/backend/assignmentapp/app/app.py ~mysqlrootuser~ $MYSQL_ROOT_USER
+    - name: Replace Assignment Placeholder MYSQL_ROOT_PASSWORD
+      run: python3 ../../Utilities/replacer.py ../../Docker/backend/assignmentapp/app/app.py ../../Docker/backend/assignmentapp/app/app.py ~mysqlrootpassword~ $MYSQL_ROOT_PASSWORD
+    - name: Replace Assignment Placeholder MYSQL_DB_URL
+      run: python3 ../../Utilities/replacer.py ../../Docker/backend/assignmentapp/app/app.py ../../Docker/backend/assignmentapp/app/app.py ~mysqldburl~ $MYSQL_DB_URL
     - name: Create Backend Microservice Assignment Image
       run: docker build -t $DOCKERHUB_USR/grade_tracker_backend_microservice_assignment:latest .
       working-directory: ./Docker/backend/assignmentapp
