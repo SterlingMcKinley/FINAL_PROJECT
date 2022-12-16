@@ -34,8 +34,8 @@ jobs:
     - name: Install Terraform
       run: sudo ./installterraform.sh
       working-directory: ./Scripts
-    - name: Install jq
-      run: sudo apt update && sudo apt install jq -y
+    # - name: Install jq
+    #   run: sudo apt update && sudo apt install jq -y
     - name: Set AWS_Region
       run: echo "AWS_REGION=$(jq .region -r .config.json)" >> $GITHUB_ENV
       working-directory: .
@@ -99,6 +99,8 @@ jobs:
       run: terraform validate
     - name: Terraform Apply
       run: terraform apply --auto-approve
+    - name: Terraform ECS Force Update Cluster
+      run: aws ecs update-service --cluster final-project-cluster --service final-project-ecs-service --force-new-deployment
     - name: App Link
       if: always()
-      run: printf "\033[0;32mApp Link ~>\033[0m $(terraform output -raw alb_url )/\n"
+      run: printf "\033[0;32mApp Link ~>\033[0m $(terraform output -raw app_url )/\n"
