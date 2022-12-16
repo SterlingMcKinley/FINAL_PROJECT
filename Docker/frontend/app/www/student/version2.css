@@ -98,33 +98,36 @@ body {
     width:100%;
     max-width:500px;
     margin-left:55%;
-    margin-top: -10%;
+    margin-top: -12%;
     padding: 20px;
     border-radius: 20px;
     border: solid 3px #adb4bf;
     background: white;
+    box-shadow:20px 20px 40px grey;
   }
 
   .chartBox_2 {
     width:100%;
     max-width:500px;
     margin-left:55%;
-    margin-top: 3%;
+    margin-top: 2%;
     padding: 20px;
     border-radius: 20px;
     border: solid 3px rgb(255, 129, 26);
     background: white;
+    box-shadow:20px 20px 40px rgb(255, 129, 26);
   }
 
   .chartBox_3 {
     width:100%;
     max-width:500px;
     margin-left:5%;
-    margin-top: -20%;
+    margin-top: -22.5%;
     padding: 20px;
     border-radius: 20px;
     border: solid 3px #5b7c99;
     background: white;
+    box-shadow:20px 20px 40px #5b7c99;
   }
 
 .greeting {
