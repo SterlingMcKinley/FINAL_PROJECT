@@ -17,9 +17,49 @@ env:
   MYSQL_ROOT_USER: ${{ secrets.MYSQL_ROOT_USER }}
   MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
 
+#This workflow requires Docker, Terraform and jq which comes Pre-Installed on Github Runners
+
 jobs: 
-  deploy-cluster: 
-    name: Deploy Cluster using Terraform
+  github-checkout: 
+    name: GitHub Checkout
+    runs-on: ubuntu-latest
+    environment: Staging
+    defaults:
+      run:
+        shell: bash
+        working-directory: .
+    steps: 
+    - uses: actions/checkout@v3
+      name: GitHub Checkout
+
+
+
+jobs: 
+  set-up-runner: 
+    needs: github-checkout
+    name: Setup Runner
+    runs-on: ubuntu-latest
+    environment: Staging
+    defaults:
+      run:
+        shell: bash
+        working-directory: .
+    steps: 
+    - uses: actions/checkout@v3
+      name: GitHub Checkout
+
+    - name: Set AWS_Region ENV
+      run: echo "AWS_REGION=$(jq .region -r .config.json)" >> $GITHUB_ENV
+
+    - name: Set MYSQL_DB_URL ENV
+      run: echo "MYSQL_DB_URL=db-test.team.franns.net" >> $GITHUB_ENV
+
+    - name: DockerHub Login
+      run: docker login --username $DOCKERHUB_USR --password $DOCKERHUB_PWD
+
+  set-up-files: 
+    needs: github-checkout
+    name: Setup Files
     runs-on: ubuntu-latest
     environment: Staging
     defaults:
@@ -27,84 +67,235 @@ jobs:
         shell: bash
         working-directory: ./Terraform/Cluster_Staging
     steps: 
-    - uses: actions/checkout@v3
-      name: GitHub Checkout
-    # - name: Install Docker
-    #   run: sudo ./installdocker.sh
-    #   working-directory: ./Scripts
-    # - name: Install Terraform
-    #   run: sudo ./installterraform.sh
-    #   working-directory: ./Scripts
-    # - name: Install jq
-    #   run: sudo apt update && sudo apt install jq -y
-    - name: Set AWS_Region
-      run: echo "AWS_REGION=$(jq .region -r .config.json)" >> $GITHUB_ENV
-      working-directory: .
-    - name: Set MYSQL_DB_URL
-      run: echo "MYSQL_DB_URL=db-test.team.franns.net" >> $GITHUB_ENV
-    - name: DockerHub Login
-      run: docker login --username $DOCKERHUB_USR --password $DOCKERHUB_PWD
-    - name: Create Frontend Image
-      run: docker build -t $DOCKERHUB_USR/grade_tracker_frontend:latest .
-      working-directory: ./Docker/frontend
     - name: Replace User Placeholder MYSQL_DATABASE
       run: python3 ../../Utilities/replacer.py ../../Docker/backend/userapp/app/app.py ../../Docker/backend/userapp/app/app.py ~mysqldatabase~ $MYSQL_DATABASE
+
     - name: Replace User Placeholder MYSQL_ROOT_USER
       run: python3 ../../Utilities/replacer.py ../../Docker/backend/userapp/app/app.py ../../Docker/backend/userapp/app/app.py ~mysqlrootuser~ $MYSQL_ROOT_USER
+
     - name: Replace User Placeholder MYSQL_ROOT_PASSWORD
       run: python3 ../../Utilities/replacer.py ../../Docker/backend/userapp/app/app.py ../../Docker/backend/userapp/app/app.py ~mysqlrootpassword~ $MYSQL_ROOT_PASSWORD
+
     - name: Replace User Placeholder MYSQL_DB_URL
       run: python3 ../../Utilities/replacer.py ../../Docker/backend/userapp/app/app.py ../../Docker/backend/userapp/app/app.py ~mysqldburl~ $MYSQL_DB_URL
-    - name: Create Backend Microservice User Image
-      run: docker build -t $DOCKERHUB_USR/grade_tracker_backend_microservice_user:latest .
-      working-directory: ./Docker/backend/userapp
+
+
+
     - name: Replace Assignment Placeholder MYSQL_DATABASE
       run: python3 ../../Utilities/replacer.py ../../Docker/backend/assignmentapp/app/app.py ../../Docker/backend/assignmentapp/app/app.py ~mysqldatabase~ $MYSQL_DATABASE
+
     - name: Replace Assignment Placeholder MYSQL_ROOT_USER
       run: python3 ../../Utilities/replacer.py ../../Docker/backend/assignmentapp/app/app.py ../../Docker/backend/assignmentapp/app/app.py ~mysqlrootuser~ $MYSQL_ROOT_USER
+
     - name: Replace Assignment Placeholder MYSQL_ROOT_PASSWORD
       run: python3 ../../Utilities/replacer.py ../../Docker/backend/assignmentapp/app/app.py ../../Docker/backend/assignmentapp/app/app.py ~mysqlrootpassword~ $MYSQL_ROOT_PASSWORD
+
     - name: Replace Assignment Placeholder MYSQL_DB_URL
       run: python3 ../../Utilities/replacer.py ../../Docker/backend/assignmentapp/app/app.py ../../Docker/backend/assignmentapp/app/app.py ~mysqldburl~ $MYSQL_DB_URL
-    - name: Create Backend Microservice Assignment Image
-      run: docker build -t $DOCKERHUB_USR/grade_tracker_backend_microservice_assignment:latest .
-      working-directory: ./Docker/backend/assignmentapp
-    - name: Create Adminer Image
-      run: docker build -t $DOCKERHUB_USR/grade_tracker_adminer:latest .
-      working-directory: ./Docker/adminer
-    - name: Create Nginx Image
-      run: docker build -t $DOCKERHUB_USR/grade_tracker_nginx:latest .
-      working-directory: ./Docker/nginx
-    - name: Push Frontend Image
-      run: docker push $DOCKERHUB_USR/grade_tracker_frontend:latest
-    - name: Push Backend Microservice User Image
-      run: docker push $DOCKERHUB_USR/grade_tracker_backend_microservice_user:latest
-    - name: Push Backend Microservice Assignment Image
-      run: docker push $DOCKERHUB_USR/grade_tracker_backend_microservice_assignment:latest
-    - name: Push Adminer Image
-      run: docker push $DOCKERHUB_USR/grade_tracker_adminer:latest
-    - name: Push Nginx Image
-      run: docker push $DOCKERHUB_USR/grade_tracker_nginx:latest
+
+
+
     - name: Replace Backend Placeholder BUCKET_NAME
       run: python3 ../../Utilities/replacer.py backend.tf backend.tf ~bucketname~ $BUCKET_NAME
+
     - name: Replace Backend Placeholder TABLE_NAME
       run: python3 ../../Utilities/replacer.py backend.tf backend.tf ~tablename~ $TABLE_NAME
+
     - name: Replace Backend Placeholder AWS_REGION
       run: python3 ../../Utilities/replacer.py backend.tf backend.tf ~region~ $AWS_REGION
+
     - name: Replace Placeholder AWS_REGION
       run: python3 ../../Utilities/replacer.py terraform.tfvars terraform.tfvars ~region~ $AWS_REGION
+
     - name: Replace Placeholder AWS_ECS_ARN
       run: python3 ../../Utilities/replacer.py main.tf main.tf ~awsecsarn~ $AWS_ECS_ARN
+
     - name: Replace Placeholder MYSQL_DB_URL
       run: python3 ../../Utilities/replacer.py main.tf main.tf ~mysqldburl~ $MYSQL_DB_URL
+
+
+
+  create-frontend-image: 
+    needs: [set-up-runner, set-up-files]
+    name: Create Frontend Image
+    runs-on: ubuntu-latest
+    environment: Staging
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./Docker/frontend
+    steps: 
+    - name: Create Frontend Image
+      run: docker build -t $DOCKERHUB_USR/grade_tracker_frontend:latest .
+
+  create-backend-microservice-user-image: 
+    needs: [set-up-runner, set-up-files]
+    name: Create Backend Microservice User Image
+    runs-on: ubuntu-latest
+    environment: Staging
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./Docker/backend/userapp
+    steps: 
+    - name: Create Backend Microservice User Image
+      run: docker build -t $DOCKERHUB_USR/grade_tracker_backend_microservice_user:latest .
+
+  create-backend-microservice-assignment-image: 
+    needs: [set-up-runner, set-up-files]
+    name: Create Backend Microservice Assignment Image
+    runs-on: ubuntu-latest
+    environment: Staging
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./Docker/backend/assignmentapp
+    steps: 
+    - name: Create Backend Microservice Assignment Image
+      run: docker build -t $DOCKERHUB_USR/grade_tracker_backend_microservice_assignment:latest .
+
+  create-adminer-image: 
+    needs: [set-up-runner, set-up-files]
+    name: Create Adminer Image
+    runs-on: ubuntu-latest
+    environment: Staging
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./Docker/adminer
+    steps: 
+    - name: Create Adminer Image
+      run: docker build -t $DOCKERHUB_USR/grade_tracker_adminer:latest .
+
+  create-nginx-image: 
+    needs: [set-up-runner, set-up-files]
+    name: Create Nginx Image
+    runs-on: ubuntu-latest
+    environment: Staging
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./Docker/nginx
+    steps: 
+    - name: Create Nginx Image
+      run: docker build -t $DOCKERHUB_USR/grade_tracker_nginx:latest .
+
+
+
+  push-frontend-image: 
+    needs: create-frontend-image
+    name: Push Frontend Image
+    runs-on: ubuntu-latest
+    environment: Staging
+    defaults:
+      run:
+        shell: bash
+        working-directory: .
+    steps: 
+    - name: Push Frontend Image
+      run: docker push $DOCKERHUB_USR/grade_tracker_frontend:latest
+
+  push-backend-microservice-user-image: 
+    needs: create-backend-microservice-user-image
+    name: Push Backend Microservice User Image
+    runs-on: ubuntu-latest
+    environment: Staging
+    defaults:
+      run:
+        shell: bash
+        working-directory: .
+    steps: 
+    - name: Push Backend Microservice User Image
+      run: docker push $DOCKERHUB_USR/grade_tracker_backend_microservice_user:latest
+
+  push-backend-microservice-assignment-image: 
+    needs: create-backend-microservice-assignment-image
+    name: Push Backend Microservice Assignment Image
+    runs-on: ubuntu-latest
+    environment: Staging
+    defaults:
+      run:
+        shell: bash
+        working-directory: .
+    steps: 
+    - name: Push Backend Microservice Assignment Image
+      run: docker push $DOCKERHUB_USR/grade_tracker_backend_microservice_assignment:latest
+
+  push-adminer-image: 
+    needs: create-adminer-image
+    name: Push Adminer Image
+    runs-on: ubuntu-latest
+    environment: Staging
+    defaults:
+      run:
+        shell: bash
+        working-directory: .
+    steps: 
+    - name: Push Adminer Image
+      run: docker push $DOCKERHUB_USR/grade_tracker_adminer:latest
+
+  push-nginx-image: 
+    needs: create-nginx-image
+    name: Push Nginx Image
+    runs-on: ubuntu-latest
+    environment: Staging
+    defaults:
+      run:
+        shell: bash
+        working-directory: .
+    steps: 
+    - name: Push Nginx Image
+      run: docker push $DOCKERHUB_USR/grade_tracker_nginx:latest
+
+
+
+  terraform-deploy-infrastructure: 
+    needs: [push-frontend-image, push-backend-microservice-user-image, push-backend-microservice-assignment-image, push-adminer-image, push-nginx-image]
+    name: Terraform Deploy Infrastructure
+    runs-on: ubuntu-latest
+    environment: Staging
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./Terraform/Cluster_Staging
+    steps: 
     - name: Terraform Init
       run: terraform init
+
     - name: Terraform Validate
       run: terraform validate
+
     - name: Terraform Apply
       run: terraform apply --auto-approve
+
+
+
+  terraform-ecs-force-update-cluster: 
+    needs: terraform-deploy-infrastructure
+    name: Terraform ECS Force Update Cluster
+    runs-on: ubuntu-latest
+    environment: Staging
+    defaults:
+      run:
+        shell: bash
+        working-directory: .
+    steps: 
     - name: Terraform ECS Force Update Cluster
       run: aws ecs update-service --cluster final-project-cluster-staging --service final-project-ecs-service-staging --force-new-deployment
+
+
+
+  app-link: 
+    if: ${{ always() }}
+    needs: terraform-ecs-force-update-cluster
+    name: App Link
+    runs-on: ubuntu-latest
+    environment: Staging
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./Terraform/Cluster_Staging
+    steps: 
     - name: App Link
       if: always()
       run: printf "\033[0;32mApp Link ~>\033[0m $(terraform output -raw app_url )/\n"
