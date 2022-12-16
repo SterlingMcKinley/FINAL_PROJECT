@@ -11,3 +11,7 @@ resource "aws_route53_record" "www" {
   records = [aws_db_instance.default.endpoint]
   depends_on = [aws_db_instance.default]
 }
+
+output "db_url" {
+  value = "http://${aws_route53_record.www.name}"
+}
