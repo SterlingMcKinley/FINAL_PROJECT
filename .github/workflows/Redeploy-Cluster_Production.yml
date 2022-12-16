@@ -13,8 +13,9 @@ env:
   DOCKERHUB_USR: ${{ secrets.DOCKERHUB_USR }}
   DOCKERHUB_PWD: ${{ secrets.DOCKERHUB_PWD }}
   AWS_ECS_ARN: ${{ secrets.AWS_ECS_ARN }}
-  MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
   MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+  MYSQL_ROOT_USER: ${{ secrets.MYSQL_ROOT_USER }}
+  MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
 
 jobs: 
   redeploy-cluster: 
