@@ -13,8 +13,8 @@ env:
   MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
 
 jobs: 
-  init-remote-statefile: 
-    name: Init Remote Statefile S3 using Terraform
+  init-rds-database: 
+    name: Init RDS Database using Terraform
     runs-on: ubuntu-latest
     environment: Staging
     defaults:
@@ -24,8 +24,8 @@ jobs:
     steps: 
     - uses: actions/checkout@v3
       name: GitHub Checkout
-    - name: Install jq
-      run: sudo apt update && sudo apt install jq -y
+    # - name: Install jq
+    #   run: sudo apt update && sudo apt install jq -y
     - name: Set AWS_Region
       run: echo "AWS_REGION=$(jq .region -r .config.json)" >> $GITHUB_ENV
       working-directory: .
