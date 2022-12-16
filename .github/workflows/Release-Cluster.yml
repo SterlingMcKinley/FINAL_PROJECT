@@ -26,9 +26,9 @@ jobs:
     steps: 
     - uses: actions/checkout@v3
       name: GitHub Checkout
-    - name: Install Terraform
-      run: sudo ./installterraform.sh
-      working-directory: ./Scripts
+    # - name: Install Terraform
+    #   run: sudo ./installterraform.sh
+    #   working-directory: ./Scripts
     # - name: Install jq
     #   run: sudo apt update && sudo apt install jq -y
     - name: Set AWS_Region
