@@ -64,8 +64,16 @@ class UserSchema(ma.Schema):
     class Meta:
         fields = ('id', 'email', 'first_name', 'last_name', 'username', 'password', 'is_admin', 'creation_datetime')
 
+#UserNP Schema
+class UserNPSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'email', 'first_name', 'last_name', 'username', 'is_admin', 'creation_datetime')
+
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
+
+usernp_schema = UserNPSchema()
+usersnp_schema = UserNPSchema(many=True)
 
 #Session Data Structure Class
 class Session(db.Model):
@@ -115,7 +123,7 @@ def grab_all_users():
         abort(401)
 
     all_users = User.query.all()
-    results = users_schema.dump(all_users)
+    results = usersnp_schema.dump(all_users)
     return jsonify(results)
 
 #Grab a user by username, Admin/Teacher only
@@ -142,7 +150,7 @@ def grab_user(requested_username):
     except:
         abort(404)
 
-    return user_schema.jsonify(user)
+    return usernp_schema.jsonify(user)
 
 #Add a user if the username is available, Open for everyone
 @app.route('/add/user', methods = ['POST'])
@@ -168,7 +176,7 @@ def add_user():
     user = User(form_email, form_first_name, form_last_name, form_username, form_password, form_is_admin)
     db.session.add(user)
     db.session.commit()
-    return user_schema.jsonify(user)
+    return usernp_schema.jsonify(user)
 
 #Update a user by username, Open for logged in user only
 @app.route('/update/user/<requested_username>', methods = ['PUT'])
@@ -202,7 +210,7 @@ def update_user(requested_username):
     user.password = form_new_password
 
     db.session.commit()
-    return user_schema.jsonify(user)
+    return usernp_schema.jsonify(user)
 
 #Delete a user by username, Admin/Teacher only
 @app.route('/delete/user/<requested_username>', methods = ['DELETE'])
@@ -230,7 +238,7 @@ def delete_user(requested_username):
 
     db.session.delete(user)
     db.session.commit()
-    return user_schema.jsonify(user)
+    return usernp_schema.jsonify(user)
 
 #Login and get a new API key, Open for everyone
 @app.route('/login', methods = ['POST'])
@@ -335,7 +343,7 @@ def grab_session_user():
     except:
         abort(401)
 
-    results = user_schema.dump(user)
+    results = usernp_schema.dump(user)
     return jsonify(results)
 
 #Health check

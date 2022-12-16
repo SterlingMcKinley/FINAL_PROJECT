@@ -172,6 +172,10 @@ resource "aws_ecs_service" "aws-ecs-service" {
   desired_count        = 1
   force_new_deployment = true
 
+  triggers = {
+    update = timestamp()  # force update in-place every apply
+  }
+
   network_configuration {
     subnets = [
       aws_subnet.private_a.id,

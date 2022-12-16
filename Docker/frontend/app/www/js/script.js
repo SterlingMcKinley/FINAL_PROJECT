@@ -9,9 +9,16 @@ var UserMicroServicePort = 5000;
 
 var AssignmentMicroServicePort = 5500;
 
-var APIUsername = null;
+var APIUser = null;
 var APIGrades = null;
 var APIAssignments = null;
+var APIStudents = null;
+
+var Greeted = false;
+var Charted = false;
+var LoadStudents = false;
+
+var WhoamiErrors = 0;
 
 //Log to console
 function Log(Msg){
@@ -81,9 +88,6 @@ function Login(JSONData){
 			if(Request.status === 200){
 				Data = JSON.parse(Request.responseText);
 				SetSessionAPIKey(Data.apikey)
-				if(window.location.href == APIRoot+'/'){
-					location.href = APIRoot+'/student/home.html';
-				}
 			}
 			else{
 				Log('Failed to use User Micro Service API, Request Error. Non 200 Status Code');
@@ -116,6 +120,7 @@ function Logout(JSONData){
 			else{
 				Log('Failed to use User Micro Service API, Request Error. Non 200 Status Code');
 				alert('Could not logout using that information!');
+				RemoveSessionAPIKey();
 			}
 		};
 		Request.onerror = function() {
@@ -127,8 +132,8 @@ function Logout(JSONData){
 	}
 }
 
-//Greet
-function Greet(JSONData){
+//Grab Who am i
+function GrabWhoami(JSONData){
 	var Request = new XMLHttpRequest();
 	var PayLoad = JSON.stringify(JSONData);
 	Request.open('POST', APIRoot+':'+UserMicroServicePort+'/grab/session/user', true);
@@ -139,13 +144,17 @@ function Greet(JSONData){
 		Request.onload = function(){
 			if(Request.status === 200){
 				Data = JSON.parse(Request.responseText);
-				document.getElementById('greeting').textContent = 'Hello '+Data.first_name;
-				document.getElementById('greeting').style.visibility = "visible";
-				style="visibility: hidden;"
-				APIUsername = Data.username;
+				APIUser = Data;
+				if(WhoamiErrors > 0){
+					WhoamiErrors = 0;
+				}
 			}
 			else{
 				Log('Failed to use User Micro Service API, Request Error. Non 200 Status Code');
+				WhoamiErrors = WhoamiErrors + 1;
+				if(WhoamiErrors > 100){
+					RemoveSessionAPIKey();
+				}
 			}
 		};
 		Request.onerror = function() {
@@ -161,7 +170,7 @@ function Greet(JSONData){
 function GrabGrades(JSONData){
 	var Request = new XMLHttpRequest();
 	var PayLoad = JSON.stringify(JSONData);
-	Request.open('POST', APIRoot+':'+AssignmentMicroServicePort+'/grab/userdata/username/'+APIUsername, true);
+	Request.open('POST', APIRoot+':'+AssignmentMicroServicePort+'/grab/userdata/username/'+APIUser.username, true);
 	Request.setRequestHeader("accept", "application/json");
 	Request.setRequestHeader("Content-Type", "application/json");
 	try{
@@ -187,7 +196,7 @@ function GrabGrades(JSONData){
 //Load All Grades of User
 function LoadGrades(){
 	Session = GetSessionAPIKey();
-	if(Session != null && APIUsername != null){
+	if(Session != null && APIUser != null){
 		var JsonObj = new Object();
 		JsonObj.apikey = Session;
 
@@ -229,6 +238,39 @@ function LoadAssignments(){
 	GrabAssignments();
 }
 
+//Grab Students
+function GrabStudents(JSONData){
+	var Request = new XMLHttpRequest();
+	var PayLoad = JSON.stringify(JSONData);
+	Request.open('POST', APIRoot+':'+UserMicroServicePort+'/grab/all/users', true);
+	Request.setRequestHeader("accept", "application/json");
+	Request.setRequestHeader("Content-Type", "application/json");
+	try{
+		Request.send(PayLoad);
+		Request.onload = function(){
+			if(Request.status === 200){
+				Data = JSON.parse(Request.responseText);
+				var Students = [];
+				for(let i = 0; i < Data.length; i++) {
+					if(Data[i].is_admin == false){
+						Students.push(Data[i]);
+					}
+				}
+				APIStudents = Students;
+			}
+			else{
+				Log('Failed to use User Micro Service API, Request Error. Non 200 Status Code');
+			}
+		};
+		Request.onerror = function() {
+			Log('Failed to use User Micro Service API, Request Error');
+		};
+	}
+	catch(err){
+		Log('Failed to use User Micro Service API');
+	}
+}
+
 //Find the Highest Grade from the Grades String
 function HighestGrade(String){
 	if(String.search('/') > 0){
@@ -243,6 +285,22 @@ function HighestGrade(String){
 			}
 		}
 		return HighestGrade
+	}
+	else{
+		return String;
+	}
+}
+
+//Find the Given Position Grade from the Grades String
+function PositionGrade(String, Position){
+	if(String.search('/') > 0){
+		var Grades = String.split('/');
+		if(Grades[Position] != null){
+			return Grades[Position];
+		}
+		else{
+			return null
+		}
 	}
 	else{
 		return String;
@@ -358,18 +416,215 @@ function LoadPageData(){
 function GreetUser(){
 	var GreetElement = document.getElementById('greeting');
 	if(GreetElement != null){
-		Session = GetSessionAPIKey();
-		if(Session != null){
-			var JsonObj = new Object();
-			JsonObj.apikey = Session;
-			Greet(JsonObj);
-		}
-		else{
-			Log('Failed to Greet User, No Session Found');
-		}
+		document.getElementById('greeting').textContent = 'Hello '+APIUser.first_name;
+		document.getElementById('greeting').style.visibility = "visible";
+		Greeted = true;
 	}
 	else{
 		Log('Failed to Greet User, No Element Found');
+	}
+}
+
+function GenerateChart(Ctx, Labels, Attempt1, Attempt2, Attempt3){
+	var GenChart = new Chart(Ctx, {
+		type: 'line',
+		data: {
+		  labels: Labels,
+		  datasets: [{
+			  label: 'Attempt 1',
+			  data: Attempt1,
+			  borderColor: 'rgba(255, 99, 132, 0.2)',
+			  backgroundColor: 'rgba(255, 99, 132, 0.2)',
+			  fill: false,
+			  borderWidth: 2
+			},
+			{
+			  label: 'Attempt 2',
+			  data: Attempt2,
+			  borderColor: 'rgba(34, 139, 34, 0.2)',
+			  backgroundColor: 'rgba(255, 206, 86, 0.2)',
+			  fill: false,
+			  borderWidth: 2
+			},
+			{
+			  label: 'Attempt 3',
+			  data: Attempt3,
+			  borderColor: 'rgba(54, 162, 235, 0.2)',
+			  backgroundColor: 'rgba(54, 162, 235, 0.2)',
+			  fill: false,
+			  borderWidth: 2
+			}
+		  ]
+		},
+		options: {
+		  scales: {
+			yAxes: [{
+			  ticks: {
+				beginAtZero: true
+			  }
+			}]
+		  }
+		}
+	  });
+	
+	return GenChart
+}
+
+//Chart the data
+function ChartData(){
+	if(chart_1 != null && chart_2 != null && chart_3 != null){
+		var DiagnosticList = [];
+		var DiagnosticLabelList = [];
+		var DiagnosticTake1List = [];
+		var DiagnosticTake2List = [];
+		var DiagnosticTake3List = [];
+
+		var BuildScriptList = [];
+		var BuildScriptLabelList = [];
+		var BuildScriptTake1List = [];
+		var BuildScriptTake2List = [];
+		var BuildScriptTake3List = [];
+
+		var DeploymentList = [];
+		var DeploymentLabelList = [];
+		var DeploymentTake1List = [];
+		var DeploymentTake2List = [];
+		var DeploymentTake3List = [];
+		
+		for(let i = 0; i < APIAssignments.length; i++) {
+			if(APIAssignments[i].assignment_name.search('Diagnostic') > 0){
+				DiagnosticList.push(APIAssignments[i]);
+				DiagnosticLabelList.push(APIAssignments[i].assignment_name);
+			}
+			else if(APIAssignments[i].assignment_name.search('Build Script') > 0){
+				BuildScriptList.push(APIAssignments[i]);
+				BuildScriptLabelList.push(APIAssignments[i].assignment_name);
+			}
+			else if(APIAssignments[i].assignment_name.search('Deployment') > 0){
+				DeploymentList.push(APIAssignments[i]);
+				DeploymentLabelList.push(APIAssignments[i].assignment_name);
+			}
+		}
+
+		for(let i = 0; i < DiagnosticList.length; i++) {
+			var Grade = null;
+			for(let j = 0; j < APIGrades.length; j++) {
+				if(APIGrades[j].assignment_id == DiagnosticList[i].id){
+					Grade = APIGrades[j];
+					break;
+				}
+			}
+			if(Grade == null){
+				DiagnosticTake1List.push(null);
+				DiagnosticTake2List.push(null);
+				DiagnosticTake3List.push(null);
+			}
+			else{
+				DiagnosticTake1List.push(PositionGrade(Grade.grades, 0));
+				DiagnosticTake2List.push(PositionGrade(Grade.grades, 1));
+				DiagnosticTake3List.push(PositionGrade(Grade.grades, 2));
+			}
+		}
+
+		for(let i = 0; i < BuildScriptList.length; i++) {
+			var Grade = null;
+			for(let j = 0; j < APIGrades.length; j++) {
+				if(APIGrades[j].assignment_id == BuildScriptList[i].id){
+					Grade = APIGrades[j];
+					break;
+				}
+			}
+			if(Grade == null){
+				BuildScriptTake1List.push(null);
+				BuildScriptTake2List.push(null);
+				BuildScriptTake3List.push(null);
+			}
+			else{
+				BuildScriptTake1List.push(PositionGrade(Grade.grades, 0));
+				BuildScriptTake2List.push(PositionGrade(Grade.grades, 1));
+				BuildScriptTake3List.push(PositionGrade(Grade.grades, 2));
+			}
+		}
+
+		for(let i = 0; i < DeploymentList.length; i++) {
+			var Grade = null;
+			for(let j = 0; j < APIGrades.length; j++) {
+				if(APIGrades[j].assignment_id == DeploymentList[i].id){
+					Grade = APIGrades[j];
+					break;
+				}
+			}
+			if(Grade == null){
+				DeploymentTake1List.push(null);
+				DeploymentTake2List.push(null);
+				DeploymentTake3List.push(null);
+			}
+			else{
+				DeploymentTake1List.push(parseInt(PositionGrade(Grade.grades, 0)));
+				DeploymentTake2List.push(parseInt(PositionGrade(Grade.grades, 1)));
+				DeploymentTake3List.push(parseInt(PositionGrade(Grade.grades, 2)));
+			}
+		}
+
+		chart_1 = GenerateChart(ctx_1, DiagnosticLabelList, DiagnosticTake1List, DiagnosticTake2List, DiagnosticTake3List)
+		chart_2 = GenerateChart(ctx_2, BuildScriptLabelList, BuildScriptTake1List, BuildScriptTake2List, BuildScriptTake3List)
+		chart_3 = GenerateChart(ctx_3, DeploymentLabelList, DeploymentTake1List, DeploymentTake2List, DeploymentTake3List)
+
+		Charted = true;
+	}
+	else{
+		Log('Failed to Chart Data, No Chart Page Data Found');
+	}
+}
+
+//Admin dashboard load students
+function AdminLoadStudents(){
+	var Table = document.getElementById('studentlist');
+	if(Table != null && APIStudents != null){
+		Table.innerHTML = "";
+		for(let i = 0; i < APIStudents.length; i++) {
+			var TableRow = document.createElement('tr');
+			var TableDataName = document.createElement('td');
+			TableDataName.textContent = APIStudents[i].first_name+' '+APIStudents[i].last_name;
+			var TableDataEmail = document.createElement('td');
+			TableDataEmail.textContent = APIStudents[i].email;
+			var TableDataEditScores = document.createElement('td');
+			var TableDataEditScoresButton = document.createElement('button');
+			TableDataEditScoresButton.type = "button";
+			TableDataEditScoresButton.className = "btn btn-link btn-rounded btn-sm fw-bold";
+			TableDataEditScoresButton.setAttribute("data-mdb-ripple-color", "dark");
+			TableDataEditScoresButton.onclick = ClickedLoadStudentsGrades();
+			TableDataEditScoresButton.setAttribute("student", APIStudents[i].username);
+			TableDataEditScores.appendChild(TableDataEditScoresButton);
+			var TableHiddenScoreRow = document.createElement('tr');
+			TableHiddenScoreRow.id = APIStudents[i].username;
+			TableHiddenScoreRow.className = "hidden_row";
+			TableHiddenScoreRow.style.display = "none";
+			TableHiddenScoreRow.style.textAlign = "center";
+			TableRow.appendChild(TableDataName);
+			TableRow.appendChild(TableDataEmail);
+			TableRow.appendChild(TableDataEditScores);
+			Table.appendChild(TableRow);
+			Table.appendChild(TableHiddenScoreRow);
+		}
+		LoadStudents = true;
+	}
+	else{
+		Log('Admin Student data is not yet ready');
+	}
+}
+
+//Load students data
+function LoadStudentsData(){
+	Session = GetSessionAPIKey();
+	if(Session != null){
+		var JsonObj = new Object();
+		JsonObj.apikey = Session;
+
+		GrabStudents(JsonObj);
+	}
+	else{
+		Log('Not Logged in Can Grab Students Data');
 	}
 }
 
@@ -377,12 +632,20 @@ function GreetUser(){
 function Navigate(){
 	Session = GetSessionAPIKey();
 	if(Session != null){
-		if(window.location.href == APIRoot+'/' || window.location.href == APIRoot+'/registration.html'){
-			Log('Loged in and On Login or Registration Page. Redirecting');
-			location.href = APIRoot+'/student/home.html';
-		}
-		else{
-			Log('No Navigation Needed');
+		if(APIUser != null){
+			if(window.location.href == APIRoot+'/' || window.location.href == APIRoot+'/registration.html'){
+				if(APIUser.is_admin != true){
+					Log('Loged in and On Login or Registration Page. Redirecting to Student Pages');
+					location.href = APIRoot+'/student/home.html';
+				}
+				else if(APIUser.is_admin == true){
+					Log('Loged in and On Login or Registration Page. Redirecting to Admin Pages');
+					location.href = APIRoot+'/admin/dashboard.html';
+				}
+			}
+			// else{
+			// 	Log('No Navigation Needed');
+			// }
 		}
 	}
 	else{
@@ -390,29 +653,57 @@ function Navigate(){
 			Log('Not Loged in and Not On Login or Registration Page. Redirecting');
 			location.href = APIRoot+'/';
 		}
-		else{
-			Log('No Navigation Needed');
-		}
+		// else{
+		// 	Log('No Navigation Needed');
+		// }
+	}
+}
+
+//Who am i
+function Whoami(){
+	Session = GetSessionAPIKey();
+	if(Session != null){
+		var JsonObj = new Object();
+		JsonObj.apikey = Session;
+
+		GrabWhoami(JsonObj);
 	}
 }
 
 //Main Loop
 function MainLoop(){
+	if(APIUser == null){
+		//Who am i
+		Whoami()
+	}
 	//Navigate the User
 	Navigate();
-	if(APIUsername == null){
+	if(APIUser != null && APIUser.is_admin == false && Greeted == false){
 		//Greet the User
 		GreetUser();
 	}
-	if(APIGrades == null || APIAssignments == null){
+	if(APIUser != null && APIUser.is_admin == false && APIGrades == null || APIAssignments == null){
 		//Load the page data
 		LoadPageData();
+	}
+	if(APIUser != null && APIUser.is_admin == false && APIGrades != null && APIAssignments != null && ChartPage != null && ChartPage == true && Charted == false){
+		//Chart the data
+		ChartData();
+	}
+	if(APIUser != null && APIUser.is_admin == true && AdminDashboardPage != null && AdminDashboardPage == true && APIStudents == null){
+		//load students data
+		LoadStudentsData();
+	}
+	if(APIUser != null && APIUser.is_admin == true && AdminDashboardPage != null && AdminDashboardPage == true && LoadStudents == false){
+		//Admin dashboard load students
+		AdminLoadStudents();
 	}
 }
 
 //Main Function
 function main(){
 	Log('Running: F.R.A.N.N.S. Grade Tracker');
+	MainLoop();
 	Loop = setInterval(MainLoop, MasterSpeed);
 }
 
