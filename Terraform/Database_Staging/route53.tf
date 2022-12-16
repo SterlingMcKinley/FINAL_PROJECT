@@ -8,7 +8,7 @@ resource "aws_route53_record" "www" {
   name    = "db-test.${data.aws_route53_zone.selected.name}"
   type    = "CNAME"
   ttl     = 300
-  records = [aws_db_instance.default.endpoint]
+  records = [aws_db_instance.default.address]
   depends_on = [aws_db_instance.default]
 }
 

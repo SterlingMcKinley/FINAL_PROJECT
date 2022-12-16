@@ -46,6 +46,6 @@ jobs:
       run: terraform validate
     - name: Terraform Apply
       run: terraform apply --auto-approve
-    - name: DB Endoint
+    - name: DB Url
       if: always()
-      run: printf "\033[0;32mDB Endoint ~>\033[0m $(terraform output -raw db_url )/\n"
+      run: printf "\033[0;32mDB Url ~>\033[0m $(terraform output -raw db_url )/\n"

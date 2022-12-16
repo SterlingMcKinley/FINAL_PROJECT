@@ -74,30 +74,6 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
       "portMappings": []
     },
       {
-      "name": "mysql-container",
-      "image": "svmckinley/grade_tracker_mysql:latest",
-      "essential": false,
-      "environment": [
-                {
-                    "name": "MYSQL_ROOT_PASSWORD",
-                    "value": "~mysqlrootpassword~"
-                },
-                {
-                    "name": "MYSQL_DATABASE",
-                    "value": "~mysqldatabase~"
-                }
-      ],
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-          "awslogs-group": "/ecs/final-project-logs",
-          "awslogs-region": "us-east-1",
-          "awslogs-stream-prefix": "ecs"
-        }
-      },
-      "portMappings": []
-    },
-      {
       "name": "adminer-container",
       "image": "svmckinley/grade_tracker_adminer:latest",
       "essential": false,
@@ -107,7 +83,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
       "environment": [
                 {
                     "name": "ADMINER_DEFAULT_SERVER",
-                    "value": "127.0.0.1"
+                    "value": "~mysqldburl~"
                 }
       ],
       "logConfiguration": {
