@@ -33,7 +33,7 @@ resource "aws_lb_target_group" "backend-user-final-project" {
     healthy_threshold = 6
     unhealthy_threshold = 6
     timeout = 2
-    interval = 50
+    interval = 5
     matcher = "200"
   }
 
@@ -54,7 +54,7 @@ resource "aws_lb_target_group" "backend-assignment-final-project" {
     healthy_threshold = 6
     unhealthy_threshold = 6
     timeout = 2
-    interval = 50
+    interval = 5
     matcher = "200"
   }
 

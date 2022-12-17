@@ -28,7 +28,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
   {
       "name": "frontend-container",
       "image": "teamfranns/grade_tracker_frontend:latest",
-      "essential": false,
+      "essential": true,
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
@@ -42,10 +42,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
       {
       "name": "backend-user-container",
       "image": "teamfranns/grade_tracker_backend_microservice_user:latest",
-      "essential": false,
-      "dependsOn": [{
-       "containerName": "mysql-container",
-       "condition": "START" }],
+      "essential": true,
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
@@ -59,10 +56,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
       {
       "name": "backend-assignment-container",
       "image": "teamfranns/grade_tracker_backend_microservice_assignment:latest",
-      "essential": false,
-      "dependsOn": [{
-       "containerName": "mysql-container",
-       "condition": "START" }],
+      "essential": true,
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
@@ -77,9 +71,6 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
       "name": "adminer-container",
       "image": "teamfranns/grade_tracker_adminer:latest",
       "essential": false,
-      "dependsOn": [{
-       "containerName": "mysql-container",
-       "condition": "START" }],
       "environment": [
                 {
                     "name": "ADMINER_DEFAULT_SERVER",
@@ -100,9 +91,6 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
       "name": "nginx-container",
       "image": "teamfranns/grade_tracker_nginx:latest",
       "essential": true,
-      "dependsOn": [{
-       "containerName": "adminer-container",
-       "condition": "START" }],
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
