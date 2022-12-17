@@ -21,6 +21,7 @@ jobs:
     steps: 
     - uses: actions/checkout@v3
       name: GitHub Checkout
+
     - name: Docker Install Unit Test
       run: sudo ./installdocker.sh
 
@@ -35,5 +36,6 @@ jobs:
     steps: 
     - uses: actions/checkout@v3
       name: GitHub Checkout
+
     - name: Terraform Install Unit Test
       run: sudo ./installterraform.sh

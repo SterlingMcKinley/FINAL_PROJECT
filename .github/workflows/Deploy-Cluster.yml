@@ -211,9 +211,6 @@ jobs:
     - name: Terraform Apply
       run: terraform apply --auto-approve
 
-    - name: Set APP_LINK ENV
-      run: echo "APP_LINK=$(terraform output -raw app_url )" >> $GITHUB_ENV
-
 
 
   terraform-ecs-force-update-cluster: 
