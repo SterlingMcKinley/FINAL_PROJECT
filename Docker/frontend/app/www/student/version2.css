@@ -140,7 +140,7 @@ body{
     width:100%;
     max-width:500px;
     margin-left:57%;
-    margin-top: 6%;
+    margin-top: 3%;
     padding: 20px;
     border-radius: 20px;
     border: solid 3px #adb4bf;
@@ -152,7 +152,7 @@ body{
     width:100%;
     max-width:500px;
     margin-left:57%;
-    margin-top: 2%;
+    margin-top: -1%;
     padding: 20px;
     border-radius: 20px;
     border: solid 3px rgb(255, 129, 26);
@@ -164,7 +164,7 @@ body{
     width:100%;
     max-width:500px;
     margin-left:12%;
-    margin-top: -22%;
+    margin-top: -19%;
     padding: 20px;
     border-radius: 20px;
     border: solid 3px #5b7c99;
@@ -174,7 +174,7 @@ body{
 
 .greeting {
    margin-left:18%;
-   margin-top:5%;
+   margin-top:12%;
    font-family: Poppins-Regular;
    font-size: 35px;
 
