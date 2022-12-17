@@ -26,11 +26,11 @@ jobs:
   create-and-push-frontend-image: 
     name: Create and Push Frontend Image
     runs-on: ubuntu-latest
-    environment: Production
+    environment: ProductionW
     defaults:
       run:
         shell: bash
-        working-directory: ./Terraform/Cluster_Production
+        working-directory: ./Terraform/Cluster_ProductionW
     steps: 
     - uses: actions/checkout@v3
       name: GitHub Checkout
@@ -50,11 +50,11 @@ jobs:
   create-and-push-backend-microservice-user-image: 
     name: Create and Push Backend Microservice User Image
     runs-on: ubuntu-latest
-    environment: Production
+    environment: ProductionW
     defaults:
       run:
         shell: bash
-        working-directory: ./Terraform/Cluster_Production
+        working-directory: ./Terraform/Cluster_ProductionW
     steps: 
     - uses: actions/checkout@v3
       name: GitHub Checkout
@@ -86,11 +86,11 @@ jobs:
   create-and-push-backend-microservice-assignment-image: 
     name: Create and Push Backend Microservice Assignment Image
     runs-on: ubuntu-latest
-    environment: Production
+    environment: ProductionW
     defaults:
       run:
         shell: bash
-        working-directory: ./Terraform/Cluster_Production
+        working-directory: ./Terraform/Cluster_ProductionW
     steps: 
     - uses: actions/checkout@v3
       name: GitHub Checkout
@@ -122,11 +122,11 @@ jobs:
   create-and-push-adminer-image: 
     name: Create and Push Adminer Image
     runs-on: ubuntu-latest
-    environment: Production
+    environment: ProductionW
     defaults:
       run:
         shell: bash
-        working-directory: ./Terraform/Cluster_Production
+        working-directory: ./Terraform/Cluster_ProductionW
     steps: 
     - uses: actions/checkout@v3
       name: GitHub Checkout
@@ -146,11 +146,11 @@ jobs:
   create-and-push-nginx-image: 
     name: Create and Push Nginx Image
     runs-on: ubuntu-latest
-    environment: Production
+    environment: ProductionW
     defaults:
       run:
         shell: bash
-        working-directory: ./Terraform/Cluster_Production
+        working-directory: ./Terraform/Cluster_ProductionW
     steps: 
     - uses: actions/checkout@v3
       name: GitHub Checkout
@@ -171,17 +171,17 @@ jobs:
     needs: [create-and-push-frontend-image, create-and-push-backend-microservice-user-image, create-and-push-backend-microservice-assignment-image, create-and-push-adminer-image, create-and-push-nginx-image]
     name: Terraform Deploy Infrastructure
     runs-on: ubuntu-latest
-    environment: Production
+    environment: ProductionW
     defaults:
       run:
         shell: bash
-        working-directory: ./Terraform/Cluster_Production
+        working-directory: ./Terraform/Cluster_ProductionW
     steps: 
     - uses: actions/checkout@v3
       name: GitHub Checkout
 
     - name: Set AWS_Region ENV
-      run: echo "AWS_REGION=$(jq .region -r .config.json)" >> $GITHUB_ENV
+      run: echo "AWS_REGION=us-west-1" >> $GITHUB_ENV
       working-directory: .
 
     - name: Replace Backend Placeholder BUCKET_NAME
@@ -217,7 +217,7 @@ jobs:
     needs: terraform-deploy-infrastructure
     name: Terraform ECS Force Update Cluster
     runs-on: ubuntu-latest
-    environment: Production
+    environment: ProductionW
     defaults:
       run:
         shell: bash
@@ -227,7 +227,7 @@ jobs:
       name: GitHub Checkout
 
     - name: Set AWS_Region ENV
-      run: echo "AWS_REGION=$(jq .region -r .config.json)" >> $GITHUB_ENV
+      run: echo "AWS_REGION=us-west-1" >> $GITHUB_ENV
       working-directory: .
 
     - name: Terraform ECS Force Update Cluster
@@ -239,7 +239,7 @@ jobs:
     needs: terraform-ecs-force-update-cluster
     name: App Url
     runs-on: ubuntu-latest
-    environment: Production
+    environment: ProductionW
     defaults:
       run:
         shell: bash

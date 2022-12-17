@@ -19,11 +19,11 @@ jobs:
   release-cluster: 
     name: Release Cluster using Terraform
     runs-on: ubuntu-latest
-    environment: Production
+    environment: ProductionW
     defaults:
       run:
         shell: bash
-        working-directory: ./Terraform/Cluster_Production
+        working-directory: ./Terraform/Cluster_ProductionW
     steps: 
     - uses: actions/checkout@v3
       name: GitHub Checkout
