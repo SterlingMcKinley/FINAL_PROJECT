@@ -13,8 +13,8 @@
 - The application infrastructure will scale based on traffic and account for fault tolerance with duplicate containers being hosted on two availability zones.
 
 ## Diagram:
-![image]()
-![image]()
+![image](https://github.com/SterlingMcKinley/FINAL_PROJECT/blob/nasir/Images/Staging.png)
+![image](https://github.com/SterlingMcKinley/FINAL_PROJECT/blob/nasir/Images/Production.png)
 
 ## Tech Stack:
 Frontend Framework
@@ -59,9 +59,9 @@ Data storage and querying
 
 ## Monitoring & Alerting:
 - In order to keep track of our application we are using Cloudwatch as well as SNS alerts. With Cloudwatch we can monitor the status of different components within our infrastructure as well as insights for each container.
-![image]()
-![image]()
-![image]()
+![image](https://github.com/SterlingMcKinley/FINAL_PROJECT/blob/nasir/Images/Email%20Alert.png)
+![image](https://github.com/SterlingMcKinley/FINAL_PROJECT/blob/nasir/Images/Monitor.png)
+![image](https://github.com/SterlingMcKinley/FINAL_PROJECT/blob/nasir/Images/Resources.png)
 
 ## Containers:
 - Within AWS Fargate our containers are able to communicate using a local container network. Our application uses 6 different containers to run the application and they are the following:
@@ -80,9 +80,9 @@ Data storage and querying
 - Some of the secrets were configured within the repo and some were configured within the environments (staging and the two production environments for the east and west US regions). 
 - Since we utilized GitHub Secrets for our pipeline to run we had to create​​ specific environment keys for each stage to use. There were some authentication keys we could make as repository and not environment keys since they were not unique to specific branches.
 
-![image]()
-![image]()
-![image]()
+![image](https://github.com/SterlingMcKinley/FINAL_PROJECT/blob/nasir/Images/Enviornments.png)
+![image](https://github.com/SterlingMcKinley/FINAL_PROJECT/blob/nasir/Images/Environment%20Secrets.png)
+![image](https://github.com/SterlingMcKinley/FINAL_PROJECT/blob/nasir/Images/Repo%20Secrets.png)
 
 ## Docker/DockerHub:
 - Docker was installed and used to pull our application images from DockerHub and containerize them. 
@@ -123,7 +123,7 @@ Data storage and querying
 
 - For our Deploy Cluster Workflow on GitHub Actions we had run the workflow with steps, meaning each action was run one at a time. This meant that this workflow took up to 10 minutes to complete. The solution to cut time was to create jobs that ran simultaneously, in this workflow images could then be made at the same time and pushed at the same time opposed to one by one. You can see this in the first box in the diagram below.  
 
-![image]()
+![image](https://github.com/SterlingMcKinley/FINAL_PROJECT/blob/nasir/Images/Jobs.png)
 
 #### Failover Routing with Route 53
 
@@ -135,5 +135,5 @@ Data storage and querying
 
 - When buying a DNS for our application we ran into issues registering as our account was under Kura Lab’s AWS. Therefore Kura Labs had to buy the DNS and add hosted zones we created for us to route our application to the DNS teams.franns.net. 
 
-
+![image](https://github.com/SterlingMcKinley/FINAL_PROJECT/blob/nasir/Images/Hosted.png)
 
