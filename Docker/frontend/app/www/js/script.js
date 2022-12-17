@@ -273,7 +273,7 @@ function GrabStudents(JSONData){
 
 //Find the Highest Grade from the Grades String
 function HighestGrade(String){
-	if(String.search('/') > 0){
+	if(String.search('/') > -1){
 		var Grades = String.split('/');
 		var HighestGrade = null;
 		for(let i = 0; i < Grades.length; i++) {
@@ -293,7 +293,7 @@ function HighestGrade(String){
 
 //Find the Given Position Grade from the Grades String
 function PositionGrade(String, Position){
-	if(String.search('/') > 0){
+	if(String.search('/') > -1){
 		var Grades = String.split('/');
 		if(Grades[Position] != null){
 			return Grades[Position];
@@ -433,24 +433,24 @@ function GenerateChart(Ctx, Labels, Attempt1, Attempt2, Attempt3){
 		  datasets: [{
 			  label: 'Attempt 1',
 			  data: Attempt1,
-			  borderColor: 'rgba(255, 99, 132, 0.2)',
-			  backgroundColor: 'rgba(255, 99, 132, 0.2)',
+			  borderColor: 'rgba(144, 190, 29)',
+			  backgroundColor: 'rgba(144, 190, 29)',
 			  fill: false,
 			  borderWidth: 2
 			},
 			{
 			  label: 'Attempt 2',
 			  data: Attempt2,
-			  borderColor: 'rgba(34, 139, 34, 0.2)',
-			  backgroundColor: 'rgba(255, 206, 86, 0.2)',
+			  borderColor: 'rgba(145, 145, 145)',
+			  backgroundColor: 'rgba(145, 145, 145)',
 			  fill: false,
 			  borderWidth: 2
 			},
 			{
 			  label: 'Attempt 3',
 			  data: Attempt3,
-			  borderColor: 'rgba(54, 162, 235, 0.2)',
-			  backgroundColor: 'rgba(54, 162, 235, 0.2)',
+			  borderColor: 'rgba(97, 142, 187)',
+			  backgroundColor: 'rgba(97, 142, 187)',
 			  fill: false,
 			  borderWidth: 2
 			}
@@ -492,15 +492,15 @@ function ChartData(){
 		var DeploymentTake3List = [];
 		
 		for(let i = 0; i < APIAssignments.length; i++) {
-			if(APIAssignments[i].assignment_name.search('Diagnostic') > 0){
+			if(APIAssignments[i].assignment_name.search('Diagnostic') > -1){
 				DiagnosticList.push(APIAssignments[i]);
 				DiagnosticLabelList.push(APIAssignments[i].assignment_name);
 			}
-			else if(APIAssignments[i].assignment_name.search('Build Script') > 0){
+			else if(APIAssignments[i].assignment_name.search('Build Script') > -1){
 				BuildScriptList.push(APIAssignments[i]);
 				BuildScriptLabelList.push(APIAssignments[i].assignment_name);
 			}
-			else if(APIAssignments[i].assignment_name.search('Deployment') > 0){
+			else if(APIAssignments[i].assignment_name.search('Deployment') > -1){
 				DeploymentList.push(APIAssignments[i]);
 				DeploymentLabelList.push(APIAssignments[i].assignment_name);
 			}
@@ -566,9 +566,18 @@ function ChartData(){
 			}
 		}
 
+		chart_1.destroy();
+		chart_2.destroy();
+		chart_3.destroy();
+
 		chart_1 = GenerateChart(ctx_1, DiagnosticLabelList, DiagnosticTake1List, DiagnosticTake2List, DiagnosticTake3List)
 		chart_2 = GenerateChart(ctx_2, BuildScriptLabelList, BuildScriptTake1List, BuildScriptTake2List, BuildScriptTake3List)
 		chart_3 = GenerateChart(ctx_3, DeploymentLabelList, DeploymentTake1List, DeploymentTake2List, DeploymentTake3List)
+
+		console.log(DiagnosticLabelList);
+		console.log(DiagnosticTake1List);
+		console.log(DiagnosticTake2List);
+		console.log(DiagnosticTake3List);
 
 		Charted = true;
 	}
@@ -686,10 +695,10 @@ function MainLoop(){
 		//Load the page data
 		LoadPageData();
 	}
-	//if(APIUser != null && APIUser.is_admin == false && APIGrades != null && APIAssignments != null && ChartPage != null && ChartPage == true && Charted == false){
+	if(APIUser != null && APIUser.is_admin == false && APIGrades != null && APIAssignments != null && ChartPage != null && ChartPage == true && Charted == false){
 		//Chart the data
-		//ChartData();
-	//}
+		ChartData();
+	}
 	//if(APIUser != null && APIUser.is_admin == true && AdminDashboardPage != null && AdminDashboardPage == true && APIStudents == null){
 		//load students data
 	//	LoadStudentsData();
