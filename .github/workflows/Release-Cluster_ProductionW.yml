@@ -1,4 +1,4 @@
-name: Release Cluster
+name: Release Cluster West
 
 on: 
   workflow_dispatch: 
