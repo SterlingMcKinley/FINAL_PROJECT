@@ -16,6 +16,7 @@ var APIStudents = null;
 
 var Greeted = false;
 var Charted = false;
+var LoadedData = false;
 var LoadStudents = false;
 
 var WhoamiErrors = 0;
@@ -271,9 +272,90 @@ function GrabStudents(JSONData){
 	}
 }
 
+//Admin Load Student Grade
+function AdminLoadStudentGrade(JSONData, Username){
+	var Request = new XMLHttpRequest();
+	var PayLoad = JSON.stringify(JSONData);
+	Request.open('POST', APIRoot+':'+AssignmentMicroServicePort+'/grab/userdata/username/'+Username, true);
+	Request.setRequestHeader("accept", "application/json");
+	Request.setRequestHeader("Content-Type", "application/json");
+	try{
+		Request.send(PayLoad);
+		Request.onload = function(){
+			if(Request.status === 200){
+				var UrlArray = Request.responseURL.split("/");
+				var User = UrlArray[(UrlArray.length - 1)];
+				Data = JSON.parse(Request.responseText);
+				if(Data != null){
+					var Table = document.getElementById(User)
+					Table.innerHTML = "";
+					if(Table != null){
+						var TableD = document.createElement('td');
+						var TableDiv = document.createElement('div');
+						var TableTable = document.createElement('table');
+						var TBody = document.createElement('tbody');
+						var TableHeaderRow = document.createElement('tr');
+						var TableHeaderAssignment = document.createElement('th');
+						TableHeaderAssignment.textContent = 'Assignment';
+						TableHeaderAssignment.style.textAlign = "center";
+						var TableHeaderA1 = document.createElement('th');
+						TableHeaderA1.textContent = 'Take One';
+						TableHeaderA1.style.textAlign = "center";
+						var TableHeaderA2 = document.createElement('th');
+						TableHeaderA2.textContent = 'Take Two';
+						TableHeaderA2.style.textAlign = "center";
+						var TableHeaderA3 = document.createElement('th');
+						TableHeaderA3.textContent = 'Take Three';
+						TableHeaderA3.style.textAlign = "center";
+						TableHeaderRow.appendChild(TableHeaderAssignment);
+						TableHeaderRow.appendChild(TableHeaderA1);
+						TableHeaderRow.appendChild(TableHeaderA2);
+						TableHeaderRow.appendChild(TableHeaderA3);
+						Table.appendChild(TableD);
+						TableD.appendChild(TableDiv);
+						TableDiv.appendChild(TableTable);
+						TableTable.appendChild(TBody);
+						TBody.appendChild(TableHeaderRow);
+						for(let i = 0; i < Data.length; i++) {
+							var TableRow = document.createElement('tr');
+							var RowAssignment = document.createElement('td');
+							RowAssignment.textContent = MatchAssignment(Data[i].assignment_id, APIAssignments)
+							var RowGradeA1 = document.createElement('td');
+							RowGradeA1.textContent = PositionGrade(Data[i].grades, 0)
+							var RowGradeA2 = document.createElement('td');
+							RowGradeA2.textContent = PositionGrade(Data[i].grades, 1)
+							var RowGradeA3 = document.createElement('td');
+							RowGradeA3.textContent = PositionGrade(Data[i].grades, 2)
+							TableRow.appendChild(RowAssignment);
+							TableRow.appendChild(RowGradeA1);
+							TableRow.appendChild(RowGradeA2);
+							TableRow.appendChild(RowGradeA3);
+							TBody.appendChild(TableRow);
+						}
+						Table.style.display = 'table-row';
+					}
+					else{
+						alert('Table data is not yet ready please try again later');
+						Log('Table data is not yet ready');
+					}
+				}
+			}
+			else{
+				Log('Failed to use Assignment Micro Service API, Request Error. Non 200 Status Code');
+			}
+		};
+		Request.onerror = function() {
+			Log('Failed to use Assignment Micro Service API, Request Error');
+		};
+	}
+	catch(err){
+		Log('Failed to use Assignment Micro Service API');
+	}
+}
+
 //Find the Highest Grade from the Grades String
 function HighestGrade(String){
-	if(String.search('/') > 0){
+	if(String.search('/') > -1){
 		var Grades = String.split('/');
 		var HighestGrade = null;
 		for(let i = 0; i < Grades.length; i++) {
@@ -293,7 +375,7 @@ function HighestGrade(String){
 
 //Find the Given Position Grade from the Grades String
 function PositionGrade(String, Position){
-	if(String.search('/') > 0){
+	if(String.search('/') > -1){
 		var Grades = String.split('/');
 		if(Grades[Position] != null){
 			return Grades[Position];
@@ -396,6 +478,24 @@ function ClickedLogout(){
 	}
 }
 
+function ClickedLoadStudentsGrades(self){
+	var Table = document.getElementById(self.srcElement.getAttribute('student'));
+	if(Table.style.display == 'table-row'){
+		Table.style.display = 'none';
+		return;
+	}
+	Session = GetSessionAPIKey();
+	if(Session != null){
+		var JsonObj = new Object();
+		JsonObj.apikey = Session;
+
+		AdminLoadStudentGrade(JsonObj, self.srcElement.getAttribute('student'));
+	}
+	else{
+		Log('Not Logged in Can Not Load Students Grades');
+	}
+}
+
 //Check if the user press entered
 function CheckSubmit(e, func) {
 	if(e && e.keyCode == 13) {
@@ -406,10 +506,25 @@ function CheckSubmit(e, func) {
 //Load the page data
 function LoadPageData(){
 	if(window.location.href == APIRoot+'/student/home.html' || window.location.href == APIRoot+'/student/overview.html'){
-		LoadGrades();
-		LoadAssignments();
-		Log('Loaded Userdata and Assignment Data');
+		if(APIAssignments == null){
+			LoadAssignments();
+		}
+		else if(APIGrades == null){
+			LoadGrades();
+		}
+		else{
+			LoadedData = true;
+		}
 	}
+	else if(window.location.href == APIRoot+'/admin/dashboard.html'){
+		if(APIAssignments == null){
+			LoadAssignments();
+		}
+		else{
+			LoadedData = true;
+		}
+	}
+	Log('Loaded Page Data');
 }
 
 //Greet the user
@@ -433,24 +548,24 @@ function GenerateChart(Ctx, Labels, Attempt1, Attempt2, Attempt3){
 		  datasets: [{
 			  label: 'Attempt 1',
 			  data: Attempt1,
-			  borderColor: 'rgba(255, 99, 132, 0.2)',
-			  backgroundColor: 'rgba(255, 99, 132, 0.2)',
+			  borderColor: 'rgba(144, 190, 29)',
+			  backgroundColor: 'rgba(144, 190, 29)',
 			  fill: false,
 			  borderWidth: 2
 			},
 			{
 			  label: 'Attempt 2',
 			  data: Attempt2,
-			  borderColor: 'rgba(34, 139, 34, 0.2)',
-			  backgroundColor: 'rgba(255, 206, 86, 0.2)',
+			  borderColor: 'rgba(145, 145, 145)',
+			  backgroundColor: 'rgba(145, 145, 145)',
 			  fill: false,
 			  borderWidth: 2
 			},
 			{
 			  label: 'Attempt 3',
 			  data: Attempt3,
-			  borderColor: 'rgba(54, 162, 235, 0.2)',
-			  backgroundColor: 'rgba(54, 162, 235, 0.2)',
+			  borderColor: 'rgba(97, 142, 187)',
+			  backgroundColor: 'rgba(97, 142, 187)',
 			  fill: false,
 			  borderWidth: 2
 			}
@@ -473,6 +588,10 @@ function GenerateChart(Ctx, Labels, Attempt1, Attempt2, Attempt3){
 //Chart the data
 function ChartData(){
 	if(chart_1 != null && chart_2 != null && chart_3 != null){
+		var ctx_1 = document.getElementById('chart_1').getContext('2d');
+		var ctx_2 = document.getElementById('chart_2').getContext('2d');
+		var ctx_3 = document.getElementById('chart_3').getContext('2d');
+		
 		var DiagnosticList = [];
 		var DiagnosticLabelList = [];
 		var DiagnosticTake1List = [];
@@ -492,15 +611,15 @@ function ChartData(){
 		var DeploymentTake3List = [];
 		
 		for(let i = 0; i < APIAssignments.length; i++) {
-			if(APIAssignments[i].assignment_name.search('Diagnostic') > 0){
+			if(APIAssignments[i].assignment_name.search('Diagnostic') > -1){
 				DiagnosticList.push(APIAssignments[i]);
 				DiagnosticLabelList.push(APIAssignments[i].assignment_name);
 			}
-			else if(APIAssignments[i].assignment_name.search('Build Script') > 0){
+			else if(APIAssignments[i].assignment_name.search('Build Script') > -1){
 				BuildScriptList.push(APIAssignments[i]);
 				BuildScriptLabelList.push(APIAssignments[i].assignment_name);
 			}
-			else if(APIAssignments[i].assignment_name.search('Deployment') > 0){
+			else if(APIAssignments[i].assignment_name.search('Deployment') > -1){
 				DeploymentList.push(APIAssignments[i]);
 				DeploymentLabelList.push(APIAssignments[i].assignment_name);
 			}
@@ -566,6 +685,10 @@ function ChartData(){
 			}
 		}
 
+		// chart_1.destroy();
+		// chart_2.destroy();
+		// chart_3.destroy();
+
 		chart_1 = GenerateChart(ctx_1, DiagnosticLabelList, DiagnosticTake1List, DiagnosticTake2List, DiagnosticTake3List)
 		chart_2 = GenerateChart(ctx_2, BuildScriptLabelList, BuildScriptTake1List, BuildScriptTake2List, BuildScriptTake3List)
 		chart_3 = GenerateChart(ctx_3, DeploymentLabelList, DeploymentTake1List, DeploymentTake2List, DeploymentTake3List)
@@ -593,8 +716,9 @@ function AdminLoadStudents(){
 			TableDataEditScoresButton.type = "button";
 			TableDataEditScoresButton.className = "btn btn-link btn-rounded btn-sm fw-bold";
 			TableDataEditScoresButton.setAttribute("data-mdb-ripple-color", "dark");
-			TableDataEditScoresButton.onclick = ClickedLoadStudentsGrades();
+			TableDataEditScoresButton.onclick = ClickedLoadStudentsGrades;
 			TableDataEditScoresButton.setAttribute("student", APIStudents[i].username);
+			TableDataEditScoresButton.textContent = "Edit Scores";
 			TableDataEditScores.appendChild(TableDataEditScoresButton);
 			var TableHiddenScoreRow = document.createElement('tr');
 			TableHiddenScoreRow.id = APIStudents[i].username;
@@ -682,22 +806,22 @@ function MainLoop(){
 		//Greet the User
 		GreetUser();
 	}
-	if(APIUser != null && APIUser.is_admin == false && APIGrades == null || APIAssignments == null){
+	if(APIUser != null && LoadedData == false){
 		//Load the page data
 		LoadPageData();
 	}
-	//if(APIUser != null && APIUser.is_admin == false && APIGrades != null && APIAssignments != null && ChartPage != null && ChartPage == true && Charted == false){
+	if(APIUser != null && APIUser.is_admin == false && APIGrades != null && APIAssignments != null && Charted == false && typeof ChartPage !== 'undefined' && ChartPage == true){
 		//Chart the data
-		//ChartData();
-	//}
-	//if(APIUser != null && APIUser.is_admin == true && AdminDashboardPage != null && AdminDashboardPage == true && APIStudents == null){
+		ChartData();
+	}
+	if(APIUser != null && APIUser.is_admin == true && AdminDashboardPage != null && AdminDashboardPage == true && APIStudents == null){
 		//load students data
-	//	LoadStudentsData();
-	//}
-	//if(APIUser != null && APIUser.is_admin == true && AdminDashboardPage != null && AdminDashboardPage == true && LoadStudents == false){
+		LoadStudentsData();
+	}
+	if(APIUser != null && APIUser.is_admin == true && AdminDashboardPage != null && AdminDashboardPage == true && LoadStudents == false){
 		//Admin dashboard load students
-		//AdminLoadStudents();
-	//}
+		AdminLoadStudents();
+	}
 }
 
 //Main Function
