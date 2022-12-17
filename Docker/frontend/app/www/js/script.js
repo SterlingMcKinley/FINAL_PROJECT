@@ -16,6 +16,7 @@ var APIStudents = null;
 
 var Greeted = false;
 var Charted = false;
+var LoadedData = false;
 var LoadStudents = false;
 
 var WhoamiErrors = 0;
@@ -282,46 +283,56 @@ function AdminLoadStudentGrade(JSONData, Username){
 		Request.send(PayLoad);
 		Request.onload = function(){
 			if(Request.status === 200){
+				var UrlArray = Request.responseURL.split("/");
+				var User = UrlArray[(UrlArray.length - 1)];
 				Data = JSON.parse(Request.responseText);
-				if(Data.length > 0){
-					var Table = document.getElementById(Data[0].username)
+				if(Data != null){
+					var Table = document.getElementById(User)
+					Table.innerHTML = "";
 					if(Table != null){
 						var TableD = document.createElement('td');
 						var TableDiv = document.createElement('div');
 						var TableTable = document.createElement('table');
+						var TBody = document.createElement('tbody');
 						var TableHeaderRow = document.createElement('tr');
 						var TableHeaderAssignment = document.createElement('th');
 						TableHeaderAssignment.textContent = 'Assignment';
+						TableHeaderAssignment.style.textAlign = "center";
 						var TableHeaderA1 = document.createElement('th');
-						TableHeaderA1.textContent = 'Attempt 1';
+						TableHeaderA1.textContent = 'Take One';
+						TableHeaderA1.style.textAlign = "center";
 						var TableHeaderA2 = document.createElement('th');
-						TableHeaderA2.textContent = 'Attempt 2';
+						TableHeaderA2.textContent = 'Take Two';
+						TableHeaderA2.style.textAlign = "center";
 						var TableHeaderA3 = document.createElement('th');
-						TableHeaderA3.textContent = 'Attempt 3';
+						TableHeaderA3.textContent = 'Take Three';
+						TableHeaderA3.style.textAlign = "center";
 						TableHeaderRow.appendChild(TableHeaderAssignment);
 						TableHeaderRow.appendChild(TableHeaderA1);
 						TableHeaderRow.appendChild(TableHeaderA2);
 						TableHeaderRow.appendChild(TableHeaderA3);
 						Table.appendChild(TableD);
-						Table.appendChild(TableDiv);
-						Table.appendChild(TableTable);
-						TableTable.appendChild(TableHeaderRow);
-						for(let i = 0; i < APIGrades.length; i++) {
+						TableD.appendChild(TableDiv);
+						TableDiv.appendChild(TableTable);
+						TableTable.appendChild(TBody);
+						TBody.appendChild(TableHeaderRow);
+						for(let i = 0; i < Data.length; i++) {
 							var TableRow = document.createElement('tr');
-							var RowAssignment = document.createElement('th');
-							RowAssignment.textContent = MatchAssignment(APIGrades[i].assignment_id, APIAssignments)
-							var RowGradeA1 = document.createElement('th');
-							RowGrade.textContent = PositionGrade(Grade.grades, 0)
-							var RowGradeA2 = document.createElement('th');
-							RowGrade.textContent = PositionGrade(Grade.grades, 1)
-							var RowGradeA3 = document.createElement('th');
-							RowGrade.textContent = PositionGrade(Grade.grades, 2)
+							var RowAssignment = document.createElement('td');
+							RowAssignment.textContent = MatchAssignment(Data[i].assignment_id, APIAssignments)
+							var RowGradeA1 = document.createElement('td');
+							RowGradeA1.textContent = PositionGrade(Data[i].grades, 0)
+							var RowGradeA2 = document.createElement('td');
+							RowGradeA2.textContent = PositionGrade(Data[i].grades, 1)
+							var RowGradeA3 = document.createElement('td');
+							RowGradeA3.textContent = PositionGrade(Data[i].grades, 2)
 							TableRow.appendChild(RowAssignment);
 							TableRow.appendChild(RowGradeA1);
 							TableRow.appendChild(RowGradeA2);
 							TableRow.appendChild(RowGradeA3);
-							Table.appendChild(TableRow);
+							TBody.appendChild(TableRow);
 						}
+						Table.style.display = 'table-row';
 					}
 					else{
 						alert('Table data is not yet ready please try again later');
@@ -468,6 +479,11 @@ function ClickedLogout(){
 }
 
 function ClickedLoadStudentsGrades(self){
+	var Table = document.getElementById(self.srcElement.getAttribute('student'));
+	if(Table.style.display == 'table-row'){
+		Table.style.display = 'none';
+		return;
+	}
 	Session = GetSessionAPIKey();
 	if(Session != null){
 		var JsonObj = new Object();
@@ -490,10 +506,25 @@ function CheckSubmit(e, func) {
 //Load the page data
 function LoadPageData(){
 	if(window.location.href == APIRoot+'/student/home.html' || window.location.href == APIRoot+'/student/overview.html'){
-		LoadGrades();
-		LoadAssignments();
-		Log('Loaded Userdata and Assignment Data');
+		if(APIAssignments == null){
+			LoadAssignments();
+		}
+		else if(APIGrades == null){
+			LoadGrades();
+		}
+		else{
+			LoadedData = true;
+		}
 	}
+	else if(window.location.href == APIRoot+'/admin/dashboard.html'){
+		if(APIAssignments == null){
+			LoadAssignments();
+		}
+		else{
+			LoadedData = true;
+		}
+	}
+	Log('Loaded Page Data');
 }
 
 //Greet the user
@@ -673,7 +704,7 @@ function ChartData(){
 function AdminLoadStudents(){
 	var Table = document.getElementById('studentlist');
 	if(Table != null && APIStudents != null){
-		//Table.innerHTML = "";
+		Table.innerHTML = "";
 		for(let i = 0; i < APIStudents.length; i++) {
 			var TableRow = document.createElement('tr');
 			var TableDataName = document.createElement('td');
@@ -775,11 +806,11 @@ function MainLoop(){
 		//Greet the User
 		GreetUser();
 	}
-	if(APIUser != null && APIGrades == null || APIAssignments == null){
+	if(APIUser != null && LoadedData == false){
 		//Load the page data
 		LoadPageData();
 	}
-	if(APIUser != null && APIUser.is_admin == false && APIGrades != null && APIAssignments != null && ChartPage != null && ChartPage == true && Charted == false){
+	if(APIUser != null && APIUser.is_admin == false && APIGrades != null && APIAssignments != null && Charted == false && typeof ChartPage !== 'undefined' && ChartPage == true){
 		//Chart the data
 		ChartData();
 	}
