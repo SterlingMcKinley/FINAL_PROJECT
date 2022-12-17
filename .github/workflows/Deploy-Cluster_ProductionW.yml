@@ -1,4 +1,4 @@
-name: Deploy Cluster
+name: Deploy Cluster West
 
 on: 
   workflow_dispatch: 
