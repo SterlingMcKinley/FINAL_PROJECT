@@ -17,7 +17,7 @@ env:
   MYSQL_ROOT_USER: ${{ secrets.MYSQL_ROOT_USER }}
   MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
   MYSQL_DB_URL: db-test.team.franns.net
-  APP_URL: test.team.franns.net
+  APP_URL: http://test.team.franns.net
 
 #This workflow requires Docker, Terraform and jq which comes Pre-Installed on Github Runners
 
@@ -210,9 +210,6 @@ jobs:
 
     - name: Terraform Apply
       run: terraform apply --auto-approve
-
-    - name: Set APP_LINK ENV
-      run: echo "APP_LINK=$(terraform output -raw app_url )" >> $GITHUB_ENV
 
 
 
