@@ -48,7 +48,7 @@ jobs:
 
 
   create-and-push-backend-microservice-user-image: 
-    name: Create Backend Microservice User Image
+    name: Create and Push Backend Microservice User Image
     runs-on: ubuntu-latest
     environment: Staging
     defaults:
@@ -84,7 +84,7 @@ jobs:
 
 
   create-and-push-backend-microservice-assignment-image: 
-    name: Create Backend Microservice Assignment Image
+    name: Create and Push Backend Microservice Assignment Image
     runs-on: ubuntu-latest
     environment: Staging
     defaults:
@@ -120,7 +120,7 @@ jobs:
 
 
   create-and-push-adminer-image: 
-    name: Create Adminer Image
+    name: Create and Push Adminer Image
     runs-on: ubuntu-latest
     environment: Staging
     defaults:
@@ -144,7 +144,7 @@ jobs:
 
 
   create-and-push-nginx-image: 
-    name: Create Nginx Image
+    name: Create and Push Nginx Image
     runs-on: ubuntu-latest
     environment: Staging
     defaults:
