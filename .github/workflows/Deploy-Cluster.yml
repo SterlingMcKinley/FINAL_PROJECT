@@ -250,7 +250,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./Terraform/Cluster_Staging
+        working-directory: .
     steps: 
     - name: App Link
       if: always()
