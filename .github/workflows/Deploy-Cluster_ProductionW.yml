@@ -1,0 +1,249 @@
+name: Deploy Cluster
+
+on: 
+  workflow_dispatch: 
+    branches: 
+      - main
+
+env: 
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
+  TABLE_NAME: ${{ secrets.TABLE_NAME }}
+  DOCKERHUB_USR: ${{ secrets.DOCKERHUB_USR }}
+  DOCKERHUB_PWD: ${{ secrets.DOCKERHUB_PWD }}
+  AWS_ECS_ARN: ${{ secrets.AWS_ECS_ARN }}
+  MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+  MYSQL_ROOT_USER: ${{ secrets.MYSQL_ROOT_USER }}
+  MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+  MYSQL_DB_URL: db-app.team.franns.net
+  APP_URL: http://app.team.franns.net
+
+#This workflow requires Docker, Terraform and jq which comes Pre-Installed on Github Runners
+
+jobs: 
+
+  create-and-push-frontend-image: 
+    name: Create and Push Frontend Image
+    runs-on: ubuntu-latest
+    environment: ProductionW
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./Terraform/Cluster_ProductionW
+    steps: 
+    - uses: actions/checkout@v3
+      name: GitHub Checkout
+
+    - name: Create Frontend Image
+      run: docker build -t $DOCKERHUB_USR/grade_tracker_frontend:latest .
+      working-directory: ./Docker/frontend
+
+    - name: DockerHub Login
+      run: docker login --username $DOCKERHUB_USR --password $DOCKERHUB_PWD
+
+    - name: Push Frontend Image
+      run: docker push $DOCKERHUB_USR/grade_tracker_frontend:latest
+
+
+
+  create-and-push-backend-microservice-user-image: 
+    name: Create and Push Backend Microservice User Image
+    runs-on: ubuntu-latest
+    environment: ProductionW
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./Terraform/Cluster_ProductionW
+    steps: 
+    - uses: actions/checkout@v3
+      name: GitHub Checkout
+
+    - name: Replace User Placeholder MYSQL_DATABASE
+      run: python3 ../../Utilities/replacer.py ../../Docker/backend/userapp/app/app.py ../../Docker/backend/userapp/app/app.py ~mysqldatabase~ $MYSQL_DATABASE
+
+    - name: Replace User Placeholder MYSQL_ROOT_USER
+      run: python3 ../../Utilities/replacer.py ../../Docker/backend/userapp/app/app.py ../../Docker/backend/userapp/app/app.py ~mysqlrootuser~ $MYSQL_ROOT_USER
+
+    - name: Replace User Placeholder MYSQL_ROOT_PASSWORD
+      run: python3 ../../Utilities/replacer.py ../../Docker/backend/userapp/app/app.py ../../Docker/backend/userapp/app/app.py ~mysqlrootpassword~ $MYSQL_ROOT_PASSWORD
+
+    - name: Replace User Placeholder MYSQL_DB_URL
+      run: python3 ../../Utilities/replacer.py ../../Docker/backend/userapp/app/app.py ../../Docker/backend/userapp/app/app.py ~mysqldburl~ $MYSQL_DB_URL
+
+    - name: Create Backend Microservice User Image
+      run: docker build -t $DOCKERHUB_USR/grade_tracker_backend_microservice_user:latest .
+      working-directory: ./Docker/backend/userapp
+
+    - name: DockerHub Login
+      run: docker login --username $DOCKERHUB_USR --password $DOCKERHUB_PWD
+
+    - name: Push Backend Microservice User Image
+      run: docker push $DOCKERHUB_USR/grade_tracker_backend_microservice_user:latest
+
+
+
+  create-and-push-backend-microservice-assignment-image: 
+    name: Create and Push Backend Microservice Assignment Image
+    runs-on: ubuntu-latest
+    environment: ProductionW
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./Terraform/Cluster_ProductionW
+    steps: 
+    - uses: actions/checkout@v3
+      name: GitHub Checkout
+
+    - name: Replace Assignment Placeholder MYSQL_DATABASE
+      run: python3 ../../Utilities/replacer.py ../../Docker/backend/assignmentapp/app/app.py ../../Docker/backend/assignmentapp/app/app.py ~mysqldatabase~ $MYSQL_DATABASE
+
+    - name: Replace Assignment Placeholder MYSQL_ROOT_USER
+      run: python3 ../../Utilities/replacer.py ../../Docker/backend/assignmentapp/app/app.py ../../Docker/backend/assignmentapp/app/app.py ~mysqlrootuser~ $MYSQL_ROOT_USER
+
+    - name: Replace Assignment Placeholder MYSQL_ROOT_PASSWORD
+      run: python3 ../../Utilities/replacer.py ../../Docker/backend/assignmentapp/app/app.py ../../Docker/backend/assignmentapp/app/app.py ~mysqlrootpassword~ $MYSQL_ROOT_PASSWORD
+
+    - name: Replace Assignment Placeholder MYSQL_DB_URL
+      run: python3 ../../Utilities/replacer.py ../../Docker/backend/assignmentapp/app/app.py ../../Docker/backend/assignmentapp/app/app.py ~mysqldburl~ $MYSQL_DB_URL
+
+    - name: Create Backend Microservice Assignment Image
+      run: docker build -t $DOCKERHUB_USR/grade_tracker_backend_microservice_assignment:latest .
+      working-directory: ./Docker/backend/assignmentapp
+
+    - name: DockerHub Login
+      run: docker login --username $DOCKERHUB_USR --password $DOCKERHUB_PWD
+
+    - name: Push Backend Microservice Assignment Image
+      run: docker push $DOCKERHUB_USR/grade_tracker_backend_microservice_assignment:latest
+
+
+
+  create-and-push-adminer-image: 
+    name: Create and Push Adminer Image
+    runs-on: ubuntu-latest
+    environment: ProductionW
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./Terraform/Cluster_ProductionW
+    steps: 
+    - uses: actions/checkout@v3
+      name: GitHub Checkout
+
+    - name: Create Adminer Image
+      run: docker build -t $DOCKERHUB_USR/grade_tracker_adminer:latest .
+      working-directory: ./Docker/adminer
+
+    - name: DockerHub Login
+      run: docker login --username $DOCKERHUB_USR --password $DOCKERHUB_PWD
+
+    - name: Push Adminer Image
+      run: docker push $DOCKERHUB_USR/grade_tracker_adminer:latest
+
+
+
+  create-and-push-nginx-image: 
+    name: Create and Push Nginx Image
+    runs-on: ubuntu-latest
+    environment: ProductionW
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./Terraform/Cluster_ProductionW
+    steps: 
+    - uses: actions/checkout@v3
+      name: GitHub Checkout
+
+    - name: Create Nginx Image
+      run: docker build -t $DOCKERHUB_USR/grade_tracker_nginx:latest .
+      working-directory: ./Docker/nginx
+
+    - name: DockerHub Login
+      run: docker login --username $DOCKERHUB_USR --password $DOCKERHUB_PWD
+
+    - name: Push Nginx Image
+      run: docker push $DOCKERHUB_USR/grade_tracker_nginx:latest
+
+
+
+  terraform-deploy-infrastructure: 
+    needs: [create-and-push-frontend-image, create-and-push-backend-microservice-user-image, create-and-push-backend-microservice-assignment-image, create-and-push-adminer-image, create-and-push-nginx-image]
+    name: Terraform Deploy Infrastructure
+    runs-on: ubuntu-latest
+    environment: ProductionW
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./Terraform/Cluster_ProductionW
+    steps: 
+    - uses: actions/checkout@v3
+      name: GitHub Checkout
+
+    - name: Set AWS_Region ENV
+      run: echo "AWS_REGION=us-west-1" >> $GITHUB_ENV
+      working-directory: .
+
+    - name: Replace Backend Placeholder BUCKET_NAME
+      run: python3 ../../Utilities/replacer.py backend.tf backend.tf ~bucketname~ $BUCKET_NAME
+
+    - name: Replace Backend Placeholder TABLE_NAME
+      run: python3 ../../Utilities/replacer.py backend.tf backend.tf ~tablename~ $TABLE_NAME
+
+    - name: Replace Backend Placeholder AWS_REGION
+      run: python3 ../../Utilities/replacer.py backend.tf backend.tf ~region~ $AWS_REGION
+
+    - name: Replace Placeholder AWS_REGION
+      run: python3 ../../Utilities/replacer.py terraform.tfvars terraform.tfvars ~region~ $AWS_REGION
+
+    - name: Replace Placeholder AWS_ECS_ARN
+      run: python3 ../../Utilities/replacer.py main.tf main.tf ~awsecsarn~ $AWS_ECS_ARN
+
+    - name: Replace Placeholder MYSQL_DB_URL
+      run: python3 ../../Utilities/replacer.py main.tf main.tf ~mysqldburl~ $MYSQL_DB_URL
+
+    - name: Terraform Init
+      run: terraform init
+
+    - name: Terraform Validate
+      run: terraform validate
+
+    - name: Terraform Apply
+      run: terraform apply --auto-approve
+
+
+
+  terraform-ecs-force-update-cluster: 
+    needs: terraform-deploy-infrastructure
+    name: Terraform ECS Force Update Cluster
+    runs-on: ubuntu-latest
+    environment: ProductionW
+    defaults:
+      run:
+        shell: bash
+        working-directory: .
+    steps: 
+    - uses: actions/checkout@v3
+      name: GitHub Checkout
+
+    - name: Set AWS_Region ENV
+      run: echo "AWS_REGION=us-west-1" >> $GITHUB_ENV
+      working-directory: .
+
+    - name: Terraform ECS Force Update Cluster
+      run: aws ecs update-service --cluster final-project-cluster --service final-project-ecs-service --force-new-deployment
+
+
+
+  app-url: 
+    needs: terraform-ecs-force-update-cluster
+    name: App Url
+    runs-on: ubuntu-latest
+    environment: ProductionW
+    defaults:
+      run:
+        shell: bash
+        working-directory: .
+    steps: 
+    - name: App Url
+      run: printf "\033[0;32mApp Url ~>\033[0m $APP_URL/\n"
