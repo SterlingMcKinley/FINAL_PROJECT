@@ -20,8 +20,8 @@ env:
 #This workflow requires Docker, Terraform and jq which comes Pre-Installed on Github Runners
 
 jobs: 
-  github-checkout: 
-    name: GitHub Checkout
+  set-up-runner: 
+    name: Setup Runner
     runs-on: ubuntu-latest
     environment: Staging
     defaults:
@@ -32,18 +32,6 @@ jobs:
     - uses: actions/checkout@v3
       name: GitHub Checkout
 
-
-
-  set-up-runner: 
-    needs: github-checkout
-    name: Setup Runner
-    runs-on: ubuntu-latest
-    environment: Staging
-    defaults:
-      run:
-        shell: bash
-        working-directory: .
-    steps: 
     - name: Set AWS_Region ENV
       run: echo "AWS_REGION=$(jq .region -r .config.json)" >> $GITHUB_ENV
 
@@ -53,16 +41,40 @@ jobs:
     - name: DockerHub Login
       run: docker login --username $DOCKERHUB_USR --password $DOCKERHUB_PWD
 
-  set-up-files: 
-    needs: github-checkout
-    name: Setup Files
+
+
+  create-and-push-frontend-image: 
+    needs: set-up-runner
+    name: Create and Push Frontend Image
     runs-on: ubuntu-latest
     environment: Staging
     defaults:
       run:
         shell: bash
-        working-directory: ./Terraform/Cluster_Staging
+        working-directory: ./Docker/frontend
     steps: 
+    - uses: actions/checkout@v3
+      name: GitHub Checkout
+
+    - name: Create Frontend Image
+      run: docker build -t $DOCKERHUB_USR/grade_tracker_frontend:latest .
+
+    - name: Push Frontend Image
+      run: docker push $DOCKERHUB_USR/grade_tracker_frontend:latest
+
+  create-and-push-backend-microservice-user-image: 
+    needs: set-up-runner
+    name: Create Backend Microservice User Image
+    runs-on: ubuntu-latest
+    environment: Staging
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./Docker/backend/userapp
+    steps: 
+    - uses: actions/checkout@v3
+      name: GitHub Checkout
+
     - name: Replace User Placeholder MYSQL_DATABASE
       run: python3 ../../Utilities/replacer.py ../../Docker/backend/userapp/app/app.py ../../Docker/backend/userapp/app/app.py ~mysqldatabase~ $MYSQL_DATABASE
 
@@ -75,7 +87,24 @@ jobs:
     - name: Replace User Placeholder MYSQL_DB_URL
       run: python3 ../../Utilities/replacer.py ../../Docker/backend/userapp/app/app.py ../../Docker/backend/userapp/app/app.py ~mysqldburl~ $MYSQL_DB_URL
 
+    - name: Create Backend Microservice User Image
+      run: docker build -t $DOCKERHUB_USR/grade_tracker_backend_microservice_user:latest .
 
+    - name: Push Backend Microservice User Image
+      run: docker push $DOCKERHUB_USR/grade_tracker_backend_microservice_user:latest
+
+  create-and-push-backend-microservice-assignment-image: 
+    needs: set-up-runner
+    name: Create Backend Microservice Assignment Image
+    runs-on: ubuntu-latest
+    environment: Staging
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./Docker/backend/assignmentapp
+    steps: 
+    - uses: actions/checkout@v3
+      name: GitHub Checkout
 
     - name: Replace Assignment Placeholder MYSQL_DATABASE
       run: python3 ../../Utilities/replacer.py ../../Docker/backend/assignmentapp/app/app.py ../../Docker/backend/assignmentapp/app/app.py ~mysqldatabase~ $MYSQL_DATABASE
@@ -89,7 +118,64 @@ jobs:
     - name: Replace Assignment Placeholder MYSQL_DB_URL
       run: python3 ../../Utilities/replacer.py ../../Docker/backend/assignmentapp/app/app.py ../../Docker/backend/assignmentapp/app/app.py ~mysqldburl~ $MYSQL_DB_URL
 
+    - name: Create Backend Microservice Assignment Image
+      run: docker build -t $DOCKERHUB_USR/grade_tracker_backend_microservice_assignment:latest .
 
+    - name: Push Backend Microservice Assignment Image
+      run: docker push $DOCKERHUB_USR/grade_tracker_backend_microservice_assignment:latest
+
+  create-and-push-adminer-image: 
+    needs: set-up-runner
+    name: Create Adminer Image
+    runs-on: ubuntu-latest
+    environment: Staging
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./Docker/adminer
+    steps: 
+    - uses: actions/checkout@v3
+      name: GitHub Checkout
+
+    - name: Create Adminer Image
+      run: docker build -t $DOCKERHUB_USR/grade_tracker_adminer:latest .
+
+    - name: Push Adminer Image
+      run: docker push $DOCKERHUB_USR/grade_tracker_adminer:latest
+
+  create-and-push-nginx-image: 
+    needs: set-up-runner
+    name: Create Nginx Image
+    runs-on: ubuntu-latest
+    environment: Staging
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./Docker/nginx
+    steps: 
+    - uses: actions/checkout@v3
+      name: GitHub Checkout
+
+    - name: Create Nginx Image
+      run: docker build -t $DOCKERHUB_USR/grade_tracker_nginx:latest .
+
+    - name: Push Nginx Image
+      run: docker push $DOCKERHUB_USR/grade_tracker_nginx:latest
+
+
+
+  terraform-deploy-infrastructure: 
+    needs: [create-and-push-frontend-image, create-and-push-backend-microservice-user-image, create-and-push-backend-microservice-assignment-image, create-and-push-adminer-image, create-and-push-nginx-image]
+    name: Terraform Deploy Infrastructure
+    runs-on: ubuntu-latest
+    environment: Staging
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./Terraform/Cluster_Staging
+    steps: 
+    - uses: actions/checkout@v3
+      name: GitHub Checkout
 
     - name: Replace Backend Placeholder BUCKET_NAME
       run: python3 ../../Utilities/replacer.py backend.tf backend.tf ~bucketname~ $BUCKET_NAME
@@ -109,152 +195,6 @@ jobs:
     - name: Replace Placeholder MYSQL_DB_URL
       run: python3 ../../Utilities/replacer.py main.tf main.tf ~mysqldburl~ $MYSQL_DB_URL
 
-
-
-  create-frontend-image: 
-    needs: [set-up-runner, set-up-files]
-    name: Create Frontend Image
-    runs-on: ubuntu-latest
-    environment: Staging
-    defaults:
-      run:
-        shell: bash
-        working-directory: ./Docker/frontend
-    steps: 
-    - name: Create Frontend Image
-      run: docker build -t $DOCKERHUB_USR/grade_tracker_frontend:latest .
-
-  create-backend-microservice-user-image: 
-    needs: [set-up-runner, set-up-files]
-    name: Create Backend Microservice User Image
-    runs-on: ubuntu-latest
-    environment: Staging
-    defaults:
-      run:
-        shell: bash
-        working-directory: ./Docker/backend/userapp
-    steps: 
-    - name: Create Backend Microservice User Image
-      run: docker build -t $DOCKERHUB_USR/grade_tracker_backend_microservice_user:latest .
-
-  create-backend-microservice-assignment-image: 
-    needs: [set-up-runner, set-up-files]
-    name: Create Backend Microservice Assignment Image
-    runs-on: ubuntu-latest
-    environment: Staging
-    defaults:
-      run:
-        shell: bash
-        working-directory: ./Docker/backend/assignmentapp
-    steps: 
-    - name: Create Backend Microservice Assignment Image
-      run: docker build -t $DOCKERHUB_USR/grade_tracker_backend_microservice_assignment:latest .
-
-  create-adminer-image: 
-    needs: [set-up-runner, set-up-files]
-    name: Create Adminer Image
-    runs-on: ubuntu-latest
-    environment: Staging
-    defaults:
-      run:
-        shell: bash
-        working-directory: ./Docker/adminer
-    steps: 
-    - name: Create Adminer Image
-      run: docker build -t $DOCKERHUB_USR/grade_tracker_adminer:latest .
-
-  create-nginx-image: 
-    needs: [set-up-runner, set-up-files]
-    name: Create Nginx Image
-    runs-on: ubuntu-latest
-    environment: Staging
-    defaults:
-      run:
-        shell: bash
-        working-directory: ./Docker/nginx
-    steps: 
-    - name: Create Nginx Image
-      run: docker build -t $DOCKERHUB_USR/grade_tracker_nginx:latest .
-
-
-
-  push-frontend-image: 
-    needs: create-frontend-image
-    name: Push Frontend Image
-    runs-on: ubuntu-latest
-    environment: Staging
-    defaults:
-      run:
-        shell: bash
-        working-directory: .
-    steps: 
-    - name: Push Frontend Image
-      run: docker push $DOCKERHUB_USR/grade_tracker_frontend:latest
-
-  push-backend-microservice-user-image: 
-    needs: create-backend-microservice-user-image
-    name: Push Backend Microservice User Image
-    runs-on: ubuntu-latest
-    environment: Staging
-    defaults:
-      run:
-        shell: bash
-        working-directory: .
-    steps: 
-    - name: Push Backend Microservice User Image
-      run: docker push $DOCKERHUB_USR/grade_tracker_backend_microservice_user:latest
-
-  push-backend-microservice-assignment-image: 
-    needs: create-backend-microservice-assignment-image
-    name: Push Backend Microservice Assignment Image
-    runs-on: ubuntu-latest
-    environment: Staging
-    defaults:
-      run:
-        shell: bash
-        working-directory: .
-    steps: 
-    - name: Push Backend Microservice Assignment Image
-      run: docker push $DOCKERHUB_USR/grade_tracker_backend_microservice_assignment:latest
-
-  push-adminer-image: 
-    needs: create-adminer-image
-    name: Push Adminer Image
-    runs-on: ubuntu-latest
-    environment: Staging
-    defaults:
-      run:
-        shell: bash
-        working-directory: .
-    steps: 
-    - name: Push Adminer Image
-      run: docker push $DOCKERHUB_USR/grade_tracker_adminer:latest
-
-  push-nginx-image: 
-    needs: create-nginx-image
-    name: Push Nginx Image
-    runs-on: ubuntu-latest
-    environment: Staging
-    defaults:
-      run:
-        shell: bash
-        working-directory: .
-    steps: 
-    - name: Push Nginx Image
-      run: docker push $DOCKERHUB_USR/grade_tracker_nginx:latest
-
-
-
-  terraform-deploy-infrastructure: 
-    needs: [push-frontend-image, push-backend-microservice-user-image, push-backend-microservice-assignment-image, push-adminer-image, push-nginx-image]
-    name: Terraform Deploy Infrastructure
-    runs-on: ubuntu-latest
-    environment: Staging
-    defaults:
-      run:
-        shell: bash
-        working-directory: ./Terraform/Cluster_Staging
-    steps: 
     - name: Terraform Init
       run: terraform init
 
@@ -263,6 +203,9 @@ jobs:
 
     - name: Terraform Apply
       run: terraform apply --auto-approve
+
+    - name: Set APP_LINK ENV
+      run: echo "APP_LINK=$(terraform output -raw app_url )" >> $GITHUB_ENV
 
 
 
@@ -294,4 +237,4 @@ jobs:
     steps: 
     - name: App Link
       if: always()
-      run: printf "\033[0;32mApp Link ~>\033[0m $(terraform output -raw app_url )/\n"
+      run: printf "\033[0;32mApp Link ~>\033[0m $APP_LINK/\n"
