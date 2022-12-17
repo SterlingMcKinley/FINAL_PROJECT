@@ -242,7 +242,6 @@ jobs:
 
 
   app-link: 
-    if: ${{ always() }}
     needs: terraform-ecs-force-update-cluster
     name: App Link
     runs-on: ubuntu-latest
@@ -253,5 +252,4 @@ jobs:
         working-directory: .
     steps: 
     - name: App Link
-      if: always()
       run: printf "\033[0;32mApp Link ~>\033[0m $APP_LINK/\n"
