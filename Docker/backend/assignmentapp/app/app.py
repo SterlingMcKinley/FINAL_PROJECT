@@ -306,7 +306,9 @@ def grab_userdata_by_username(userdata_username):
                 abort(404)
             else:
                 raise
-        if lookupuser.is_admin != True and session.username != lookupuser.username:
+        if lookupuser.is_admin == True or session.username == lookupuser.username:
+            pass
+        else:
             raise
     except:
         abort(401)
@@ -338,7 +340,9 @@ def grab_userdata_by_id(userdata_id):
                 abort(404)
             else:
                 raise
-        if user.is_admin != True and session.username != lookupuserdata.username:
+        if lookupuser.is_admin == True or session.username == lookupuser.username:
+            pass
+        else:
             raise
     except:
         abort(401)
