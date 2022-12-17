@@ -28,7 +28,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
   {
       "name": "frontend-container",
       "image": "svmckinley/grade_tracker_frontend:latest",
-      "essential": false,
+      "essential": true,
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
@@ -42,10 +42,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
       {
       "name": "backend-user-container",
       "image": "svmckinley/grade_tracker_backend_microservice_user:latest",
-      "essential": false,
-      "dependsOn": [{
-       "containerName": "mysql-container",
-       "condition": "START" }],
+      "essential": true,
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
@@ -59,34 +56,7 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
       {
       "name": "backend-assignment-container",
       "image": "svmckinley/grade_tracker_backend_microservice_assignment:latest",
-      "essential": false,
-      "dependsOn": [{
-       "containerName": "mysql-container",
-       "condition": "START" }],
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-          "awslogs-group": "/ecs/final-project-logs",
-          "awslogs-region": "us-east-1",
-          "awslogs-stream-prefix": "ecs"
-        }
-      },
-      "portMappings": []
-    },
-      {
-      "name": "mysql-container",
-      "image": "svmckinley/grade_tracker_mysql:latest",
-      "essential": false,
-      "environment": [
-                {
-                    "name": "MYSQL_ROOT_PASSWORD",
-                    "value": "~mysqlrootpassword~"
-                },
-                {
-                    "name": "MYSQL_DATABASE",
-                    "value": "~mysqldatabase~"
-                }
-      ],
+      "essential": true,
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
@@ -101,13 +71,10 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
       "name": "adminer-container",
       "image": "svmckinley/grade_tracker_adminer:latest",
       "essential": false,
-      "dependsOn": [{
-       "containerName": "mysql-container",
-       "condition": "START" }],
       "environment": [
                 {
                     "name": "ADMINER_DEFAULT_SERVER",
-                    "value": "127.0.0.1"
+                    "value": "~mysqldburl~"
                 }
       ],
       "logConfiguration": {
@@ -124,9 +91,6 @@ resource "aws_ecs_task_definition" "aws-ecs-task" {
       "name": "nginx-container",
       "image": "svmckinley/grade_tracker_nginx:latest",
       "essential": true,
-      "dependsOn": [{
-       "containerName": "adminer-container",
-       "condition": "START" }],
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
@@ -171,6 +135,10 @@ resource "aws_ecs_service" "aws-ecs-service" {
   scheduling_strategy  = "REPLICA"
   desired_count        = 1
   force_new_deployment = true
+
+  # triggers = {
+  #   update = timestamp()  # force update in-place every apply
+  # }
 
   network_configuration {
     subnets = [

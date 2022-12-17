@@ -12,9 +12,11 @@ env:
   MYSQL_ROOT_USER: ${{ secrets.MYSQL_ROOT_USER }}
   MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
 
+#This workflow requires Docker, Terraform and jq which comes Pre-Installed on Github Runners
+
 jobs: 
-  init-remote-statefile: 
-    name: Init Remote Statefile S3 using Terraform
+  init-rds-database: 
+    name: Init RDS Database using Terraform
     runs-on: ubuntu-latest
     environment: Production
     defaults:
@@ -24,22 +26,32 @@ jobs:
     steps: 
     - uses: actions/checkout@v3
       name: GitHub Checkout
-    - name: Install jq
-      run: sudo apt update && sudo apt install jq -y
+
     - name: Set AWS_Region
       run: echo "AWS_REGION=$(jq .region -r .config.json)" >> $GITHUB_ENV
       working-directory: .
+
     - name: Replace Placeholder MYSQL_DATABASE
-      run: python3 ../../Utilities/replacer.py terraform.tfvars terraform.tfvars ~bucketname~ $MYSQL_DATABASE
+      run: python3 ../../Utilities/replacer.py terraform.tfvars terraform.tfvars ~mysqldatabase~ $MYSQL_DATABASE
+
     - name: Replace Placeholder MYSQL_ROOT_USER
-      run: python3 ../../Utilities/replacer.py terraform.tfvars terraform.tfvars ~tablename~ $MYSQL_ROOT_USER
+      run: python3 ../../Utilities/replacer.py terraform.tfvars terraform.tfvars ~mysqlrootuser~ $MYSQL_ROOT_USER
+
     - name: Replace Placeholder MYSQL_ROOT_PASSWORD
-      run: python3 ../../Utilities/replacer.py terraform.tfvars terraform.tfvars ~tablename~ $MYSQL_ROOT_PASSWORD
+      run: python3 ../../Utilities/replacer.py terraform.tfvars terraform.tfvars ~mysqlrootpassword~ $MYSQL_ROOT_PASSWORD
+
     - name: Replace Placeholder AWS_REGION
       run: python3 ../../Utilities/replacer.py terraform.tfvars terraform.tfvars ~region~ $AWS_REGION
+
     - name: Terraform Init
       run: terraform init
+
     - name: Terraform Validate
       run: terraform validate
+
     - name: Terraform Apply
       run: terraform apply --auto-approve
+
+    - name: DB Url
+      if: always()
+      run: printf "\033[0;32mDB Url ~>\033[0m $(terraform output -raw db_url )/\n"
