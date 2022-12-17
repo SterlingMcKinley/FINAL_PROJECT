@@ -272,10 +272,10 @@ function GrabStudents(JSONData){
 }
 
 //Admin Load Student Grade
-function AdminLoadStudentGrade(JSONData){
+function AdminLoadStudentGrade(JSONData, Username){
 	var Request = new XMLHttpRequest();
 	var PayLoad = JSON.stringify(JSONData);
-	Request.open('POST', APIRoot+':'+UserMicroServicePort+'/grab/all/users', true);
+	Request.open('POST', APIRoot+':'+AssignmentMicroServicePort+'/grab/userdata/username/'+Username, true);
 	Request.setRequestHeader("accept", "application/json");
 	Request.setRequestHeader("Content-Type", "application/json");
 	try{
@@ -283,24 +283,62 @@ function AdminLoadStudentGrade(JSONData){
 		Request.onload = function(){
 			if(Request.status === 200){
 				Data = JSON.parse(Request.responseText);
-				var Students = [];
-				for(let i = 0; i < Data.length; i++) {
-					if(Data[i].is_admin == false){
-						Students.push(Data[i]);
+				if(Data.length > 0){
+					var Table = document.getElementById(Data[0].username)
+					if(Table != null){
+						var TableD = document.createElement('td');
+						var TableDiv = document.createElement('div');
+						var TableTable = document.createElement('table');
+						var TableHeaderRow = document.createElement('tr');
+						var TableHeaderAssignment = document.createElement('th');
+						TableHeaderAssignment.textContent = 'Assignment';
+						var TableHeaderA1 = document.createElement('th');
+						TableHeaderA1.textContent = 'Attempt 1';
+						var TableHeaderA2 = document.createElement('th');
+						TableHeaderA2.textContent = 'Attempt 2';
+						var TableHeaderA3 = document.createElement('th');
+						TableHeaderA3.textContent = 'Attempt 3';
+						TableHeaderRow.appendChild(TableHeaderAssignment);
+						TableHeaderRow.appendChild(TableHeaderA1);
+						TableHeaderRow.appendChild(TableHeaderA2);
+						TableHeaderRow.appendChild(TableHeaderA3);
+						Table.appendChild(TableD);
+						Table.appendChild(TableDiv);
+						Table.appendChild(TableTable);
+						TableTable.appendChild(TableHeaderRow);
+						for(let i = 0; i < APIGrades.length; i++) {
+							var TableRow = document.createElement('tr');
+							var RowAssignment = document.createElement('th');
+							RowAssignment.textContent = MatchAssignment(APIGrades[i].assignment_id, APIAssignments)
+							var RowGradeA1 = document.createElement('th');
+							RowGrade.textContent = PositionGrade(Grade.grades, 0)
+							var RowGradeA2 = document.createElement('th');
+							RowGrade.textContent = PositionGrade(Grade.grades, 1)
+							var RowGradeA3 = document.createElement('th');
+							RowGrade.textContent = PositionGrade(Grade.grades, 2)
+							TableRow.appendChild(RowAssignment);
+							TableRow.appendChild(RowGradeA1);
+							TableRow.appendChild(RowGradeA2);
+							TableRow.appendChild(RowGradeA3);
+							Table.appendChild(TableRow);
+						}
+					}
+					else{
+						alert('Table data is not yet ready please try again later');
+						Log('Table data is not yet ready');
 					}
 				}
-				APIStudents = Students;
 			}
 			else{
-				Log('Failed to use User Micro Service API, Request Error. Non 200 Status Code');
+				Log('Failed to use Assignment Micro Service API, Request Error. Non 200 Status Code');
 			}
 		};
 		Request.onerror = function() {
-			Log('Failed to use User Micro Service API, Request Error');
+			Log('Failed to use Assignment Micro Service API, Request Error');
 		};
 	}
 	catch(err){
-		Log('Failed to use User Micro Service API');
+		Log('Failed to use Assignment Micro Service API');
 	}
 }
 
@@ -429,14 +467,13 @@ function ClickedLogout(){
 	}
 }
 
-function ClickedLoadStudentsGrades(){
-	console.log(self.getAttribute(student));
+function ClickedLoadStudentsGrades(self){
 	Session = GetSessionAPIKey();
 	if(Session != null){
 		var JsonObj = new Object();
 		JsonObj.apikey = Session;
 
-		AdminLoadStudentGrade(JsonObj);
+		AdminLoadStudentGrade(JsonObj, self.srcElement.getAttribute('student'));
 	}
 	else{
 		Log('Not Logged in Can Not Load Students Grades');
@@ -632,7 +669,7 @@ function ChartData(){
 function AdminLoadStudents(){
 	var Table = document.getElementById('studentlist');
 	if(Table != null && APIStudents != null){
-		Table.innerHTML = "";
+		//Table.innerHTML = "";
 		for(let i = 0; i < APIStudents.length; i++) {
 			var TableRow = document.createElement('tr');
 			var TableDataName = document.createElement('td');
@@ -644,7 +681,7 @@ function AdminLoadStudents(){
 			TableDataEditScoresButton.type = "button";
 			TableDataEditScoresButton.className = "btn btn-link btn-rounded btn-sm fw-bold";
 			TableDataEditScoresButton.setAttribute("data-mdb-ripple-color", "dark");
-			TableDataEditScoresButton.onclick = ClickedLoadStudentsGrades();
+			TableDataEditScoresButton.onclick = ClickedLoadStudentsGrades;
 			TableDataEditScoresButton.setAttribute("student", APIStudents[i].username);
 			TableDataEditScoresButton.textContent = "Edit Scores";
 			TableDataEditScores.appendChild(TableDataEditScoresButton);
