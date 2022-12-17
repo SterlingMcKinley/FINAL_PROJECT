@@ -5,40 +5,40 @@ resource "aws_vpc" "app_vpc" {
 resource "aws_subnet" "public_a" {
   vpc_id            = aws_vpc.app_vpc.id
   cidr_block        = "172.28.0.0/18"
-  availability_zone = "us-east-1a"
+  availability_zone = "us-west-1a"
 
   tags = {
-    "Name" = "public | us-east-1a"
+    "Name" = "public | us-west-1a"
   }
 }
 
 resource "aws_subnet" "private_a" {
   vpc_id            = aws_vpc.app_vpc.id
   cidr_block        = "172.28.64.0/18"
-  availability_zone = "us-east-1a"
+  availability_zone = "us-west-1a"
 
   tags = {
-    "Name" = "private | us-east-1a"
+    "Name" = "private | us-west-1a"
   }
 }
 
 resource "aws_subnet" "public_b" {
   vpc_id            = aws_vpc.app_vpc.id
   cidr_block        = "172.28.128.0/18"
-  availability_zone = "us-east-1b"
+  availability_zone = "us-west-1b"
 
   tags = {
-    "Name" = "public | us-east-1b"
+    "Name" = "public | us-west-1b"
   }
 }
 
 resource "aws_subnet" "private_b" {
   vpc_id            = aws_vpc.app_vpc.id
   cidr_block        = "172.28.192.0/18"
-  availability_zone = "us-east-1b"
+  availability_zone = "us-west-1b"
 
   tags = {
-    "Name" = "private | us-east-1b"
+    "Name" = "private | us-west-1b"
   }
 }
 
