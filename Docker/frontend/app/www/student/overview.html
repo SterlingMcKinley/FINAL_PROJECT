@@ -107,25 +107,24 @@
         </script>
 
     <head>
-      <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.js"></script>
-      <script> 
-      $(document).ready(function () {
-        $('.nav-toggle').click(function () {
-          var collapse_content_selector = 
-    $(this).attr('href');
-          var toggle_switch = $(this);
-          $(collapse_content_selector).toggle(function () 
-            if ($(this).css('display') == 'none') {
-              toggle_switch.html('Submit');
-
-          } else {
-            LoadTable();	
-                      toggle_switch.html('Exit');	
-                  }	
-              });	
-          });	
-          ;
-      </script>
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.js"></script>
+        <script> 
+        $(document).ready(function () {
+            $('.nav-toggle').click(function () {
+                var collapse_content_selector = $(this).attr('href');
+                var toggle_switch = $(this);
+                $(collapse_content_selector).toggle(function () {
+                    if ($(this).css('display') == 'none') {
+                        toggle_switch.html('Submit');
+                    } else {
+                        LoadTable();
+                        toggle_switch.html('Exit');
+                    }
+                });
+            });
+  
+        });
+        </script>
 
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
