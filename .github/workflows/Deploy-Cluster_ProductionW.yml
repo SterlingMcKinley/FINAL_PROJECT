@@ -1,4 +1,4 @@
-name: Release Cluster
+name: Deploy Cluster West
 
 on: 
   workflow_dispatch: 
@@ -10,26 +10,32 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
   TABLE_NAME: ${{ secrets.TABLE_NAME }}
+  DOCKERHUB_USR: ${{ secrets.DOCKERHUB_USR }}
+  DOCKERHUB_PWD: ${{ secrets.DOCKERHUB_PWD }}
   AWS_ECS_ARN: ${{ secrets.AWS_ECS_ARN }}
+  MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+  MYSQL_ROOT_USER: ${{ secrets.MYSQL_ROOT_USER }}
+  MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
   MYSQL_DB_URL: db-app.team.franns.net
+  APP_URL: http://app.team.franns.net
 
 #This workflow requires Docker, Terraform and jq which comes Pre-Installed on Github Runners
 
 jobs: 
-  release-cluster: 
-    name: Release Cluster using Terraform
+  terraform-deploy-infrastructure: 
+    name: Terraform Deploy Infrastructure
     runs-on: ubuntu-latest
-    environment: Production
+    environment: ProductionW
     defaults:
       run:
         shell: bash
-        working-directory: ./Terraform/Cluster_Production
+        working-directory: ./Terraform/Cluster_ProductionW
     steps: 
     - uses: actions/checkout@v3
       name: GitHub Checkout
 
-    - name: Set AWS_Region
-      run: echo "AWS_REGION=$(jq .region -r .config.json)" >> $GITHUB_ENV
+    - name: Set AWS_Region ENV
+      run: echo "AWS_REGION=us-west-1" >> $GITHUB_ENV
       working-directory: .
 
     - name: Replace Backend Placeholder BUCKET_NAME
@@ -56,5 +62,42 @@ jobs:
     - name: Terraform Validate
       run: terraform validate
 
-    - name: Terraform Destroy
-      run: terraform destroy --auto-approve
+    - name: Terraform Apply
+      run: terraform apply --auto-approve
+
+
+
+  terraform-ecs-force-update-cluster: 
+    needs: terraform-deploy-infrastructure
+    name: Terraform ECS Force Update Cluster
+    runs-on: ubuntu-latest
+    environment: ProductionW
+    defaults:
+      run:
+        shell: bash
+        working-directory: .
+    steps: 
+    - uses: actions/checkout@v3
+      name: GitHub Checkout
+
+    - name: Set AWS_Region ENV
+      run: echo "AWS_REGION=us-west-1" >> $GITHUB_ENV
+      working-directory: .
+
+    - name: Terraform ECS Force Update Cluster
+      run: aws ecs update-service --cluster final-project-cluster --service final-project-ecs-service --force-new-deployment
+
+
+
+  app-url: 
+    needs: terraform-ecs-force-update-cluster
+    name: App Url
+    runs-on: ubuntu-latest
+    environment: ProductionW
+    defaults:
+      run:
+        shell: bash
+        working-directory: .
+    steps: 
+    - name: App Url
+      run: printf "\033[0;32mApp Url ~>\033[0m $APP_URL/\n"
