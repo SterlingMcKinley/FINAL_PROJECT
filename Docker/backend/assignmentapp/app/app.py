@@ -302,13 +302,11 @@ def grab_userdata_by_username(userdata_username):
             raise
         lookupuser = User.query.filter_by(username=userdata_username).first()
         if lookupuser == None:
-            if lookupuser.is_admin == True or sessionuser.username == userdata_username:
+            if sessionuser.is_admin == True or sessionuser.username == userdata_username:
                 abort(404)
             else:
                 raise
-        if lookupuser.is_admin == True or session.username == lookupuser.username:
-            pass
-        else:
+        if sessionuser.is_admin != True and session.username != lookupuser.username:
             raise
     except:
         abort(401)
@@ -336,13 +334,11 @@ def grab_userdata_by_id(userdata_id):
             raise
         lookupuserdata = Userdata.query.filter_by(id=userdata_id).first()
         if lookupuser == None:
-            if lookupuser.is_admin == True:
+            if sessionuser.is_admin == True:
                 abort(404)
             else:
                 raise
-        if lookupuser.is_admin == True or session.username == lookupuser.username:
-            pass
-        else:
+        if sessionuser.is_admin != True and session.username != lookupuserdata.username:
             raise
     except:
         abort(401)
