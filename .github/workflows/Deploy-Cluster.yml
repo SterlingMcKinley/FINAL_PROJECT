@@ -16,32 +16,14 @@ env:
   MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
   MYSQL_ROOT_USER: ${{ secrets.MYSQL_ROOT_USER }}
   MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+  MYSQL_DB_URL: db-test.team.franns.net
+  APP_URL: test.team.franns.net
 
 #This workflow requires Docker, Terraform and jq which comes Pre-Installed on Github Runners
 
 jobs: 
-  set-up-runner: 
-    name: Setup Runner
-    runs-on: ubuntu-latest
-    environment: Staging
-    defaults:
-      run:
-        shell: bash
-        working-directory: .
-    steps: 
-    - uses: actions/checkout@v3
-      name: GitHub Checkout
-
-    - name: Set AWS_Region ENV
-      run: echo "AWS_REGION=$(jq .region -r .config.json)" >> $GITHUB_ENV
-
-    - name: Set MYSQL_DB_URL ENV
-      run: echo "MYSQL_DB_URL=db-test.team.franns.net" >> $GITHUB_ENV
-
-
 
   create-and-push-frontend-image: 
-    needs: set-up-runner
     name: Create and Push Frontend Image
     runs-on: ubuntu-latest
     environment: Staging
@@ -63,8 +45,9 @@ jobs:
     - name: Push Frontend Image
       run: docker push $DOCKERHUB_USR/grade_tracker_frontend:latest
 
+
+
   create-and-push-backend-microservice-user-image: 
-    needs: set-up-runner
     name: Create Backend Microservice User Image
     runs-on: ubuntu-latest
     environment: Staging
@@ -98,8 +81,9 @@ jobs:
     - name: Push Backend Microservice User Image
       run: docker push $DOCKERHUB_USR/grade_tracker_backend_microservice_user:latest
 
+
+
   create-and-push-backend-microservice-assignment-image: 
-    needs: set-up-runner
     name: Create Backend Microservice Assignment Image
     runs-on: ubuntu-latest
     environment: Staging
@@ -133,8 +117,9 @@ jobs:
     - name: Push Backend Microservice Assignment Image
       run: docker push $DOCKERHUB_USR/grade_tracker_backend_microservice_assignment:latest
 
+
+
   create-and-push-adminer-image: 
-    needs: set-up-runner
     name: Create Adminer Image
     runs-on: ubuntu-latest
     environment: Staging
@@ -156,8 +141,9 @@ jobs:
     - name: Push Adminer Image
       run: docker push $DOCKERHUB_USR/grade_tracker_adminer:latest
 
+
+
   create-and-push-nginx-image: 
-    needs: set-up-runner
     name: Create Nginx Image
     runs-on: ubuntu-latest
     environment: Staging
@@ -193,6 +179,9 @@ jobs:
     steps: 
     - uses: actions/checkout@v3
       name: GitHub Checkout
+
+    - name: Set AWS_Region ENV
+      run: echo "AWS_REGION=$(jq .region -r .config.json)" >> $GITHUB_ENV
 
     - name: Replace Backend Placeholder BUCKET_NAME
       run: python3 ../../Utilities/replacer.py backend.tf backend.tf ~bucketname~ $BUCKET_NAME
@@ -241,9 +230,9 @@ jobs:
 
 
 
-  app-link: 
+  app-url: 
     needs: terraform-ecs-force-update-cluster
-    name: App Link
+    name: App Url
     runs-on: ubuntu-latest
     environment: Staging
     defaults:
@@ -251,5 +240,5 @@ jobs:
         shell: bash
         working-directory: .
     steps: 
-    - name: App Link
-      run: printf "\033[0;32mApp Link ~>\033[0m $APP_LINK/\n"
+    - name: App Url
+      run: printf "\033[0;32mApp Url ~>\033[0m $APP_URL/\n"
