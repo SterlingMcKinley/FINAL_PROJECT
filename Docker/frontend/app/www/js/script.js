@@ -557,6 +557,10 @@ function GenerateChart(Ctx, Labels, Attempt1, Attempt2, Attempt3){
 //Chart the data
 function ChartData(){
 	if(chart_1 != null && chart_2 != null && chart_3 != null){
+		var ctx_1 = document.getElementById('chart_1').getContext('2d');
+		var ctx_2 = document.getElementById('chart_2').getContext('2d');
+		var ctx_3 = document.getElementById('chart_3').getContext('2d');
+		
 		var DiagnosticList = [];
 		var DiagnosticLabelList = [];
 		var DiagnosticTake1List = [];
@@ -650,9 +654,9 @@ function ChartData(){
 			}
 		}
 
-		chart_1.destroy();
-		chart_2.destroy();
-		chart_3.destroy();
+		// chart_1.destroy();
+		// chart_2.destroy();
+		// chart_3.destroy();
 
 		chart_1 = GenerateChart(ctx_1, DiagnosticLabelList, DiagnosticTake1List, DiagnosticTake2List, DiagnosticTake3List)
 		chart_2 = GenerateChart(ctx_2, BuildScriptLabelList, BuildScriptTake1List, BuildScriptTake2List, BuildScriptTake3List)
