@@ -55,7 +55,7 @@ resource "aws_cloudwatch_metric_alarm" "Grade-Tracker-ECS-High_CPU" {
   metric_name = "CpuUtilized"
   namespace = "ECS/ContainerInsights"
   dimensions = {
-    ClusterName = "final-project-cluster-staging"
+    ClusterName = "final-project-cluster"
   }
 
   actions_enabled = true
@@ -78,7 +78,7 @@ resource "aws_cloudwatch_metric_alarm" "Grade-Tracker-ECS-Low_CPU" {
   metric_name = "CpuUtilized"
   namespace = "ECS/ContainerInsights"
   dimensions = {
-    ClusterName = "final-project-cluster-staging"
+    ClusterName = "final-project-cluster"
   }
 
   actions_enabled = true
@@ -102,7 +102,7 @@ resource "aws_cloudwatch_metric_alarm" "Grade-Tracker-ECS-High_MEM" {
   metric_name = "MemoryUtilized"
   namespace = "ECS/ContainerInsights"
   dimensions = {
-    ClusterName = "final-project-cluster-staging"
+    ClusterName = "final-project-cluster"
   }
 
   actions_enabled = true
@@ -125,7 +125,7 @@ resource "aws_cloudwatch_metric_alarm" "Grade-Tracker-ECS-Low_MEM" {
   metric_name = "MemoryUtilized"
   namespace = "ECS/ContainerInsights"
   dimensions = {
-    ClusterName = "final-project-cluster-staging"
+    ClusterName = "final-project-cluster"
   }
 
   actions_enabled = true
