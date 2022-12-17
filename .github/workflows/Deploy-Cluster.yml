@@ -182,6 +182,7 @@ jobs:
 
     - name: Set AWS_Region ENV
       run: echo "AWS_REGION=$(jq .region -r .config.json)" >> $GITHUB_ENV
+      working-directory: .
 
     - name: Replace Backend Placeholder BUCKET_NAME
       run: python3 ../../Utilities/replacer.py backend.tf backend.tf ~bucketname~ $BUCKET_NAME
