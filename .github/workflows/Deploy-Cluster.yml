@@ -38,9 +38,6 @@ jobs:
     - name: Set MYSQL_DB_URL ENV
       run: echo "MYSQL_DB_URL=db-test.team.franns.net" >> $GITHUB_ENV
 
-    - name: DockerHub Login
-      run: docker login --username $DOCKERHUB_USR --password $DOCKERHUB_PWD
-
 
 
   create-and-push-frontend-image: 
@@ -51,13 +48,17 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./Docker/frontend
+        working-directory: ./Terraform/Cluster_Staging
     steps: 
     - uses: actions/checkout@v3
       name: GitHub Checkout
 
     - name: Create Frontend Image
       run: docker build -t $DOCKERHUB_USR/grade_tracker_frontend:latest .
+      working-directory: ./Docker/frontend
+
+    - name: DockerHub Login
+      run: docker login --username $DOCKERHUB_USR --password $DOCKERHUB_PWD
 
     - name: Push Frontend Image
       run: docker push $DOCKERHUB_USR/grade_tracker_frontend:latest
@@ -70,7 +71,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./Docker/backend/userapp
+        working-directory: ./Terraform/Cluster_Staging
     steps: 
     - uses: actions/checkout@v3
       name: GitHub Checkout
@@ -89,6 +90,10 @@ jobs:
 
     - name: Create Backend Microservice User Image
       run: docker build -t $DOCKERHUB_USR/grade_tracker_backend_microservice_user:latest .
+      working-directory: ./Docker/backend/userapp
+
+    - name: DockerHub Login
+      run: docker login --username $DOCKERHUB_USR --password $DOCKERHUB_PWD
 
     - name: Push Backend Microservice User Image
       run: docker push $DOCKERHUB_USR/grade_tracker_backend_microservice_user:latest
@@ -101,7 +106,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./Docker/backend/assignmentapp
+        working-directory: ./Terraform/Cluster_Staging
     steps: 
     - uses: actions/checkout@v3
       name: GitHub Checkout
@@ -120,6 +125,10 @@ jobs:
 
     - name: Create Backend Microservice Assignment Image
       run: docker build -t $DOCKERHUB_USR/grade_tracker_backend_microservice_assignment:latest .
+      working-directory: ./Docker/backend/assignmentapp
+
+    - name: DockerHub Login
+      run: docker login --username $DOCKERHUB_USR --password $DOCKERHUB_PWD
 
     - name: Push Backend Microservice Assignment Image
       run: docker push $DOCKERHUB_USR/grade_tracker_backend_microservice_assignment:latest
@@ -132,13 +141,17 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./Docker/adminer
+        working-directory: ./Terraform/Cluster_Staging
     steps: 
     - uses: actions/checkout@v3
       name: GitHub Checkout
 
     - name: Create Adminer Image
       run: docker build -t $DOCKERHUB_USR/grade_tracker_adminer:latest .
+      working-directory: ./Docker/adminer
+
+    - name: DockerHub Login
+      run: docker login --username $DOCKERHUB_USR --password $DOCKERHUB_PWD
 
     - name: Push Adminer Image
       run: docker push $DOCKERHUB_USR/grade_tracker_adminer:latest
@@ -151,13 +164,17 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./Docker/nginx
+        working-directory: ./Terraform/Cluster_Staging
     steps: 
     - uses: actions/checkout@v3
       name: GitHub Checkout
 
     - name: Create Nginx Image
       run: docker build -t $DOCKERHUB_USR/grade_tracker_nginx:latest .
+      working-directory: ./Docker/nginx
+
+    - name: DockerHub Login
+      run: docker login --username $DOCKERHUB_USR --password $DOCKERHUB_PWD
 
     - name: Push Nginx Image
       run: docker push $DOCKERHUB_USR/grade_tracker_nginx:latest
@@ -225,7 +242,6 @@ jobs:
 
 
   app-link: 
-    if: ${{ always() }}
     needs: terraform-ecs-force-update-cluster
     name: App Link
     runs-on: ubuntu-latest
@@ -233,8 +249,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./Terraform/Cluster_Staging
+        working-directory: .
     steps: 
     - name: App Link
-      if: always()
       run: printf "\033[0;32mApp Link ~>\033[0m $APP_LINK/\n"
