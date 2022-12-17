@@ -21,7 +21,7 @@ resource "aws_route53_record" "www1" {
   zone_id = data.aws_route53_zone.selected.zone_id 
   name    = "app.${data.aws_route53_zone.selected.name}"
   type    = "CNAME"
-  ttl     = "60"
+  ttl     = 60
 
   failover_routing_policy {
     type = "PRIMARY"
@@ -42,7 +42,7 @@ resource "aws_route53_record" "www2" {
   zone_id = data.aws_route53_zone.selected.zone_id 
   name    = "app.${data.aws_route53_zone.selected.name}"
   type    = "CNAME"
-  ttl     = "60"
+  ttl     = 60
 
   failover_routing_policy {
     type = "SECONDARY"
